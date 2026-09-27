@@ -1,0 +1,14 @@
+{
+  "matches": [
+    {
+      "name": "jev-context-manager:astra-continuity",
+      "description": "Bootstrap JCM continuity for an existing Codex session or recover registered history in a new session. Use for JCM initialization, adoption of an already running session, or a trusted JCM request token. Preserve automatic capture, query-specific Jev participation, source provenance and current-file reconciliation.",
+      "path": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-34657e6c-f9zfvek2/codex/plugins/cache/jcm/jev-context-manager/0.1.0-dev.4/skills/astra-continuity/SKILL.md",
+      "scope": "user",
+      "enabled": true,
+      "pluginId": "jev-context-manager@jcm"
+    }
+  ],
+  "pass": true,
+  "surface": "fresh app-server skills/list, not Desktop UI"
+}

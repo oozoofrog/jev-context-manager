@@ -1,0 +1,101 @@
+{
+  "source": "oozoofrog/jev-context-manager",
+  "ref": "main",
+  "fixture": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-34657e6c-f9zfvek2",
+  "live": true,
+  "host_version": "codex-cli 0.158.0-alpha.2.1",
+  "checks": {
+    "install_does_not_activate_projects": true,
+    "installed_enabled": true,
+    "installed_payload_integrity": true,
+    "no_permanent_project_hooks": true,
+    "external_storage": true,
+    "egress_policy": true,
+    "fresh_independent_session": true,
+    "native_hook_received": true,
+    "new_bootstrap_used": true,
+    "served_real_pack": true,
+    "old_marker_in_pack": true,
+    "real_Jev_normal": true,
+    "requirements_restored": true,
+    "marker_restored": true,
+    "no_project_hooks_after_sessions": true,
+    "follower_started": true,
+    "disable_stops_follower": true,
+    "disable_stops_capture": true,
+    "uninstall_removes_cache": true,
+    "uninstall_preserves_records": true,
+    "reinstall_preserves_records": true,
+    "global_configuration_unchanged": true
+  },
+  "sessions": [
+    {
+      "name": "old",
+      "id": "01a0e353-597a-7d61-9149-fbb4e221cb04",
+      "exit_code": 0,
+      "elapsed_seconds": 68.84
+    },
+    {
+      "name": "fresh",
+      "id": "01a0e354-63bd-7de0-8956-6c5f25ff86a1",
+      "exit_code": 0,
+      "elapsed_seconds": 89.08
+    }
+  ],
+  "pass": true,
+  "marketplace": {
+    "marketplaceName": "jcm",
+    "installedRoot": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-34657e6c-f9zfvek2/codex/.tmp/marketplaces/jcm",
+    "alreadyAdded": false
+  },
+  "installation": {
+    "pluginId": "jev-context-manager@jcm",
+    "name": "jev-context-manager",
+    "marketplaceName": "jcm",
+    "version": "0.1.0-dev.4",
+    "installedPath": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-34657e6c-f9zfvek2/codex/plugins/cache/jcm/jev-context-manager/0.1.0-dev.4",
+    "authPolicy": "ON_INSTALL"
+  },
+  "runtime_manifest_sha256": "87560cf5321cc88d4daed29e20873565a328f2a7c94e64a3b645903748487b7d",
+  "marketplace_revision": "b1e64813f3fa42670a8ffb1de29472b7ce868765",
+  "trust": "Vetted synthetic fixture with per-invocation hook trust bypass; production approval UI not tested",
+  "provider_calls": [
+    {
+      "id": "f52007b150134b0c945b42dc3400ddf0",
+      "day": "2026-09-27",
+      "bytes": 1728,
+      "status": "success"
+    },
+    {
+      "id": "6bad74b9ff9a4056a503540b2429af38",
+      "day": "2026-09-27",
+      "bytes": 6519,
+      "status": "success"
+    },
+    {
+      "id": "5833207b28ff4cd69f457b1ee784c7b1",
+      "day": "2026-09-27",
+      "bytes": 15366,
+      "status": "success"
+    },
+    {
+      "id": "49621a4c2f10497187b488a7e518ebbf",
+      "day": "2026-09-27",
+      "bytes": 1410,
+      "status": "success"
+    },
+    {
+      "id": "3bab3652307047a68e844ea42334c817",
+      "day": "2026-09-27",
+      "bytes": 1578,
+      "status": "success"
+    },
+    {
+      "id": "7dd54cfeba2940fb8457d7bdcc94fdb9",
+      "day": "2026-09-27",
+      "bytes": 35948,
+      "status": "success"
+    }
+  ],
+  "fixture_disabled": true
+}

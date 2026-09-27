@@ -44,7 +44,7 @@ and the matching Python runtime. Requires local **Python 3.11+**; this route doe
 not run pip, download runtime dependencies, or install a second user skill.
 
 Open a new Codex chat, review/trust the plugin's hooks, and ask
-`$astra-continuity` to enable JCM for the selected project and adopt the current
+`$jev-context-manager:astra-continuity` to enable JCM for the selected project and adopt the current
 session. State whether Jev egress is allowed; local-only is the default. The skill
 uses its bundled executable directly, so a separate global `jcm` command is not
 required. Installation alone does not activate any project or send context.

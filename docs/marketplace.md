@@ -26,7 +26,7 @@ codex plugin marketplace add oozoofrog/jev-context-manager --ref main
 codex plugin add jev-context-manager@jcm
 ```
 
-In a new chat, use the plugin's `astra-continuity` skill. It resolves `scripts/jcm`
+In a new chat, use `$jev-context-manager:astra-continuity`. It resolves `scripts/jcm`
 from its own installed location. In commands below, `PLUGIN_JCM` means that
 absolute executable path, not a path guessed from another user's cache.
 
@@ -109,6 +109,8 @@ contains the registration reference; JCM does not create a project `.jcm` direct
 ## Verification
 
 ```sh
+# Developer checkout setup (not needed by plugin users):
+python3 -m pip install -e .
 python3 scripts/build_plugin.py --check
 python3 -m unittest discover -s tests
 python3 scripts/verify_plugin.py

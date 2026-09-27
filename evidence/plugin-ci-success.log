@@ -1,0 +1,195 @@
+test	Set up job	﻿2026-09-27T14:45:25.7992724Z Current runner version: '2.337.0'
+test	Set up job	2026-09-27T14:45:25.8013635Z ##[group]Runner Image Provisioner
+test	Set up job	2026-09-27T14:45:25.8014442Z Hosted Compute Agent
+test	Set up job	2026-09-27T14:45:25.8014930Z Version: 20260828.587
+test	Set up job	2026-09-27T14:45:25.8015479Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+test	Set up job	2026-09-27T14:45:25.8016117Z Build Date: 2026-08-28T16:44:25Z
+test	Set up job	2026-09-27T14:45:25.8016783Z Worker ID: {cdc18bc0-a8b9-4146-9520-34dfa58a0de3}
+test	Set up job	2026-09-27T14:45:25.8017408Z Azure Region: westus3
+test	Set up job	2026-09-27T14:45:25.8017884Z ##[endgroup]
+test	Set up job	2026-09-27T14:45:25.8019146Z ##[group]Operating System
+test	Set up job	2026-09-27T14:45:25.8019675Z Ubuntu
+test	Set up job	2026-09-27T14:45:25.8020174Z 24.04.5
+test	Set up job	2026-09-27T14:45:25.8020637Z LTS
+test	Set up job	2026-09-27T14:45:25.8021070Z ##[endgroup]
+test	Set up job	2026-09-27T14:45:25.8021502Z ##[group]Runner Image
+test	Set up job	2026-09-27T14:45:25.8022067Z Image: ubuntu-24.04
+test	Set up job	2026-09-27T14:45:25.8022529Z Version: 20260920.314.1
+test	Set up job	2026-09-27T14:45:25.8023408Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260920.314/images/ubuntu/Ubuntu2404-Readme.md
+test	Set up job	2026-09-27T14:45:25.8024839Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260920.314
+test	Set up job	2026-09-27T14:45:25.8025682Z ##[endgroup]
+test	Set up job	2026-09-27T14:45:25.8026865Z ##[group]GITHUB_TOKEN Permissions
+test	Set up job	2026-09-27T14:45:25.8028615Z Contents: read
+test	Set up job	2026-09-27T14:45:25.8029114Z Metadata: read
+test	Set up job	2026-09-27T14:45:25.8029646Z Packages: read
+test	Set up job	2026-09-27T14:45:25.8030155Z ##[endgroup]
+test	Set up job	2026-09-27T14:45:25.8031732Z Secret source: Actions
+test	Set up job	2026-09-27T14:45:25.8032896Z Cache mode: write
+test	Set up job	2026-09-27T14:45:25.8033495Z Prepare workflow directory
+test	Set up job	2026-09-27T14:45:25.8291486Z Prepare all required actions
+test	Set up job	2026-09-27T14:45:25.8330685Z Getting action download info
+test	Set up job	2026-09-27T14:45:26.1258486Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+test	Set up job	2026-09-27T14:45:26.2193714Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+test	Set up job	2026-09-27T14:45:26.4281286Z Complete job name: test
+test	Run actions/checkout@v4	﻿2026-09-27T14:45:26.4865197Z ##[group]Run actions/checkout@v4
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4865879Z with:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4866268Z   repository: oozoofrog/jev-context-manager
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4869402Z   token: ***
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4869757Z   ssh-strict: true
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4870111Z   ssh-user: git
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4870465Z   persist-credentials: true
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4870850Z   clean: true
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4871204Z   sparse-checkout-cone-mode: true
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4871611Z   fetch-depth: 1
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4871947Z   fetch-tags: false
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4872292Z   show-progress: true
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4872647Z   lfs: false
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4872971Z   submodules: false
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4873322Z   set-safe-directory: true
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4873721Z   allow-unsafe-pr-checkout: false
+test	Run actions/checkout@v4	2026-09-27T14:45:26.4874310Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5701954Z Syncing repository: oozoofrog/jev-context-manager
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5703480Z ##[group]Getting Git version info
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5704136Z Working directory is '/home/runner/work/jev-context-manager/jev-context-manager'
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5705086Z [command]/usr/bin/git version
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5774778Z git version 2.55.0
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5792582Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5805655Z Temporarily overriding HOME='/home/runner/work/_temp/0911199a-78b3-4910-a4c6-1c125fe03087' before making global git config changes
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5807937Z Adding repository directory to the temporary git global config as a safe directory
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5810353Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jev-context-manager/jev-context-manager
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5852389Z Deleting the contents of '/home/runner/work/jev-context-manager/jev-context-manager'
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5858818Z ##[group]Initializing the repository
+test	Run actions/checkout@v4	2026-09-27T14:45:26.5860283Z [command]/usr/bin/git init /home/runner/work/jev-context-manager/jev-context-manager
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6136953Z hint: Using 'master' as the name for the initial branch. This default branch name
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6138625Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6139798Z hint: to use in all of your new repositories, which will suppress this warning,
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6140705Z hint: call:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6141188Z hint:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6141819Z hint: 	git config --global init.defaultBranch <name>
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6142569Z hint:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6143272Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6144411Z hint: 'development'. The just-created branch can be renamed via this command:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6145322Z hint:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6145901Z hint: 	git branch -m <name>
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6146594Z hint:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6147681Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6155666Z Initialized empty Git repository in /home/runner/work/jev-context-manager/jev-context-manager/.git/
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6160647Z [command]/usr/bin/git remote add origin https://github.com/oozoofrog/jev-context-manager
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6208932Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6209600Z ##[group]Disabling automatic garbage collection
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6210158Z [command]/usr/bin/git config --local gc.auto 0
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6247382Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6248104Z ##[group]Setting up auth
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6253426Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6283481Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6557838Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6589538Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6777479Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6807438Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Run actions/checkout@v4	2026-09-27T14:45:26.6993111Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test	Run actions/checkout@v4	2026-09-27T14:45:26.7026617Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:26.7027668Z ##[group]Fetching the repository
+test	Run actions/checkout@v4	2026-09-27T14:45:26.7034025Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1d5c123817897407bf09172665c59c05d05769b5:refs/remotes/origin/main
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3133162Z From https://github.com/oozoofrog/jev-context-manager
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3134215Z  * [new ref]         1d5c123817897407bf09172665c59c05d05769b5 -> origin/main
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3137162Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3138084Z ##[group]Determining the checkout info
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3139361Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3144237Z [command]/usr/bin/git sparse-checkout disable
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3187836Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3216339Z ##[group]Checking out the ref
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3219106Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3327314Z Switched to a new branch 'main'
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3331703Z branch 'main' set up to track 'origin/main'.
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3337488Z ##[endgroup]
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3372807Z [command]/usr/bin/git log -1 --format=%H
+test	Run actions/checkout@v4	2026-09-27T14:45:27.3395468Z 1d5c123817897407bf09172665c59c05d05769b5
+test	Run actions/setup-python@v5	﻿2026-09-27T14:45:27.3694455Z ##[group]Run actions/setup-python@v5
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3695371Z with:
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3695995Z   python-version: 3.11
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3696823Z   check-latest: false
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3703952Z   token: ***
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3704625Z   update-environment: true
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3705624Z   allow-prereleases: false
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3706398Z   freethreaded: false
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.3707199Z ##[endgroup]
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.4743375Z ##[group]Installed versions
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.5191195Z (node:2022) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.5193780Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.5195572Z Successfully set up CPython (3.11.16)
+test	Run actions/setup-python@v5	2026-09-27T14:45:27.5206094Z ##[endgroup]
+test	Run python -m pip install -e .	﻿2026-09-27T14:45:27.5377575Z ##[group]Run python -m pip install -e .
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5378879Z ^[[36;1mpython -m pip install -e .^[[0m
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5663069Z shell: /usr/bin/bash -e {0}
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5664072Z env:
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5665022Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5666631Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5668238Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5669633Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5670982Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5672346Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib
+test	Run python -m pip install -e .	2026-09-27T14:45:27.5673517Z ##[endgroup]
+test	Run python -m pip install -e .	2026-09-27T14:45:30.0918824Z Obtaining file:///home/runner/work/jev-context-manager/jev-context-manager
+test	Run python -m pip install -e .	2026-09-27T14:45:30.0929593Z   Installing build dependencies: started
+test	Run python -m pip install -e .	2026-09-27T14:45:31.2892169Z   Installing build dependencies: finished with status 'done'
+test	Run python -m pip install -e .	2026-09-27T14:45:31.2913895Z   Checking if build backend supports build_editable: started
+test	Run python -m pip install -e .	2026-09-27T14:45:31.5672841Z   Checking if build backend supports build_editable: finished with status 'done'
+test	Run python -m pip install -e .	2026-09-27T14:45:31.5679135Z   Getting requirements to build editable: started
+test	Run python -m pip install -e .	2026-09-27T14:45:31.8108719Z   Getting requirements to build editable: finished with status 'done'
+test	Run python -m pip install -e .	2026-09-27T14:45:31.8115824Z   Preparing editable metadata (pyproject.toml): started
+test	Run python -m pip install -e .	2026-09-27T14:45:31.9434298Z   Preparing editable metadata (pyproject.toml): finished with status 'done'
+test	Run python -m pip install -e .	2026-09-27T14:45:31.9462110Z Building wheels for collected packages: jev-context-manager
+test	Run python -m pip install -e .	2026-09-27T14:45:31.9470581Z   Building editable for jev-context-manager (pyproject.toml): started
+test	Run python -m pip install -e .	2026-09-27T14:45:32.0973304Z   Building editable for jev-context-manager (pyproject.toml): finished with status 'done'
+test	Run python -m pip install -e .	2026-09-27T14:45:32.0977419Z   Created wheel for jev-context-manager: filename=jev_context_manager-0.1.0.dev4-0.editable-py3-none-any.whl size=1715 sha256=622216b2389100b465ea35def8e80796a0cdde53ef7eee2022fc5f4473dc3a5d
+test	Run python -m pip install -e .	2026-09-27T14:45:32.0979063Z   Stored in directory: /tmp/pip-ephem-wheel-cache-khcviead/wheels/5b/a7/cc/e9c69a1d0ea53ecacf43ba55937f9d8b91b41ac12ed4e94960
+test	Run python -m pip install -e .	2026-09-27T14:45:32.0994267Z Successfully built jev-context-manager
+test	Run python -m pip install -e .	2026-09-27T14:45:32.1111041Z Installing collected packages: jev-context-manager
+test	Run python -m pip install -e .	2026-09-27T14:45:32.1174691Z Successfully installed jev-context-manager-0.1.0.dev4
+test	Run python scripts/build_plugin.py --check	﻿2026-09-27T14:45:32.1653981Z ##[group]Run python scripts/build_plugin.py --check
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1654342Z ^[[36;1mpython scripts/build_plugin.py --check^[[0m
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1712295Z shell: /usr/bin/bash -e {0}
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1712518Z env:
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1712753Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1713118Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1713472Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1713777Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1714072Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1714372Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.1714633Z ##[endgroup]
+test	Run python scripts/build_plugin.py --check	2026-09-27T14:45:32.2031989Z Plugin payload verified
+test	Run python -m unittest discover -s tests	﻿2026-09-27T14:45:32.2095763Z ##[group]Run python -m unittest discover -s tests
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2096310Z ^[[36;1mpython -m unittest discover -s tests^[[0m
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2150722Z shell: /usr/bin/bash -e {0}
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2150938Z env:
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2151166Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2151523Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2151853Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2152159Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2152468Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2152793Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:32.2153053Z ##[endgroup]
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:39.3421370Z ...............................................................
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:39.3421969Z ----------------------------------------------------------------------
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:39.3422491Z Ran 63 tests in 6.816s
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:39.3422683Z 
+test	Run python -m unittest discover -s tests	2026-09-27T14:45:39.3422787Z OK
+test	Post Run actions/setup-python@v5	﻿2026-09-27T14:45:39.3649385Z Post job cleanup.
+test	Post Run actions/setup-python@v5	2026-09-27T14:45:39.4620358Z (node:3048) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test	Post Run actions/setup-python@v5	2026-09-27T14:45:39.4620980Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test	Post Run actions/checkout@v4	﻿2026-09-27T14:45:39.4775423Z Post job cleanup.
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5477346Z [command]/usr/bin/git version
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5491403Z git version 2.55.0
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5519336Z Temporarily overriding HOME='/home/runner/work/_temp/96d5990c-0dc5-4ae6-ab75-a8a67255aae4' before making global git config changes
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5520377Z Adding repository directory to the temporary git global config as a safe directory
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5523254Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/jev-context-manager/jev-context-manager
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5554464Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5582626Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5792388Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5816062Z http.https://github.com/.extraheader
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5825516Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.5856805Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.6082295Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test	Post Run actions/checkout@v4	2026-09-27T14:45:39.6115822Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test	Complete job	﻿2026-09-27T14:45:39.6451600Z Cleaning up orphan processes
+test	Complete job	2026-09-27T14:45:39.6708379Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

@@ -32,8 +32,46 @@ was added. The user's global configuration was unchanged and the fixture was
 disabled afterward.
 
 This first live run preceded the final custom-home-reference and inactive-status
-enhancements; those were separately covered by the 63-test source run. Published
-Git-backed verification is recorded below after deployment.
+enhancements; those were covered by the 63-test source run and the subsequent
+published-package run below.
+
+## Published Git-backed package
+
+`evidence/live-plugin-34657e6c/result.json` records installation from
+`oozoofrog/jev-context-manager --ref main`, resolved to source commit
+`b1e64813f3fa42670a8ffb1de29472b7ce868765`. All 22 checks passed. It repeated the
+two independent real Codex sessions, native hook capture, exact random-marker
+restoration, paused/protocol preservation, and six successful real Jev calls.
+The installed bundle's SHA-256 inventory matched every included runtime/skill
+file. Later commits update tests/documentation/evidence without changing that
+runtime payload.
+
+This run also repeated disable, follower shutdown, uninstall, preserved records
+and reinstall using the Git-sourced package. Its temporary project was disabled
+afterward; the user's global configuration was unchanged.
+
+A separate fresh app-server `skills/list` response exposed the enabled skill as
+`jev-context-manager:astra-continuity`, with plugin ID `jev-context-manager@jcm`
+and its path inside the installed Git-sourced bundle. Evidence:
+`evidence/plugin-skill-discovery.json`. This confirms fresh-process loader
+discovery, not the Desktop plugin-card appearance.
+
+## Linux CI and standalone package
+
+[Linux/Python 3.11 CI](https://github.com/oozoofrog/jev-context-manager/actions/runs/36327065433)
+passed the bundle consistency check and all 63 tests on commit `1d5c123`.
+The first CI run failed because an older transcript rotation fixture assumed
+unlink/create always allocates a different inode. Linux can reuse that inode.
+The fixture now retains the rotated file and asserts distinct inodes before
+checking source-reference deduplication. Runtime behavior was not changed to
+satisfy the test. Both initial failure and successful logs are retained in
+`evidence/plugin-ci-initial-failure.log` and `evidence/plugin-ci-success.log`.
+
+The standalone `0.1.0.dev4` wheel also built successfully with standard PEP 517
+build isolation (`evidence/plugin-wheel-build.log`). An initial non-isolated
+build could not import the build backend in the development venv; its log remains
+at `evidence/plugin-wheel-without-build-isolation.log`. Plugin installation does
+not use either wheel-building path.
 
 ## Evidence boundaries
 
