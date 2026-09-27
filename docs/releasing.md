@@ -5,7 +5,7 @@ Run the maintained pipeline instead of repeating release operations in chat:
 ```sh
 .venv/bin/python scripts/release.py \
   --publish --install \
-  --notes docs/releases/v0.1.0-dev.8.md \
+  --notes docs/releases/v0.1.0-dev.9.md \
   --commit-message "Remove local Jev quotas and automate release installation" \
   --include evidence/provider-limits-live.json \
   --include evidence/provider-limits-tests.log \

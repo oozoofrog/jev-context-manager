@@ -1,5 +1,5 @@
 {
-  "runtime/jcm/__init__.py": "0c96f342234aab71f17342feccdcfaac62b19b815e38268b672731f517bf22a7",
+  "runtime/jcm/__init__.py": "9485da7b7779e7c44dc1d1b5833ab998a46b664fc054e92f17f82c99a6f5038a",
   "runtime/jcm/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
   "runtime/jcm/adapter.py": "44cbeeb250aa3498bebf9e890d81340f7595701bc8c09e60d4e880369ce6f615",
   "runtime/jcm/batching.py": "0db77caa0db5048a1926c81bc122373b2792689fc9ea7f94edb13ea55a9879aa",

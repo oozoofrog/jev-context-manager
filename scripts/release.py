@@ -249,7 +249,10 @@ class Release:
         public_fixture = self.directory / f'jcm-{self.version}-plugin-validation.json'
         shutil.copy2(assets[1], public_fixture)
         assets[1] = public_fixture
-        available = self.json('release-assets', ['gh', 'api', f'repos/{REPOSITORY}/releases/tags/{self.tag}'])
+        # GitHub's REST lookup by tag returns 404 for a draft; gh resolves drafts
+        # through release listing and their release ID.
+        available = self.json('release-assets', ['gh', 'release', 'view', self.tag,
+                                                 '--repo', REPOSITORY, '--json', 'assets'])
         names = {a['name'] for a in available['assets']}
         for asset in assets:
             if asset.name in names:

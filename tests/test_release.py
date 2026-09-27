@@ -15,7 +15,7 @@ spec.loader.exec_module(release)
 class ReleaseTests(unittest.TestCase):
     def test_versions_must_agree_before_any_release(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             (root / 'src/jcm').mkdir(parents=True)
             (root / 'plugins/jev-context-manager/.codex-plugin').mkdir(parents=True)
             (root / 'pyproject.toml').write_text('[project]\nversion="0.1.0.dev8"\n')
@@ -58,7 +58,7 @@ class ReleaseTests(unittest.TestCase):
 
     def test_sqlite_backup_preserves_committed_wal_data_and_blobs(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); source = root / 'store'; source.mkdir()
+            root = Path(directory).resolve(); source = root / 'store'; source.mkdir()
             (source / 'blobs').mkdir(); (source / 'blobs/data').write_text('durable source')
             connection = sqlite3.connect(source / 'journal.sqlite')
             try:
@@ -76,7 +76,7 @@ class ReleaseTests(unittest.TestCase):
 
     def test_backup_does_not_follow_external_symlinks(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory); source = root / 'store'; source.mkdir()
+            root = Path(directory).resolve(); source = root / 'store'; source.mkdir()
             (root / 'private').write_text('do not copy')
             (source / 'external').symlink_to(root / 'private')
             with self.assertRaisesRegex(release.ReleaseError, 'symlinks'):
@@ -92,3 +92,26 @@ class ReleaseTests(unittest.TestCase):
         first = {'installed': [{'pluginId':'other', 'version':'1'}, {'pluginId':release.SELECTOR,'version':'old'}]}
         second = {'installed': [{'pluginId':release.SELECTOR,'version':'new'}, {'pluginId':'other','version':'1'}]}
         self.assertEqual(release.other_plugins(first), release.other_plugins(second))
+
+    def test_draft_release_assets_use_draft_aware_lookup(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            notes = root / 'notes.md'; notes.write_text('Release notes')
+            wheel = root / 'package.whl'; wheel.write_bytes(b'wheel')
+            fixture = root / 'fixture.json'; fixture.write_text('{}')
+            runner = object.__new__(release.Release)
+            runner.root = runner.directory = root
+            runner.version, runner.tag = '0.1.0-dev.9', 'v0.1.0-dev.9'
+            runner.args = Mock(notes=str(notes))
+            runner.progress = Mock()
+            runner.run = Mock(return_value=subprocess.CompletedProcess([], 0, '{}', ''))
+            def response(name, argv):
+                if argv[:2] == ['gh', 'api']:
+                    raise release.ReleaseError('draft release tag endpoint returns 404')
+                if argv[-1] == 'assets':
+                    return {'assets': []}
+                return {'url': 'https://github.com/owner/repo/releases/tag/v1', 'isDraft': False}
+            runner.json = Mock(side_effect=response)
+            result = runner.release({'wheel': str(wheel)}, {'result': str(fixture)})
+            self.assertFalse(result['isDraft'])
+            self.assertEqual(sum(call.args[0] == 'asset-upload' for call in runner.run.call_args_list), 2)
