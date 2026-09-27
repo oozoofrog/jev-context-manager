@@ -31,7 +31,42 @@ See [requirement → acceptance → module mapping](docs/acceptance-map.md) and
 limits are in [the initial validation report](docs/validation.md) and
 [the bootstrap validation report](docs/bootstrap-validation.md).
 
-## Install directly from GitHub into local Codex
+## Install the Codex marketplace plugin (recommended)
+
+```sh
+codex plugin marketplace add oozoofrog/jev-context-manager --ref main
+codex plugin add jev-context-manager@jcm
+```
+
+The Git-backed marketplace is **`jcm`**; its plugin is **JCM — Astra Continuity**
+(`jev-context-manager`). It includes `astra-continuity`, native lifecycle hooks,
+and the matching Python runtime. Requires local **Python 3.11+**; this route does
+not run pip, download runtime dependencies, or install a second user skill.
+
+Open a new Codex chat, review/trust the plugin's hooks, and ask
+`$astra-continuity` to enable JCM for the selected project and adopt the current
+session. State whether Jev egress is allowed; local-only is the default. The skill
+uses its bundled executable directly, so a separate global `jcm` command is not
+required. Installation alone does not activate any project or send context.
+
+Existing standalone registrations use the plugin's `plugin-bind` command before
+adoption. This preserves records and egress policy, stops the old follower, and
+backs up/removes only that registration's project hook commands. Plugin-bound
+projects use native plugin hooks, without adding permanent project handlers.
+
+Update the marketplace snapshot and installed plugin together:
+
+```sh
+codex plugin marketplace upgrade jcm
+codex plugin add jev-context-manager@jcm
+```
+
+Disabling the plugin's persistent Codex setting stops new guarded capture and the
+follower. Uninstall removes the bundle, while records stay outside plugin caches
+in `JCM_HOME`. See [marketplace setup, migration and lifecycle limits](docs/marketplace.md)
+and [marketplace verification](docs/marketplace-validation.md).
+
+## Standalone CLI installation (alternative)
 
 Run this in a local terminal on macOS or Linux; no checkout or `sudo` is needed:
 

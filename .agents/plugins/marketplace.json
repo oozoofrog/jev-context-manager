@@ -1,0 +1,20 @@
+{
+  "name": "jcm",
+  "interface": {
+    "displayName": "Jcm"
+  },
+  "plugins": [
+    {
+      "name": "jev-context-manager",
+      "source": {
+        "source": "local",
+        "path": "./plugins/jev-context-manager"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

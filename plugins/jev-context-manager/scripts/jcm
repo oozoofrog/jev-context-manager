@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+plugin_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+python="${JCM_PYTHON:-python3}"
+if ! command -v "$python" >/dev/null || ! "$python" -I -c 'import sys; sys.exit(sys.version_info < (3,11))'; then
+    echo 'JCM requires Python 3.11+; set JCM_PYTHON to its absolute executable path.' >&2
+    exit 1
+fi
+export JCM_PLUGIN_ROOT="$plugin_root"
+export JCM_LAUNCHER="$plugin_root/scripts/jcm"
+exec "$python" -I -B "$plugin_root/scripts/entry.py" "$@"

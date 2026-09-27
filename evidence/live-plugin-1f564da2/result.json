@@ -1,0 +1,99 @@
+{
+  "source": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager",
+  "ref": null,
+  "fixture": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-1f564da2-cbez5juz",
+  "live": true,
+  "host_version": "codex-cli 0.158.0-alpha.2.1",
+  "checks": {
+    "install_does_not_activate_projects": true,
+    "installed_enabled": true,
+    "installed_payload_integrity": true,
+    "no_permanent_project_hooks": true,
+    "external_storage": true,
+    "egress_policy": true,
+    "fresh_independent_session": true,
+    "native_hook_received": true,
+    "new_bootstrap_used": true,
+    "served_real_pack": true,
+    "old_marker_in_pack": true,
+    "real_Jev_normal": true,
+    "requirements_restored": true,
+    "marker_restored": true,
+    "no_project_hooks_after_sessions": true,
+    "follower_started": true,
+    "disable_stops_follower": true,
+    "disable_stops_capture": true,
+    "uninstall_removes_cache": true,
+    "uninstall_preserves_records": true,
+    "reinstall_preserves_records": true,
+    "global_configuration_unchanged": true
+  },
+  "sessions": [
+    {
+      "name": "old",
+      "id": "01a0e34e-d2fa-7493-8144-095b0fc44011",
+      "exit_code": 0,
+      "elapsed_seconds": 55.2
+    },
+    {
+      "name": "fresh",
+      "id": "01a0e34f-972e-7d00-a74c-e31757dd988c",
+      "exit_code": 0,
+      "elapsed_seconds": 77.55
+    }
+  ],
+  "pass": true,
+  "marketplace": {
+    "marketplaceName": "jcm",
+    "installedRoot": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager",
+    "alreadyAdded": false
+  },
+  "installation": {
+    "pluginId": "jev-context-manager@jcm",
+    "name": "jev-context-manager",
+    "marketplaceName": "jcm",
+    "version": "0.1.0-dev.4",
+    "installedPath": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-1f564da2-cbez5juz/codex/plugins/cache/jcm/jev-context-manager/0.1.0-dev.4",
+    "authPolicy": "ON_INSTALL"
+  },
+  "trust": "Vetted synthetic fixture with per-invocation hook trust bypass; production approval UI not tested",
+  "provider_calls": [
+    {
+      "id": "759b9548774243d891b8f45910a924e2",
+      "day": "2026-09-27",
+      "bytes": 1728,
+      "status": "success"
+    },
+    {
+      "id": "92651d9e75d94b72b7cd9fa38e4f0337",
+      "day": "2026-09-27",
+      "bytes": 6519,
+      "status": "success"
+    },
+    {
+      "id": "ac272e926c974972aeacf261064b5e1f",
+      "day": "2026-09-27",
+      "bytes": 15352,
+      "status": "success"
+    },
+    {
+      "id": "e6e8f0ddf11f40aa8e1ab2b1c7e78f77",
+      "day": "2026-09-27",
+      "bytes": 1403,
+      "status": "success"
+    },
+    {
+      "id": "b9c3b9a774f44a0ea7a8df2e94590124",
+      "day": "2026-09-27",
+      "bytes": 1551,
+      "status": "success"
+    },
+    {
+      "id": "03776ff8d921483d80f05eb152765a11",
+      "day": "2026-09-27",
+      "bytes": 40408,
+      "status": "success"
+    }
+  ],
+  "fixture_disabled": true
+}
