@@ -29,7 +29,7 @@ def main():
     root.mkdir()
     code = root / 'connection.py'
     code.write_text('def reconnect(paused):\n    return {"connected": True, "paused": False}\n')
-    policy = config.enable(home, root, allow_egress=True, max_calls=20)
+    policy = config.enable(home, root, max_calls=20)
     store = Store(policy)
     evidence = REPOSITORY / 'evidence' / ('live-bootstrap-' + case)
     evidence.mkdir(mode=0o700)

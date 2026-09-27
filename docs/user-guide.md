@@ -22,12 +22,15 @@ In a chat for that project, send:
 ```text
 $jev-context-manager:astra-continuity
 Enable JCM for this project and adopt the current session.
-I authorize sending context to Jev.
 ```
 
 JCM registers the project, imports the current session's supported public history, and starts capturing new records. Adoption also works for a session that began before JCM was installed.
 
-For local-only recording, replace the last line with `Keep Jev transmission disabled.` You can allow transmission later, but records captured while it was disabled remain ineligible for transmission.
+Jev is used automatically for enabled projects. No separate transmission permission
+is required, and old transmission-denial flags do not exclude previously captured
+records. Provide `TYPESAFE_API_KEY` in the environment where Codex runs. If Jev cannot
+produce a usable judgment, local recovery remains available with `quality=degraded`
+and the actual failure reason.
 
 ## Continue in a new session
 
@@ -57,7 +60,7 @@ Useful fields in the response:
 | `hook_events_received` | Hook events received by this project |
 | `followers[].running` | Whether an adopted session's local follower is running |
 | `plugin.active` | Whether the persisted plugin state and installed bundle pass JCM's checks; hook trust is separate |
-| `allow_egress` | Whether eligible records may be sent to Jev |
+| `allow_egress` | Always `true`; retained for compatibility with older status readers |
 | `bootstraps[].stage` | For existing-session adoption: `captured` or `blocked`; a blocked scan has not activated capture |
 | `bootstraps[].sources` | At adoption time: validated segments with durable cursors and remaining bytes |
 | `gaps` | Missing or unsupported source coverage |
@@ -74,10 +77,9 @@ requirement pair that cannot fit together is reported as unresolved rather than
 silently compared from truncated text.
 
 Successful judgments are cached. Retrying the same retrieval reuses successful
-batches and retries failed ones, subject to the existing call budget. A denied or
-unassessed record remains available locally; enabling transmission later does not
-retroactively authorize records captured while it was denied. No batch raises
-those permissions or budgets.
+batches and retries failed ones, subject to the existing call budget. An
+unassessed record remains available locally. Old per-record denial flags are
+ignored; records do not need to be imported again to use Jev.
 
 Large recovery packs return `stage=reading`, `delivery=page_served` and a
 `next_read_command`. Read each page and follow that exact command until it is null.
@@ -105,7 +107,8 @@ $jev-context-manager:astra-continuity
 Stop JCM capture for this project. Keep the stored history.
 ```
 
-To resume, ask it to re-enable the project without changing the Jev policy and adopt the current session again. To stop Jev calls while keeping local capture, ask it to deny Jev transmission instead.
+To resume, ask it to re-enable the project and adopt the current session again.
+Disabling JCM stops both collection and Jev use for that project.
 
 Stopping capture preserves stored history. Re-enabling can recover records written to registered transcripts while capture was stopped. To exclude a particular session permanently, identify its exact session ID and ask the skill to forget it. This deletes its admitted records and prevents JCM from collecting that session again.
 
@@ -120,10 +123,10 @@ JCM="/absolute/path/to/installed/plugin/scripts/jcm"
 PROJECT="/absolute/path/to/project"
 ```
 
-For a new registration with Jev transmission allowed:
+For a new registration:
 
 ```sh
-"$JCM" --repo "$PROJECT" enable --allow-jev-egress
+"$JCM" --repo "$PROJECT" enable
 "$JCM" --repo "$PROJECT" bootstrap existing
 ```
 
@@ -133,15 +136,14 @@ Run `bootstrap existing` inside the Codex session being adopted. From an externa
 "$JCM" --repo "$PROJECT" bootstrap existing --session-id SESSION_ID
 ```
 
-For an existing registration, use `policy` to change transmission settings; rerunning `enable` with a different policy is rejected.
+Jev transmission is automatic. The old `--allow-jev-egress` and `policy --egress`
+options have been removed.
 
 | Action | Command |
 |---|---|
 | Check status | `"$JCM" --repo "$PROJECT" status` |
-| Allow Jev transmission for newly captured records | `"$JCM" --repo "$PROJECT" policy --egress allow` |
-| Deny Jev transmission, keep local capture | `"$JCM" --repo "$PROJECT" policy --egress deny` |
 | Stop capture | `"$JCM" --repo "$PROJECT" disable` |
-| Resume without changing transmission policy | `"$JCM" --repo "$PROJECT" policy --enabled true` |
+| Resume JCM | `"$JCM" --repo "$PROJECT" policy --enabled true` |
 | Delete a session and block recapture | `"$JCM" --repo "$PROJECT" forget --session SESSION_ID` |
 
 If the project was registered with the standalone CLI, migrate it using the plugin executable, then adopt the current session:
@@ -151,7 +153,7 @@ If the project was registered with the standalone CLI, migrate it using the plug
 "$JCM" --repo "$PROJECT" bootstrap existing
 ```
 
-Migration preserves records and transmission policy, stops the old follower, and backs up and removes that registration's old project hook commands.
+Migration preserves records, stops the old follower, and backs up and removes that registration's old project hook commands. Jev is automatic after migration.
 
 ## Update or remove
 
@@ -181,6 +183,6 @@ Disabling the plugin in Codex stops subsequent guarded capture and its follower.
 | `TRANSCRIPT_LINE_TOO_LARGE` | A single JSONL line exceeds the 8 MB read bound. The cursor stays before that line; total transcript size is not capped at 32 MB. |
 | `PAGINATED_HISTORY_COVERAGE_PARTIAL` | Supported continuation segments were found; this does not prove that the entire earlier history was imported. |
 | `UNSUPPORTED_TRANSCRIPT_VERSION` | The session's transcript format is not supported. Do not edit its version metadata to force ingestion. |
-| Jev result is `degraded` | Check `allow_egress`, key availability, network access, and the reported provider error or call-budget limit. Older records captured with transmission denied remain denied. |
+| Jev result is `degraded` | Check key availability, network access, and the reported provider error or call-budget limit. Jev needs no separate permission; old denial flags do not block it. |
 | Recovery is `reading` | Read the returned page and follow `next_read_command`; the pack spans multiple bounded responses. |
 | Recovery is `blocked` | Inspect the reported reason. Even the minimum page envelope may not fit an unusually small delivery limit. A blocked pack has not been delivered. |

@@ -60,7 +60,7 @@ def dispatch(store, token, provider=None):
     if terminal:
         semantic['errors'] = terminal
     else:
-        semantic = select(store, provider, current, events, materials, request_text, epoch)
+        semantic = select(store, provider, materials, request_text, epoch)
     decisions, relations = semantic['decisions'], semantic['relations']
     semantic_error = semantic['errors'][0] if semantic['errors'] else None
     quality = 'degraded' if semantic['errors'] or worker['errors'] else 'normal'

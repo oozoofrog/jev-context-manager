@@ -40,6 +40,8 @@ def main():
         if not os.environ.get('TYPESAFE_API_KEY'):
             raise SystemExit('Live Jev credential unavailable')
         (ch/'auth.json').symlink_to(user_home/'auth.json')
+    else:
+        env.pop('TYPESAFE_API_KEY', None)
     evidence = REPO/'evidence'/('live-plugin-' + case)
     evidence.mkdir()
     summary = {'source':args.source, 'ref':args.ref, 'fixture':str(base), 'live':args.live,
@@ -97,12 +99,12 @@ def main():
                                 text=True,capture_output=True)
         summary['marketplace_revision']=revision.stdout.strip() if revision.returncode==0 else None
         summary['checks']['installed_payload_integrity']=all(hashlib.sha256((plugin/p).read_bytes()).hexdigest()==h for p,h in manifest.items())
-        enable=[launcher,'--repo',str(root),'enable']+(['--allow-jev-egress'] if args.live else [])
+        enable=[launcher,'--repo',str(root),'enable']
         call(enable,'enable')
         policy=config.load(home,root);store=Store(policy)
         summary['checks']['no_permanent_project_hooks']=not(root/'.codex/hooks.json').exists()
         summary['checks']['external_storage']=str(home) == policy['home'] and not(root/'.jcm').exists()
-        summary['checks']['egress_policy']=policy['allow_egress'] is args.live
+        summary['checks']['automatic_jev']=policy['allow_egress'] is True
         if args.live:
             (root/'connection.py').write_text('def reconnect(paused):\n    return {"connected": True, "paused": False}\n')
             old,_=run_session('old','connection.py 연결 복구 작업입니다. 반환값에 protocol_version: 1을 유지하고 전달받은 paused 값을 그대로 유지해야 합니다. 지금은 구현하지 마세요. 별도 도구 호출에서 Python uuid.uuid4().hex로 임의 표식을 생성하여 CONTINUITY_MARKER=<표식> 한 줄로 출력하세요. 이후 구현의 continuity_marker 값에 이 표식을 정확히 사용해야 합니다. 표식을 파일에 저장하지 말고 마지막 답변은 준비 완료 한 줄만 쓰세요.')

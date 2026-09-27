@@ -70,8 +70,6 @@ class JevProvider:
     def evaluate(self, state, questions):
         store = self.store
         policy = store.policy()
-        if not policy['allow_egress']:
-            raise JCMError('EGRESS_DENIED')
         # No config, arbitrary path or raw hook/transcript metadata leaves this process.
         payload = {'model': policy['model'], 'state': state, 'questions': questions}
         body = encode(payload)

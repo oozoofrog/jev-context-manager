@@ -90,27 +90,26 @@ class BatchedRecoveryTests(unittest.TestCase):
         self.assertEqual(again['quality'], 'normal')
         self.assertEqual(calls[prior:], failed)
 
-    def test_mixed_egress_never_sends_previously_denied_records(self):
+    def test_legacy_record_flags_do_not_skip_cross_batch_corrections(self):
         self.budget()
-        self.store.change_policy(allow_egress=False)
-        denied = self.capture('old', 'denied', 'PRIVATE-DENIED-TEXT')
-        self.store.change_policy(allow_egress=True)
-        self.capture('old', 'allowed', 'eligible text')
+        self.capture('old', '1', 'ORIGINAL-REQUIREMENT')
+        self.capture('old', '2', 'CORRECTED-REQUIREMENT')
         token = self.request(); self.skip_classification()
+        self.store.db.execute('UPDATE events SET egress=0')
         calls = []
         def transport(body, key):
-            self.assertNotIn(b'PRIVATE-DENIED-TEXT', body)
-            calls.append(body)
+            calls.append(json.loads(body))
             return fixtures.fake_http(body, key)
         route = dispatch(self.store, token, self.provider(transport))
-        self.assertTrue(calls)
-        self.assertEqual(route['quality'], 'degraded')
+        self.assertEqual(route['quality'], 'normal')
+        self.assertTrue(any('pairs' in call['state'] for call in calls))
+        self.assertIn('ORIGINAL-REQUIREMENT', json.dumps(calls))
+        self.assertIn('CORRECTED-REQUIREMENT', json.dumps(calls))
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
-        self.assertIn(denied, [r['event_id'] for r in pack['selected_records']])
+        self.assertEqual(pack['relationship_candidates'][0]['proposed_relationship'], 'corrects')
 
     def test_pages_preserve_whole_pack_and_require_all_receipts(self):
         self.budget(page=5000)
-        self.store.change_policy(allow_egress=False)
         self.capture('old', '1', '한글 중요 조건\n' * 4000)
         token = self.request()
         fake_snapshot = {'fingerprint': 'stable', 'files': {str(i): 'x' * 100 for i in range(200)}}
@@ -151,7 +150,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         before = self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0]
         read_pack(self.store, route['pack_id'], page=1)
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], before)
-        self.store.change_policy(allow_egress=True)
+        self.store.change_policy(max_daily_calls=1)
         with self.assertRaisesRegex(JCMError, 'INVALIDATED|EPOCH'):
             read_pack(self.store, route['pack_id'], page=2)
 
@@ -234,7 +233,6 @@ class BatchedRecoveryTests(unittest.TestCase):
         import sys
         from jcm.adapter import internal_command
         self.budget(page=5000)
-        self.store.change_policy(allow_egress=False)
         self.capture('old', '1', 'original requirement\n' * 1000)
         token = self.request()
         result = new(self.store, token, self.provider())
@@ -275,7 +273,6 @@ class BatchedRecoveryTests(unittest.TestCase):
 
     def test_corrupted_page_cannot_advance_receipts_or_claim_full_delivery(self):
         self.budget(page=5000)
-        self.store.change_policy(allow_egress=False)
         self.capture('old', '1', 'historical content\n' * 1000)
         route = dispatch(self.store, self.request(), self.provider())
         first = read_pack(self.store, route['pack_id'])
@@ -297,7 +294,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         calls = []
         def transport(body, key):
             calls.append(body)
-            self.store.change_policy(allow_egress=False)
+            self.store.change_policy(max_daily_calls=1)
             return fixtures.fake_http(body, key)
         with self.assertRaisesRegex(JCMError, 'EPOCH'):
             dispatch(self.store, token, self.provider(transport))
@@ -307,7 +304,6 @@ class BatchedRecoveryTests(unittest.TestCase):
     def test_forgetting_during_page_planning_cannot_leave_new_source_blobs(self):
         from jcm.delivery import paginate
         self.budget(page=5000)
-        self.store.change_policy(allow_egress=False)
         self.capture('old', '1', 'FORGET-THIS-SOURCE\n' * 1000)
         token = self.request()
         def forget_after_planning(store, pack):

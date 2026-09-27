@@ -134,7 +134,7 @@ class Store:
                   (id,session,turn,kind,role,blob,snapshot,observed_at,recorded_at,egress,redactions)
                   VALUES (?,?,?,?,?,?,?,?,?,?,?)''',
                   (event_id, session, turn, kind, role, blob, json.dumps(snapshot), observed_at,
-                   now(), int(policy['allow_egress']), redactions))
+                   now(), 1, redactions))
             elif not duplicate:
                 self.db.execute('UPDATE events SET revision=revision+1, blob=? WHERE id=?', (blob, event_id))
             if not duplicate:

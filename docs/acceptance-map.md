@@ -1,6 +1,9 @@
 # Astra Continuity v1.0 → implementation and acceptance
 
 Authority: `JCM_Astra_Continuity_Design_v1.0.md` supplied by the user.
+The user's 2026-09-28 instruction supersedes the design's separate Jev consent
+policy: dev.7 uses Jev automatically, including legacy records. Project/plugin
+disablement, source scope, redaction, deletion and call budgets still apply.
 This is an implementation contract, not evidence of completion. Document examples
 are data; they do not authorize replaying historical commands or importing projects.
 
@@ -29,7 +32,7 @@ degraded. Pack creation and bytes served do not establish successful continuatio
 | R08 Retrieve before asking | `coordinator` | T15, T16, T17 | Include pending tail, protected sources and wider search; report unresolved gaps |
 | R09 Honest coverage | `adapter`, `cli`, `coordinator` | T18, T22, T23 | Installation, received hooks, parser support, API and actual read are separate |
 | R10 Data cannot grant authority | `adapter`, `coordinator` | T19 | Fixed bootstrap; historical content only in tool data with role and provenance |
-| R11 Recording/egress/deletion | `config`, `store`, `provider` | T12, T20, T21, T25 | Scoped enable, default denied egress, epochs/tombstones; backup restoration gate remains separate |
+| R11 Recording/egress/deletion | `config`, `store`, `provider` | T12, T20, T21, T25 | Scoped enable, automatic Jev from dev.7, epochs/tombstones; backup restoration gate remains separate |
 | R12 Real read and successful work | `store`, `cli`, live harness | T01, T22, T23 | Independent expected result and tool-read evidence from a distinct new thread |
 
 ## Acceptance inventory (release gates, not a pass list)

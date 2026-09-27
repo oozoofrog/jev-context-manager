@@ -3,7 +3,7 @@ from .provider import choice, retrieval_questions
 from .util import JCMError, digest, encode
 
 STOP_ERRORS = {'PROVIDER_HTTP_401', 'PROVIDER_HTTP_403', 'PROVIDER_CREDENTIAL_UNAVAILABLE',
-               'EGRESS_DENIED', 'PROVIDER_DAILY_CALL_BUDGET_EXCEEDED', 'POLICY_EPOCH_CHANGED',
+               'PROVIDER_DAILY_CALL_BUDGET_EXCEEDED', 'POLICY_EPOCH_CHANGED',
                'PROJECT_DISABLED', 'SOURCE_FORGOTTEN'}
 
 
@@ -58,7 +58,7 @@ def source_span(material, start, end):
                      'source_hash': digest(material['text'])}}
 
 
-def select(store, provider, current, events, materials, request_text, epoch):
+def select(store, provider, materials, request_text, epoch):
     policy = store.policy(epoch)
     assessments = [{'complete': False, 'spans': [], 'relevance': None, 'omission': None,
                     'representation': 'full'} for _ in materials]
@@ -100,11 +100,7 @@ def select(store, provider, current, events, materials, request_text, epoch):
                  'candidates': sources}, retrieval_questions(sources, relations=False))
 
     chunks, expected, received = [], [0] * len(materials), [0] * len(materials)
-    eligible = policy['allow_egress'] and current['egress']
-    for i, (event, material) in enumerate(zip(events, materials)):
-        if not eligible or not event['egress']:
-            errors.append('CANDIDATE_EGRESS_DENIED')
-            continue
+    for i, material in enumerate(materials):
         def fit_span(start, end):
             return fits(*retrieval([(i, source_span(material, start, end))]))
         try:
@@ -154,9 +150,6 @@ def select(store, provider, current, events, materials, request_text, epoch):
         relation = {'from': materials[left]['event_id'], 'to': materials[right]['event_id'],
                     'proposed_relationship': 'uncertain', 'status': 'unresolved', 'supersedes_applied': False}
         relations.append(relation)
-        if not eligible or not events[left]['egress'] or not events[right]['egress']:
-            relation['error'] = 'CANDIDATE_EGRESS_DENIED'
-            continue
         pair = {'left': source_span(materials[left], 0, len(materials[left]['text'])),
                 'right': source_span(materials[right], 0, len(materials[right]['text']))}
         if not fits(*relation_request([(left, relation, pair)])):

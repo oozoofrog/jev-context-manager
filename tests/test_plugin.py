@@ -33,7 +33,7 @@ class PluginTests(unittest.TestCase):
         self.settings = self.codex / 'config.toml'
         self.settings.write_text('[plugins."' + PLUGIN_ID + '"]\nenabled = true\n')
         self.binding = {'id': PLUGIN_ID, 'codex_home': str(self.codex), 'root': str(self.plugin)}
-        self.env = {**os.environ, 'CODEX_HOME': str(self.codex), 'JCM_HOME': str(self.home)}
+        self.env = {**os.environ, 'CODEX_HOME': str(self.codex), 'JCM_HOME': str(self.home), 'TYPESAFE_API_KEY': ''}
 
     def bind(self):
         self.cfg = bind(self.cfg, self.binding, migrate=True)
@@ -164,10 +164,9 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(len(self.store.events()), 1)
         require_active(updated['plugin'])
 
-    def test_bundled_cli_reads_all_pages_without_global_or_egress_changes(self):
+    def test_bundled_cli_reads_all_pages_when_credential_is_unavailable(self):
         self.setup_plugin()
         self.bind()
-        self.store.change_policy(allow_egress=False)
         self.capture('old', '1', 'retained requirement\n' * 5000)
         event = self.capture('fresh', 'now', 'continue previous work')
         token = self.store.request('fresh', event)
@@ -185,7 +184,8 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(responses[0]['stage'], 'reading')
         self.assertEqual(responses[-1]['stage'], 'read_served')
         self.assertTrue(responses[-1]['pagination']['all_pages_served'])
-        self.assertFalse(config.load(self.home, self.root)['allow_egress'])
+        self.assertTrue(config.load(self.home, self.root)['allow_egress'])
+        self.assertEqual(responses[0]['quality'], 'degraded')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM calls').fetchone()[0], 0)
 
     def test_wrong_distribution_binding_rejected(self):

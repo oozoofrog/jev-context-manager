@@ -144,7 +144,7 @@ class BootstrapTests(unittest.TestCase):
         result = new(self.store, token, self.provider())
         self.assertEqual(result['stage'], 'blocked')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], 0)
-        self.store.change_policy(allow_egress=False)
+        self.store.change_policy(max_daily_calls=1)
         with self.assertRaisesRegex(JCMError, 'EPOCH'):
             new(self.store, token, self.provider())
 
@@ -157,18 +157,19 @@ class BootstrapTests(unittest.TestCase):
         self.assertTrue(internal_command(self.cfg, command))
         self.assertFalse(internal_command(self.cfg, command + ' && touch marker'))
 
-    def test_cli_existing_to_new_default_denied_egress_is_local_degraded(self):
-        self.store.change_policy(allow_egress=False)
+    def test_cli_existing_to_new_missing_credential_is_local_degraded(self):
+        env = {**os.environ, 'TYPESAFE_API_KEY': ''}
         path = self.history()
         command = [sys.executable, '-m', 'jcm', '--home', str(self.home), '--repo', str(self.root)]
         result = subprocess.run(command + ['bootstrap', 'existing', '--session-id', 'prior',
-                                 '--transcript', str(path), '--no-follow'], capture_output=True, text=True)
+                                 '--transcript', str(path), '--no-follow'], capture_output=True, text=True, env=env)
         self.assertEqual(result.returncode, 0, result.stderr)
         report = json.loads(result.stdout)
         output = subprocess.run(command + ['bootstrap', 'new', '--request-token', report['request_token']],
-                                capture_output=True, text=True)
+                                capture_output=True, text=True, env=env)
         self.assertEqual(output.returncode, 0, output.stderr)
         pack = json.loads(output.stdout)
         self.assertEqual(pack['pack']['quality'], 'degraded')
+        self.assertEqual(pack['pack']['semantic_error'], 'PROVIDER_CREDENTIAL_UNAVAILABLE')
         self.assertIn('protocol_version=1', str(pack))
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM calls').fetchone()[0], 0)

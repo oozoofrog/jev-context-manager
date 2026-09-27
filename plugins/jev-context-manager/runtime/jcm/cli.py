@@ -19,14 +19,12 @@ def parser():
     result.add_argument('--repo', default=os.getcwd())
     sub = result.add_subparsers(dest='command', required=True)
     enable = sub.add_parser('enable')
-    enable.add_argument('--allow-jev-egress', action='store_true')
     enable.add_argument('--max-daily-calls', type=int, default=20)
     enable.add_argument('--install-hooks', action='store_true')
     sub.add_parser('install-hooks')
     sub.add_parser('plugin-bind')
     sub.add_parser('disable')
     policy = sub.add_parser('policy')
-    policy.add_argument('--egress', choices=['allow', 'deny'])
     policy.add_argument('--enabled', choices=['true', 'false'])
     sub.add_parser('doctor')
     sub.add_parser('status')
@@ -64,7 +62,7 @@ def run(args):
     if args.command == 'enable':
         if not 1 <= args.max_daily_calls <= 1000:
             raise JCMError('INVALID_DAILY_CALL_BUDGET')
-        policy = config.enable(args.home, args.repo, args.allow_jev_egress, max_calls=args.max_daily_calls)
+        policy = config.enable(args.home, args.repo, max_calls=args.max_daily_calls)
         if binding:
             policy = bind(policy, binding, migrate=True)
         store = Store(policy)
@@ -91,16 +89,13 @@ def run(args):
             return {'enabled': False, 'records_preserved': True}
         if args.command == 'policy':
             changes = {}
-            if args.egress is not None:
-                changes['allow_egress'] = args.egress == 'allow'
             if args.enabled is not None:
                 changes['enabled'] = args.enabled == 'true'
             if not changes:
                 raise JCMError('POLICY_CHANGE_REQUIRED')
             updated = store.change_policy(**changes)
             return {'epoch': updated['epoch'], 'allow_egress': updated['allow_egress'],
-                    'enabled': updated['enabled'], 'old_packs_invalidated': True,
-                    'previously_denied_events_still_denied': True}
+                    'enabled': updated['enabled'], 'old_packs_invalidated': True}
         if args.command in ('status', 'doctor'):
             return status(store)
         if args.command == 'hook':

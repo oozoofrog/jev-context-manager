@@ -29,12 +29,11 @@ In a new chat, review and trust the plugin's hooks, then make this request in th
 ```text
 $jev-context-manager:astra-continuity
 Enable JCM for this project and adopt the current session.
-I authorize sending context to Jev.
 ```
 
 After that, request work as usual in a new session within the same project. JCM restores the previous context, and Codex checks the current files before continuing.
 
-Sending context to Jev is disabled by default. Only records captured after authorization become eligible for transmission. If transmission is not allowed, the key is missing, or the API fails, JCM restores context from local records and marks the result as `degraded`.
+JCM uses Jev automatically for enabled projects, including records captured by older versions. There is no separate transmission permission step. If the API key is missing, the API fails, or a call budget prevents a usable judgment, JCM restores available local records and marks the result as `degraded` with the actual reason.
 
 ## Record management
 

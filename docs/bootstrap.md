@@ -2,7 +2,7 @@
 
 두 경로 모두 `jcm bootstrap`의 명시적 진입점이다. 저장소 등록은 `enable`로
 한 번 수행한다. 이 문서의 명령은 등록한 root 및 선택한 private home에서 실행한다.
-`--home`, `--repo`는 하위 명령 앞에 둔다. 외부 전송은 기본 차단이며 별도 정책이다.
+`--home`, `--repo`는 하위 명령 앞에 둔다. dev.7부터 Jev는 활성화된 프로젝트에서 별도 허용 절차 없이 사용한다. 이전 전송 금지 표시는 적용하지 않는다.
 
 ## 기존 세션
 
@@ -53,7 +53,7 @@ Sandbox가 `.codex` 쓰기를 차단하면 `PROJECT_HOOK_INSTALL_PERMISSION_DENI
 
 같은 token으로 재실행하면 최신 source와 현재 파일을 다시 대조하여 새 immutable pack을
 만든다. 입력이 정확히 같을 때 provider cache는 기존 계약대로 적용되지만 과거 pack을
-현재 상태인 것처럼 재사용하지 않는다. 기록이 많거나 전송 금지/네트워크 오류가 있으면
+현재 상태인 것처럼 재사용하지 않는다. 기록이 많거나 API 키 누락/네트워크 오류가 있으면
 `degraded`/`blocked`와 coverage gap을 반환한다. 수동 checkpoint로 우회하지 않는다.
 
 ## 추가 수용 시험

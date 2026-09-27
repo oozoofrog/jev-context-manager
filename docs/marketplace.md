@@ -5,8 +5,8 @@
 The public GitHub repository is a Codex marketplace named `jcm`, declared in
 `.agents/plugins/marketplace.json`. It ships one plugin from
 `plugins/jev-context-manager`. This is a Git-backed distribution, not an OpenAI
-official-directory listing. The plugin version is `0.1.0-dev.6`; the corresponding
-Python package version is `0.1.0.dev6`.
+official-directory listing. The plugin version is `0.1.0-dev.7`; the corresponding
+Python package version is `0.1.0.dev7`.
 
 The bundle includes the skill, `hooks/hooks.json`, a launcher, and a copy of the
 canonical stdlib runtime. `scripts/build_plugin.py` produces that copy and its
@@ -35,11 +35,9 @@ absolute executable path, not a path guessed from another user's cache.
 "$PLUGIN_JCM" --repo /absolute/project bootstrap existing
 ```
 
-The first command opts in only that project, with Jev egress denied by default.
-For a new registration already authorized for Jev, add `--allow-jev-egress` to
-`enable`. For an existing registration, explicitly use `policy --egress allow`
-before collecting records eligible for transmission. Previously denied records
-remain denied. Provide `TYPESAFE_API_KEY` through the execution environment; JCM
+The first command enables JCM only for that project. Jev is used automatically,
+including for records previously marked as transmission-denied. No separate
+permission step is required. Provide `TYPESAFE_API_KEY` through the execution environment; JCM
 does not write credentials to the plugin or project.
 
 Python 3.11+ must be available in the hook's execution environment. `JCM_PYTHON`
@@ -60,7 +58,7 @@ successful continuation.
 "$PLUGIN_JCM" --repo /absolute/project bootstrap existing
 ```
 
-Migration preserves project identity, records and egress policy. It temporarily
+Migration preserves project identity and records. Jev is automatic. It temporarily
 disables the old registration so even an older runtime's follower stops, waits
 for observed follower shutdown, backs up the project hook file, and removes only
 handlers exactly matching that profile's saved JCM command. Other handlers,
@@ -82,8 +80,8 @@ codex plugin remove jev-context-manager@jcm
 ```
 
 Open a fresh chat after updates. The next native hook or bundled CLI invocation
-rebinds a plugin-owned profile to the current bundle path without changing its
-egress policy. Registered transcript tails remain recoverable. Old follower
+rebinds a plugin-owned profile to the current bundle path. Registered transcript
+tails remain recoverable. Old follower
 processes stop when their bound runtime changes or disappears.
 
 At capture and provider boundaries, JCM checks the persistent enabled flag for

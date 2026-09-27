@@ -50,7 +50,7 @@ class ContinuityTests(unittest.TestCase):
         self.home = self.base / 'private'
         self.logs = self.base / 'transcripts'
         self.logs.mkdir()
-        self.cfg = config.enable(self.home, self.root, allow_egress=True,
+        self.cfg = config.enable(self.home, self.root,
                                  transcript_roots=[self.logs], max_calls=100)
         self.store = Store(self.cfg)
 
@@ -343,12 +343,48 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.assertNotIn('supersecret', ''.join(p.read_text() for p in self.store.blobs.iterdir()))
         self.assertIn('historical', context)
 
-    def test_T20_policy_denial_makes_zero_transport_calls(self):
-        config.save_policy(self.cfg, allow_egress=False)
-        def forbidden(*args):
-            self.fail('egress occurred')
-        with self.assertRaisesRegex(JCMError, 'EGRESS_DENIED'):
-            self.provider(forbidden).evaluate({}, {'q': noul('A?')})
+    def test_default_registration_enables_jev_without_permission_step(self):
+        from jcm.cli import parser, run
+        root = self.base / 'new-project'
+        root.mkdir()
+        args = ['--home', str(self.home), '--repo', str(root)]
+        enabled = run(parser().parse_args(args + ['enable']))
+        self.assertTrue(enabled['allow_egress'])
+        self.assertTrue(config.load(self.home, root)['allow_egress'])
+
+    def test_legacy_denial_does_not_block_classification_or_retrieval(self):
+        source = self.capture('old', '1', 'LEGACY-REQUIREMENT')
+        token = self.request()
+        # Reproduce an actual dev.6 profile and records without rewriting history.
+        profile = self.home / 'profiles' / (self.cfg['repo_id'] + '.json')
+        legacy = json.loads(profile.read_text())
+        legacy['allow_egress'] = False
+        profile.write_bytes(encode(legacy))
+        self.store.db.execute('UPDATE events SET egress=0')
+        before = [dict(r) for r in self.store.events()]
+        calls = []
+        def transport(body, key):
+            calls.append(json.loads(body))
+            return fake_http(body, key)
+        result = dispatch(self.store, token, self.provider(transport))
+        self.assertEqual(result['quality'], 'normal')
+        self.assertTrue(any('source' in c['state'] for c in calls))
+        self.assertTrue(any('candidates' in c['state'] for c in calls))
+        self.assertIn('LEGACY-REQUIREMENT', json.dumps(calls))
+        self.assertIsNotNone(self.store.db.execute('SELECT 1 FROM projections WHERE event_id=?', (source,)).fetchone())
+        self.assertEqual(before, [dict(r) for r in self.store.events()])
+        self.assertTrue(status(self.store)['allow_egress'])
+
+    def test_missing_credential_degrades_without_transport_or_permission_error(self):
+        from unittest.mock import patch
+        self.capture('old', '1', 'requirement')
+        token = self.request()
+        with patch.dict(os.environ, {'TYPESAFE_API_KEY': ''}):
+            result = dispatch(self.store, token)
+        self.assertEqual(result['quality'], 'degraded')
+        self.assertIn('PROVIDER_CREDENTIAL_UNAVAILABLE', result['coverage']['gaps'])
+        self.assertFalse(any('EGRESS' in gap for gap in result['coverage']['gaps']))
+        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM calls').fetchone()[0], 0)
 
     def test_T20_policy_change_invalidates_pack_and_request(self):
         self.capture('A', '1', 'keep')
