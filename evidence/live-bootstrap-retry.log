@@ -1,0 +1,5 @@
+{"session": "existing", "state": "running"}
+{"name": "existing", "thread_id": "01a0e326-6f03-7431-a287-da53d0f8cc9a", "exit_code": 0, "elapsed_seconds": 40.99}
+{"session": "fresh", "state": "running"}
+{"name": "fresh", "thread_id": "01a0e327-0f37-7910-bb3d-6e7ae5df9eda", "exit_code": 0, "elapsed_seconds": 94.06}
+{"evidence": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager/evidence/live-bootstrap-175760f5", "pass": false, "checks": {"existing_started_without_hooks": true, "existing_self_identity_resolved": true, "existing_history_backfilled": true, "existing_local_follower_running_at_adoption": true, "post_adoption_tail_automatically_captured": true, "post_adoption_semantics_pending": true, "fresh_independent_thread": true, "new_bootstrap_used": true, "new_read_served": true, "old_requirement_in_pack": true, "post_adoption_tail_in_pack": true, "real_Jev_normal_path": true, "true_paused_preserved": true, "false_paused_preserved": true, "older_protocol_preserved": true, "later_marker_exact": false, "other_global_config_preserved": true}, "error": null}

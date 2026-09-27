@@ -1,0 +1,37 @@
+{
+  "lane": "real_existing_and_fresh_Astra_CLI_real_Jev",
+  "workspace": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-bootstrap-f47916dc-2yxq6458/workspace",
+  "home": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-bootstrap-f47916dc-2yxq6458/private",
+  "model": "gpt-6-astra",
+  "reasoning": "xhigh",
+  "sessions": [
+    {
+      "name": "existing",
+      "thread_id": "01a0e325-8b97-7e72-beb4-8b4dce100dc0",
+      "exit_code": 0,
+      "elapsed_seconds": 27.08
+    }
+  ],
+  "pass": false,
+  "trust": "vetted_fixture_one_invocation_bypass_not_production_trust",
+  "hooks_absent_before_existing_session": true,
+  "error": "Actual existing session did not adopt itself",
+  "fixture_disabled": true,
+  "config_cleanup": {
+    "removed": true,
+    "project": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-bootstrap-f47916dc-2yxq6458/workspace",
+    "other_config_preserved": true
+  },
+  "checks": {
+    "other_global_config_preserved": true
+  },
+  "decisions": [],
+  "provider_calls": [],
+  "followers_at_end": [
+    {
+      "source_key": "1e5d884160655d6a073daf58ce182fbcb9d39959a0d81684ba23d3a3b2465898",
+      "state": "not_started",
+      "running": false
+    }
+  ]
+}

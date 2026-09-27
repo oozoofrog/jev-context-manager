@@ -1,0 +1,13 @@
+Processing ./.
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: jev-context-manager
+  Building wheel for jev-context-manager (pyproject.toml): started
+  Building wheel for jev-context-manager (pyproject.toml): finished with status 'done'
+  Created wheel for jev-context-manager: filename=jev_context_manager-0.1.0.dev1-py3-none-any.whl size=25535 sha256=c550d21d83f881d287c3877710b575a976840840a413e8323d14952353636958
+  Stored in directory: /private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/pip-ephem-wheel-cache-lfn6rmdp/wheels/c6/60/0f/f2a0baeb14200a612eea4eba468f2d9dc19d5e62033e58e8b3
+Successfully built jev-context-manager

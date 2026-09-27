@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.codex/jcm.json
+.codex/hooks.json
+.codex/config.toml
+evidence/live-*/*
+!evidence/live-*/result.json
+evidence/host-probe*.jsonl
+evidence/host-probe*.log
+
+# Local agent bookkeeping and downloaded documentation caches
+.task-notes/
+.DS_Store
+evidence/codex-hooks.md
+evidence/typesafe-*.md

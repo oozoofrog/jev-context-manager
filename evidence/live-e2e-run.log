@@ -1,0 +1,7 @@
+{"session": "A", "state": "running"}
+{"name": "A", "thread_id": "01a0e303-62ec-7441-a2cf-2effad377e89", "exit_code": 0, "interrupted_after_durable_capture": false, "captured_event": null, "elapsed_seconds": 47.899}
+{"session": "B", "state": "running"}
+{"name": "B", "thread_id": "01a0e304-1dd6-7751-b61f-5bac460c10fa", "exit_code": -15, "interrupted_after_durable_capture": true, "captured_event": {"id": "cb634d89399c70f7434d87417b1381044270e7e671dd319d6009248b9c737603", "session": "01a0e304-1dd6-7751-b61f-5bac460c10fa"}, "elapsed_seconds": 5.061}
+{"session": "C", "state": "running"}
+{"name": "C", "thread_id": "01a0e304-3172-7460-957e-24b96d6fef80", "exit_code": 0, "interrupted_after_durable_capture": false, "captured_event": null, "elapsed_seconds": 115.317}
+{"pass": false, "checks": {"connected": true, "paused": true, "protocol_version": true, "continuity_marker": true, "running_state_preserved": true, "three_distinct_fresh_threads": true, "C_read_served_pack": true, "latest_correction_in_C_pack": true, "older_A_requirement_in_C_pack": true, "real_Jev_normal_C_dispatch": false, "global_config_unchanged": false, "correction_was_pending": true, "no_stop_required_for_B": true}, "error": null, "evidence": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager/evidence/live-e2e-12fee5f9"}

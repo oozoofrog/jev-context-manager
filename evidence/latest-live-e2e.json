@@ -1,0 +1,20 @@
+{
+  "evidence": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager/evidence/live-e2e-b917b743",
+  "pass": true,
+  "checks": {
+    "connected": true,
+    "paused": true,
+    "protocol_version": true,
+    "continuity_marker": true,
+    "running_state_preserved": true,
+    "three_distinct_fresh_threads": true,
+    "C_read_served_pack": true,
+    "latest_correction_in_C_pack": true,
+    "older_A_requirement_in_C_pack": true,
+    "real_Jev_normal_C_dispatch": true,
+    "global_config_preserved_after_fixture_cleanup": true,
+    "correction_was_pending": true,
+    "no_stop_required_for_B": true
+  },
+  "error": null
+}

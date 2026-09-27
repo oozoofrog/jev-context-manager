@@ -1,0 +1,14 @@
+Processing ./dist/jev_context_manager-0.1.0.dev1-py3-none-any.whl
+Installing collected packages: jev-context-manager
+Successfully installed jev-context-manager-0.1.0.dev1
+No broken requirements found.
+usage: jcm [-h] [--home HOME] [--repo REPO]
+           {enable,install-hooks,disable,policy,doctor,status,hook,dispatch,read,inspect,worker,forget} ...
+
+positional arguments:
+  {enable,install-hooks,disable,policy,doctor,status,hook,dispatch,read,inspect,worker,forget}
+
+options:
+  -h, --help            show this help message and exit
+  --home HOME
+  --repo REPO

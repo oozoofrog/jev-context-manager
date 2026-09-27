@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jev-context-manager"
+version = "0.1.0.dev2"
+description = "Durable automatic Codex session continuity with bounded Jev judgments"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+jcm = "jcm.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

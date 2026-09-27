@@ -1,0 +1,1903 @@
+test_bootstrap_hook_and_internal_output_boundary (test_bootstrap.BootstrapTests.test_bootstrap_hook_and_internal_output_boundary) ... ok
+test_cli_existing_to_new_default_denied_egress_is_local_degraded (test_bootstrap.BootstrapTests.test_cli_existing_to_new_default_denied_egress_is_local_degraded) ... ok
+test_current_session_discovery_and_ambiguous_environment (test_bootstrap.BootstrapTests.test_current_session_discovery_and_ambiguous_environment) ... ok
+test_existing_backfills_idempotently_without_fabricating_snapshot (test_bootstrap.BootstrapTests.test_existing_backfills_idempotently_without_fabricating_snapshot) ... ok
+test_existing_rejects_foreign_version_session_and_forgotten (test_bootstrap.BootstrapTests.test_existing_rejects_foreign_version_session_and_forgotten) ... ok
+test_follower_captures_partial_tail_without_hooks_and_stops_on_disable (test_bootstrap.BootstrapTests.test_follower_captures_partial_tail_without_hooks_and_stops_on_disable) ... ok
+test_new_blocked_and_revoked_token_do_not_claim_read (test_bootstrap.BootstrapTests.test_new_blocked_and_revoked_token_do_not_claim_read) ... /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0220>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0400>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da04f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da05e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da07c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da08b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da06d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da32e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0310>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da34c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da33d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3790>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da35b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3a60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3880>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3b50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3970>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3c40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3d30>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da36a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3f10>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004040>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004310>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004130>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004400>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004220>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060044f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060046d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060045e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060047c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060048b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3e20>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004b80>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004a90>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004c70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004d60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004e50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004f40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060049a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005210>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005120>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060054e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060055d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060053f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060056c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060058a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060057b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005990>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005300>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005030>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005b70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005d50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005e40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005f30>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006020>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005c60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006110>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006200>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060062f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060063e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060064d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060066b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060065c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006890>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006980>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060067a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006a70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_new_preparation_has_no_invented_request_or_provider_call (test_bootstrap.BootstrapTests.test_new_preparation_has_no_invented_request_or_provider_call) ... ok
+test_new_recovers_registered_tail_and_serves_actual_pack (test_bootstrap.BootstrapTests.test_new_recovers_registered_tail_and_serves_actual_pack) ... ok
+test_stale_reader_cursor_cannot_rewind_or_duplicate (test_bootstrap.BootstrapTests.test_stale_reader_cursor_cannot_rewind_or_duplicate) ... ok
+test_T01_T02_T03_pending_correction_is_restored_without_checkpoint (test_continuity.ContinuityTests.test_T01_T02_T03_pending_correction_is_restored_without_checkpoint) ... /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3e20>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3f10>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3d30>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da36a0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3970>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3b50>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3c40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3880>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da35b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3790>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da33d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0310>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da32e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da34c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da06d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3a60>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da07c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da08b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da05e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da04f0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0220>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0400>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006d40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006a70>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006980>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006890>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060067a0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060065c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060066b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005a80>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060062f0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006110>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006020>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006200>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060063e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005f30>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005e40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005d50>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005c60>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005b70>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005030>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005300>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060057b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005990>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060056c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060053f0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060055d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060058a0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005120>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005210>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060054e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060049a0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004e50>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004d60>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004f40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004a90>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004c70>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060048b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060047c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004b80>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060045e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060044f0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004400>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004130>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004040>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060072e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060073d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004310>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004220>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060046d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007a60>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007970>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060074c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007b50>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007c40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007e20>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007d30>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007f10>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054130>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054040>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054400>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060544f0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054310>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060545e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060547c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060546d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054a90>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060549a0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060548b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054b80>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054c70>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054d60>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060064d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055030>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054f40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055300>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055120>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060553f0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060555d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060556c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060557b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060554e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055a80>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055c60>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055d50>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055e40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055f30>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056020>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056110>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055b70>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056200>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060562f0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060563e0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060564d0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060566b0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060565c0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056890>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056980>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060567a0>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056a70>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056c50>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056d40>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py:330: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056f20>
+  filters.insert(0, item)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_T04_blob_failure_does_not_create_event_or_ack (test_continuity.ContinuityTests.test_T04_blob_failure_does_not_create_event_or_ack) ... ok
+test_T04_process_crash_before_and_after_commit (test_continuity.ContinuityTests.test_T04_process_crash_before_and_after_commit) ... ok
+test_T05_partial_line_rotation_and_duplicate_source_refs (test_continuity.ContinuityTests.test_T05_partial_line_rotation_and_duplicate_source_refs) ... ok
+test_T05_private_and_instruction_records_are_never_captured (test_continuity.ContinuityTests.test_T05_private_and_instruction_records_are_never_captured) ... ok
+test_T05_unknown_parser_does_not_guess (test_continuity.ContinuityTests.test_T05_unknown_parser_does_not_guess) ... ok
+test_T06_duplicates_do_not_merge_distinct_occurrences (test_continuity.ContinuityTests.test_T06_duplicates_do_not_merge_distinct_occurrences) ... ok
+test_T07_T13_relationship_never_silently_overwrites_requirements (test_continuity.ContinuityTests.test_T07_T13_relationship_never_silently_overwrites_requirements) ... ok
+test_T08_same_history_selects_different_optional_context_by_query (test_continuity.ContinuityTests.test_T08_same_history_selects_different_optional_context_by_query) ... ok
+test_T09_T10_no_fact_or_pass_promotion (test_continuity.ContinuityTests.test_T09_T10_no_fact_or_pass_promotion) ... /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007f10>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007d30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007e20>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060064d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007b50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060074c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007970>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007c40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004220>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060072e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004130>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060046d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004310>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004040>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060045e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007a60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060047c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060073d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004b80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004c70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004400>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004f40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060044f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004d60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004e50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060049a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060048b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005210>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004a90>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005120>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060055d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060053f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060056c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005990>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060057b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005300>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060058a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005030>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005b70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005c60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005d50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005f30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005e40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006200>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006020>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060063e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006110>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005a80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060066b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060062f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060067a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060065c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006980>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006a70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006890>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006d40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0220>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da05e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da08b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3a60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da06d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da34c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da07c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da04f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0400>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da33d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0310>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060054e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3790>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3880>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3c40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3b50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3970>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da36a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3d30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3f10>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3e20>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da35b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055210>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060558a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055990>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054e50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056b60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056e30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056d40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056c50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056f20>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056a70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056980>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056890>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060564d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060563e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056200>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055b70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056020>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056110>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060566b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060565c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055d50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060567a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055e40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055f30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055c60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060562f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055a80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060554e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060557b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060556c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060553f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060555d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055300>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054f40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055120>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055030>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054c70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054d60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060546d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060547c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054310>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060544f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054130>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054040>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054a90>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060549a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054b80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060548b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da32e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060573d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060572e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060571f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057100>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060574c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060575b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060576a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054400>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057790>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057880>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057970>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057a60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057c40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057b50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057e20>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057f10>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_T11_changed_file_marks_old_evidence_and_pack_stale (test_continuity.ContinuityTests.test_T11_changed_file_marks_old_evidence_and_pack_stale) ... ok
+test_T12_cross_project_and_symlink_refused (test_continuity.ContinuityTests.test_T12_cross_project_and_symlink_refused) ... ok
+test_T12_git_branch_and_dirty_fingerprints_change_without_modifying_git (test_continuity.ContinuityTests.test_T12_git_branch_and_dirty_fingerprints_change_without_modifying_git) ... ok
+test_T14_new_task_does_not_dispatch_old_work (test_continuity.ContinuityTests.test_T14_new_task_does_not_dispatch_old_work) ... ok
+test_T16_T17_protected_budget_overflow_is_blocked (test_continuity.ContinuityTests.test_T16_T17_protected_budget_overflow_is_blocked) ... /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057f10>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057b50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057c40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057e20>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057970>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057a60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057790>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054400>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057880>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060576a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060574c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060571f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060572e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060548b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054b80>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060549a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060573d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057100>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060575b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054130>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054040>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060545e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060544f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060547c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060546d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054d60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054c70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054310>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055030>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055120>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054f40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055300>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060553f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060555d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060557b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060554e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060556c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055a80>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055c60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055f30>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060562f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060567a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055e40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060565c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060566b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055d50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056110>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055b70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056200>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060563e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056890>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056980>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060564d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056a70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056020>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056c50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056f20>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056d40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056e30>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054e50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1055ed990>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056b60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055990>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055210>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060558a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da32e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054a90>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3e20>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0130>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3f10>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da36a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3970>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3b50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3c40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3880>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3790>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0310>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da33d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0400>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da07c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da04f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da06d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3a60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da34c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da08b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0220>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da05e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060054e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006890>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006d40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006980>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060065c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006a70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060067a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060066b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005a80>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006110>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006020>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006200>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060063e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005e40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060062f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005d50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3d30>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005b70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da35b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005c60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060058a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005300>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060057b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005990>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060056c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060053f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060055d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005120>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004a90>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005210>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060048b0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060049a0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004e50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060044f0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004d60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004400>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004c70>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004f40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004b80>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060047c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007a60>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060073d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004040>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060045e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060046d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004130>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004310>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060072e0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007c40>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060074c0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007b50>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007e20>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007d30>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007f10>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060064d0>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:552: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004220>
+  def _push_exit_callback(self, callback, is_sync=True):
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_T17_large_required_pack_does_not_silently_truncate (test_continuity.ContinuityTests.test_T17_large_required_pack_does_not_silently_truncate) ... ok
+test_T18_auth_no_retry_and_local_degraded_recovery (test_continuity.ContinuityTests.test_T18_auth_no_retry_and_local_degraded_recovery) ... ok
+test_T18_cache_is_bound_to_exact_state_and_rubric (test_continuity.ContinuityTests.test_T18_cache_is_bound_to_exact_state_and_rubric) ... ok
+test_T18_daily_budget_stops_before_transport (test_continuity.ContinuityTests.test_T18_daily_budget_stops_before_transport) ... ok
+test_T18_schema_failure_not_applied (test_continuity.ContinuityTests.test_T18_schema_failure_not_applied) ... ok
+test_T18_transient_retry_reserves_each_attempt (test_continuity.ContinuityTests.test_T18_transient_retry_reserves_each_attempt) ... ok
+test_T19_bootstrap_contains_no_historical_or_prompt_instructions (test_continuity.ContinuityTests.test_T19_bootstrap_contains_no_historical_or_prompt_instructions) ... ok
+test_T19_internal_pack_output_is_not_recursively_captured (test_continuity.ContinuityTests.test_T19_internal_pack_output_is_not_recursively_captured) ... ok
+test_T20_forget_in_flight_invalidates_response_and_recapture (test_continuity.ContinuityTests.test_T20_forget_in_flight_invalidates_response_and_recapture) ... ok
+test_T20_policy_change_invalidates_pack_and_request (test_continuity.ContinuityTests.test_T20_policy_change_invalidates_pack_and_request) ... /opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005030>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005f30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060064d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007d30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007e20>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007b50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060074c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004220>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007c40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060072e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004310>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004130>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060045e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060046d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060073d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007a60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004040>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060047c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004f40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004c70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004b80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004d60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004400>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004e50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060049a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060044f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060048b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106004a90>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005120>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060055d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060056c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005990>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060053f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060057b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005210>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060058a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106007f10>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005b70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005d50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060062f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005e40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060063e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005c60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006200>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006020>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006110>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005a80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060067a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060066b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060065c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006980>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006a70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006d40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060054e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106006890>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106005300>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3d30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da05e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da08b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da34c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0220>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3a60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da04f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da06d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da07c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da33d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0310>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0400>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3790>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da35b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3880>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3b50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3970>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3f10>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da0130>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da36a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3e20>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1055ed990>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da32e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060558a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055210>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x105da3c40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055990>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056b60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056e30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056d40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054a90>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056f20>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056c50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056a70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060564d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056020>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056980>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056890>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060563e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056200>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055b70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054e50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060566b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106056110>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055e40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060567a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060565c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055d50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060562f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055c60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060556c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060554e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055f30>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055a80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060553f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055300>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060555d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055120>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106055030>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054f40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054c70>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054d60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060557b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060546d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060544f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060545e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054040>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054130>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060547c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060575b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057100>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060573d0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060549a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060548b0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054b80>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060571f0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060574c0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060572e0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x1060576a0>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106054400>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057790>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057880>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057970>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057a60>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057c40>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py:479: ResourceWarning: unclosed database in <sqlite3.Connection object at 0x106057b50>
+  @staticmethod
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+ok
+test_T20_policy_denial_makes_zero_transport_calls (test_continuity.ContinuityTests.test_T20_policy_denial_makes_zero_transport_calls) ... ok
+test_T22_T23_created_is_not_read_or_success (test_continuity.ContinuityTests.test_T22_T23_created_is_not_read_or_success) ... ok
+test_T25_fixture_trust_cleanup_preserves_every_other_setting (test_continuity.ContinuityTests.test_T25_fixture_trust_cleanup_preserves_every_other_setting) ... ok
+test_T25_install_preserves_existing_hooks_and_legacy (test_continuity.ContinuityTests.test_T25_install_preserves_existing_hooks_and_legacy) ... ok
+test_blob_corruption_fails_closed (test_continuity.ContinuityTests.test_blob_corruption_fails_closed) ... ok
+test_expired_lease_recovery (test_continuity.ContinuityTests.test_expired_lease_recovery) ... ok
+test_hook_rejects_missing_scope_and_admits_non_object_tool_input (test_continuity.ContinuityTests.test_hook_rejects_missing_scope_and_admits_non_object_tool_input) ... ok
+test_internal_query_detection_requires_exact_installed_invocation (test_continuity.ContinuityTests.test_internal_query_detection_requires_exact_installed_invocation) ... ok
+test_non_git_workspace_never_initialized (test_continuity.ContinuityTests.test_non_git_workspace_never_initialized) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 8.523s
+
+OK

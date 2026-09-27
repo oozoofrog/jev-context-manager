@@ -1,0 +1,7 @@
+{
+  "wheel": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager/dist/jev_context_manager-0.1.0.dev2-py3-none-any.whl",
+  "sha256": "bcd11ce8c6a95e7a7da608cb7eb4e53994811c9979d3f9a0717cc1d93e1d0bc9",
+  "isolated_environment": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-bootstrap-final-wheel-d7ibscsm/venv",
+  "imported_module": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-bootstrap-final-wheel-d7ibscsm/venv/lib/python3.14/site-packages/jcm/__init__.py",
+  "test_exit_code": 0
+}

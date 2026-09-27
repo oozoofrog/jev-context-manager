@@ -1,0 +1,62 @@
+{
+  "version": "0.1.0.dev2",
+  "source_hashes": {
+    "pyproject.toml": "96491cc286addf15ddd4c1296c114975284c9ae811703a151d376e3b2580ded3",
+    "scripts/config_guard.py": "3e7ae048f443c0e44d2de379d58fb38a3a1703d322b65fb7c4f96f25f9aa09b5",
+    "scripts/live_bootstrap.py": "e88f421fcf911bc377284be68008e92d8252d4b18479a93c21d8da6dfe69c628",
+    "scripts/live_e2e.py": "070b8f3fdae437a6fe2043aa231ca8449780bcb0299380b51797e6df485c4e4b",
+    "scripts/live_jev.py": "4bbff301a3e11a574c856553618d4f8324f6839296a746a919cb26a26bd82b38",
+    "scripts/probe_host.py": "015cbe3cd127a3ba077afcf8d1af8fae63ee25a670b694c33b9196ed80c6ae98",
+    "skills/astra-continuity/SKILL.md": "ad19285bfdeddb0b6f3c710576c9f026a326c33346d2f07ac7b4ff8399ecb66f",
+    "src/jcm/__init__.py": "689041b3ee90d4a45209c221d96a780c02fdac3eacb9171fd5f1c028daadc195",
+    "src/jcm/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "src/jcm/adapter.py": "a7efa8827fab8ad0b9c5b44d83e568f4be99f03cea0193e4adb3f00704cfa6f0",
+    "src/jcm/bootstrap.py": "37afc4d381cb957a81af0dee328b17f2cf9006539b39fcc06b17376149710985",
+    "src/jcm/cli.py": "0171bdbd6bce1a41f345565542a9bb80f35529b8d1a85dfa08f681b675ef1c43",
+    "src/jcm/config.py": "fba31be4a1fb5b43b652ce8b87fcc1c37de874d7378abbaa328c21fa6af67d93",
+    "src/jcm/coordinator.py": "7f46afebbafc05122204daad350710f5e71439fe20c6641d7af2d731c41991b6",
+    "src/jcm/follower.py": "8fe368ca950acba3ce35e8666e302fbf276c7b99f4241dcda0b12516aa097322",
+    "src/jcm/provider.py": "9aa16978d890abed1062ea13a42db954336d3d54b0e4c7b472897b4dd20fb212",
+    "src/jcm/snapshot.py": "f6a820b91823a69dba93c3e32c164fa4ca224357b3e491959e062992688e1608",
+    "src/jcm/store.py": "7bfab218ca46f3c94031180e71b5b52712c014a10b2088d30e7f2356384facb7",
+    "src/jcm/util.py": "a8974ba69aa1e8aa02ccc4314dfdd48d3118e1703102351d5cf5d083031273fc",
+    "src/jcm/worker.py": "ee2a7db7c2ba9b7f3dc8e4b21da6df00f1b1aa9d31204be5f409b8f0807a2ca2",
+    "tests/test_bootstrap.py": "b06ad5a2b61b940ee604cb78268f68d25557e46da0ba3d58f7c6d7b27f4a25f9",
+    "tests/test_continuity.py": "d6963a8e39951a8d63a8c77473ca4c48127263841c788451d2cfcef27eed0c85"
+  },
+  "design_original_preserved": true,
+  "jcm_folder_created": false,
+  "project_production_hooks_installed": false,
+  "all_bootstrap_fixture_trust_removed": true,
+  "package": {
+    "wheel": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager/dist/jev_context_manager-0.1.0.dev2-py3-none-any.whl",
+    "sha256": "bcd11ce8c6a95e7a7da608cb7eb4e53994811c9979d3f9a0717cc1d93e1d0bc9",
+    "isolated_environment": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-bootstrap-final-wheel-d7ibscsm/venv",
+    "imported_module": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-bootstrap-final-wheel-d7ibscsm/venv/lib/python3.14/site-packages/jcm/__init__.py",
+    "test_exit_code": 0
+  },
+  "live_bootstrap": {
+    "evidence": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager/evidence/live-bootstrap-ae93a080",
+    "pass": true,
+    "checks": {
+      "existing_started_without_hooks": true,
+      "existing_self_identity_resolved": true,
+      "existing_history_backfilled": true,
+      "existing_local_follower_running_at_adoption": true,
+      "post_adoption_tail_automatically_captured": true,
+      "post_adoption_semantics_pending": true,
+      "fresh_independent_thread": true,
+      "new_bootstrap_used": true,
+      "new_read_served": true,
+      "old_requirement_in_pack": true,
+      "post_adoption_tail_in_pack": true,
+      "real_Jev_normal_path": true,
+      "true_paused_preserved": true,
+      "false_paused_preserved": true,
+      "older_protocol_preserved": true,
+      "later_marker_exact": true,
+      "other_global_config_preserved": true
+    },
+    "error": null
+  }
+}

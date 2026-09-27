@@ -1,0 +1,17 @@
+Obtaining file:///Volumes/eyedisk/develop/oozoofrog/jev-context-manager
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Checking if build backend supports build_editable: started
+  Checking if build backend supports build_editable: finished with status 'done'
+  Getting requirements to build editable: started
+  Getting requirements to build editable: finished with status 'done'
+  Preparing editable metadata (pyproject.toml): started
+  Preparing editable metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: jev-context-manager
+  Building editable for jev-context-manager (pyproject.toml): started
+  Building editable for jev-context-manager (pyproject.toml): finished with status 'done'
+  Created wheel for jev-context-manager: filename=jev_context_manager-0.1.0.dev1-0.editable-py3-none-any.whl size=1727 sha256=74749e4427bce55b275e9208158fb0c29669e5876fdaad8824306caaca3cfc46
+  Stored in directory: /private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/pip-ephem-wheel-cache-plb1zfk3/wheels/c6/60/0f/f2a0baeb14200a612eea4eba468f2d9dc19d5e62033e58e8b3
+Successfully built jev-context-manager
+Installing collected packages: jev-context-manager
+Successfully installed jev-context-manager-0.1.0.dev1

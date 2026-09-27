@@ -1,0 +1,30 @@
+{
+  "design_original_preserved": true,
+  "source_hashes": {
+    "pyproject.toml": "09cbed95d1d3addada323d042061c7165fd2623b20a160937da93774d10e328e",
+    "scripts/config_guard.py": "3e7ae048f443c0e44d2de379d58fb38a3a1703d322b65fb7c4f96f25f9aa09b5",
+    "scripts/live_e2e.py": "070b8f3fdae437a6fe2043aa231ca8449780bcb0299380b51797e6df485c4e4b",
+    "scripts/live_jev.py": "4bbff301a3e11a574c856553618d4f8324f6839296a746a919cb26a26bd82b38",
+    "scripts/probe_host.py": "015cbe3cd127a3ba077afcf8d1af8fae63ee25a670b694c33b9196ed80c6ae98",
+    "src/jcm/__init__.py": "066bc9a635ffc64742a28a1d3b33fb6d5e4c4ab876ec20f96eec339b24738513",
+    "src/jcm/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "src/jcm/adapter.py": "345cd36df712a01956115acf19997aefe3a281886aec74b221a1c67e1dbf62a7",
+    "src/jcm/cli.py": "fff717d34ee8edb08293964d91a7ad1318093dc7fabad00f8d57b231389b2c9d",
+    "src/jcm/config.py": "cfedde0230643fbb417dd8ca3668ce88d52803bfd1871496361c905631eae414",
+    "src/jcm/coordinator.py": "ecc4f57b60ec10c760166d09993ff3c6b634ce892388ff81f24606e786db399b",
+    "src/jcm/provider.py": "9aa16978d890abed1062ea13a42db954336d3d54b0e4c7b472897b4dd20fb212",
+    "src/jcm/snapshot.py": "f6a820b91823a69dba93c3e32c164fa4ca224357b3e491959e062992688e1608",
+    "src/jcm/store.py": "555d06306ccaf1a96ef5a0d9c5223d12eac8200da7a09f3df7603f21db8ceb5b",
+    "src/jcm/util.py": "a8974ba69aa1e8aa02ccc4314dfdd48d3118e1703102351d5cf5d083031273fc",
+    "src/jcm/worker.py": "ee2a7db7c2ba9b7f3dc8e4b21da6df00f1b1aa9d31204be5f409b8f0807a2ca2",
+    "tests/test_continuity.py": "331fcf88dee80fd09a8cbbb828ec67f77e669d1447243fb31cac4ed7973dfb64"
+  },
+  "git_repository_created": false,
+  "python_files": 17,
+  "installed_wheel": {
+    "wheel": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager/dist/jev_context_manager-0.1.0.dev1-py3-none-any.whl",
+    "sha256": "c550d21d83f881d287c3877710b575a976840840a413e8323d14952353636958",
+    "isolated_environment": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-wheel-validation-yaralefw/venv",
+    "test_exit_code": 0
+  }
+}

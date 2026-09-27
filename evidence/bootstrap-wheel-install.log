@@ -1,0 +1,11 @@
+Processing ./dist/jev_context_manager-0.1.0.dev2-py3-none-any.whl
+Installing collected packages: jev-context-manager
+Successfully installed jev-context-manager-0.1.0.dev2
+No broken requirements found.
+usage: jcm bootstrap [-h] {existing,new} ...
+
+positional arguments:
+  {existing,new}
+
+options:
+  -h, --help      show this help message and exit
