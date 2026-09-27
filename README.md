@@ -31,6 +31,112 @@ See [requirement → acceptance → module mapping](docs/acceptance-map.md) and
 limits are in [the initial validation report](docs/validation.md) and
 [the bootstrap validation report](docs/bootstrap-validation.md).
 
+## Install directly from GitHub into local Codex
+
+Run this in a local terminal on macOS or Linux; no checkout or `sudo` is needed:
+
+```sh
+bash -o pipefail -c 'curl -fsSL https://raw.githubusercontent.com/oozoofrog/jev-context-manager/main/install.sh | bash'
+```
+
+Requires **Python 3.11+**, Python's `venv`/pip support, `curl`, and HTTPS access to
+GitHub and PyPI for build dependencies. A local Codex app/CLI is needed to use the
+installed skill. On Linux distributions that split out `python3-venv`, install that
+prerequisite using your system package manager first. Runtime itself has no third-party
+Python dependencies. `JCM_PYTHON` selects a different Python executable.
+
+| Installed item | Default location |
+|---|---|
+| Versioned CLI virtual environments and source provenance | `~/.local/share/jcm/releases/` |
+| Stable runtime selector | `~/.local/share/jcm/current` |
+| CLI launcher | `~/.local/bin/jcm` |
+| Local Codex skill | `~/.agents/skills/astra-continuity/` |
+| Previous files and rollback index | `~/.local/share/jcm/backups/` |
+
+The skill is installed in Codex's documented
+[user skill directory](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills).
+It includes the absolute CLI path, so Codex does not depend on a GUI shell's PATH.
+If it does not appear in the skill selector, refresh/restart Codex. Installing the
+files does not establish that the current app session has loaded the skill.
+
+The installer leaves Codex global configuration, API credentials and shell startup
+files untouched. Add `~/.local/bin` to PATH yourself if desired, or use the absolute
+launcher below. It does not activate arbitrary projects, ingest current conversations
+or make Jev calls during installation.
+
+### Connect a project after installation
+
+For local capture with Jev egress denied:
+
+```sh
+"$HOME/.local/bin/jcm" --repo /absolute/project enable --install-hooks
+```
+
+For a **new registration** that you explicitly authorize to send admitted context
+to Jev, use this command instead, with `TYPESAFE_API_KEY` already supplied through
+your environment:
+
+```sh
+"$HOME/.local/bin/jcm" --repo /absolute/project enable --install-hooks --allow-jev-egress
+```
+
+The key is not written by the installer. Existing registrations keep their policy;
+use `policy --egress allow` for an explicit policy change. Previously denied records
+remain denied. Review the installed hook definitions in Codex's `/hooks` surface;
+the installer does not bypass project or hook trust.
+
+In a session already running before installation, invoke `$astra-continuity` and
+ask it to bootstrap the current session, or run this **inside that Codex session**:
+
+```sh
+"$HOME/.local/bin/jcm" --repo /absolute/project bootstrap existing
+```
+
+This resolves the real current session identity, backfills public history and starts
+the bounded follower. From an outside terminal, identify the session explicitly with
+`--session-id ID` (and optionally `--transcript PATH`). Fresh sessions use the
+SessionStart/request hook path automatically after project activation and trust.
+Historical records remain in the external private `JCM_HOME` described below;
+installation does not create a project `.jcm/` directory.
+
+### Update, pin or customize
+
+Run the same installation command again to update. It resolves the selected ref to
+an immutable commit, builds and checks a new environment before activation, and
+retains the previous release and replaced files. Ordinary activation failures roll
+back the launcher, runtime selector, skill and install manifest. This is not a
+power-loss transaction guarantee. Download/build failures leave the active install
+unchanged; the retained release's `install.log` contains build diagnostics.
+
+To pin a revision and pass options, download the bootstrap from that **full commit
+SHA**, then use the same SHA for `--ref`:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/oozoofrog/jev-context-manager/FULL_COMMIT_SHA/install.sh -o /tmp/jcm-install.sh && \
+  bash /tmp/jcm-install.sh --ref FULL_COMMIT_SHA
+```
+
+Available options:
+
+- `--prefix PATH`: runtime/releases/backups root (default `~/.local/share/jcm`).
+- `--bin-dir PATH`: launcher directory (default `~/.local/bin`).
+- `--skill-dir PATH`: full skill folder; use this for a custom/legacy Codex skill location.
+- `--no-skill`: install only the CLI.
+- `--replace-existing`: explicitly back up and replace a conflicting `jcm` launcher
+  or `astra-continuity` skill. Unrelated files in those directories remain untouched.
+- `--ref REF`: branch, tag or full commit SHA; `JCM_REF` supplies the default.
+
+Managed reinstallation needs no replacement flag. Conflicting unmanaged targets are
+refused by default. Keep the same prefix for updates: project profiles registered
+through this installer use its stable `bin/jcm` launcher path. Pre-existing
+profiles created with another Python environment keep that binding; this installer
+does not silently migrate them or rewrite their hook definitions.
+
+The installer is [install.sh](install.sh) plus [scripts/install.py](scripts/install.py).
+The Python script also supports `--source /path/to/checkout` for development tests.
+Installation verification and its boundaries are recorded in
+[the installer validation report](docs/installer-validation.md).
+
 ## Development installation
 
 Requires Python 3.11+ on macOS/Linux and Git only when inspecting a Git project. Runtime uses the
@@ -48,8 +154,9 @@ The last command registers only the chosen canonical root, creates a random
 repo/worktree identity, and merges project-local `.codex/hooks.json`. Existing
 hook definitions remain; original bytes are backed up before changing that file.
 An absent `.codex/config.toml` receives a minimal hooks layer. Existing config is
-preserved. Existing `.codex/work` is untouched. No user-global hook, skill, model,
-API credential or settings are installed by JCM.
+preserved. Existing `.codex/work` is untouched. This project enable command does
+not install user-global hooks, skills, model settings or API credentials. The remote
+installer above separately installs the user-scoped routing skill.
 
 The default private store is `~/Library/Application Support/JCM` (directories
 0700, files 0600). `--home /absolute/private/path` or `JCM_HOME` chooses another
@@ -104,7 +211,8 @@ All machine output is one UTF-8 JSON object; diagnostics go to stderr. Global
 
 Only transcript paths admitted by hooks or explicit existing-session bootstrap are
 tailed; JCM does not read every Codex conversation. See [both bootstrap paths](docs/bootstrap.md)
-and the source [routing skill](skills/astra-continuity/SKILL.md). The skill is not globally installed. The current parser is gated to the
+and the source [routing skill](skills/astra-continuity/SKILL.md). The remote installer
+installs that skill; editable development installation alone does not. The current parser is gated to the
 probed CLI version and public `item_completed` records. Unknown formats remain
 visible coverage gaps. Source records distinguish statements, agent reports and
 observed tool output. A model label never verifies implementation, resolves an

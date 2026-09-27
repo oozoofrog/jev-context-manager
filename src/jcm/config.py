@@ -14,6 +14,18 @@ EVENTS = ('SessionStart', 'UserPromptSubmit', 'PostToolUse', 'Stop',
           'PreCompact', 'PostCompact', 'SessionEnd', 'Interrupt')
 
 
+def runtime_argv():
+    # The managed launcher survives versioned-venv upgrades; Python may resolve
+    # its executable symlink to a particular release on some platforms.
+    launcher = os.environ.get('JCM_LAUNCHER')
+    if launcher:
+        path = Path(launcher)
+        if not path.is_absolute() or not path.is_file() or not os.access(path, os.X_OK):
+            raise JCMError('INVALID_RUNTIME_LAUNCHER')
+        return [str(path)]
+    return [sys.executable, '-m', 'jcm']
+
+
 def default_home():
     return Path(os.environ.get('JCM_HOME', '~/Library/Application Support/JCM')).expanduser()
 
@@ -67,7 +79,7 @@ def enable(home, root, allow_egress=False, transcript_roots=None, max_calls=20):
                   'transcript_roots': [str(Path(p).expanduser().resolve()) for p in
                     (transcript_roots if transcript_roots is not None else
                      [Path(os.environ.get('CODEX_HOME', '~/.codex')).expanduser() / 'sessions'])],
-                  'cli_argv': [sys.executable, '-m', 'jcm', '--home', str(home), '--repo', str(root)],
+                  'cli_argv': runtime_argv() + ['--home', str(home), '--repo', str(root)],
                   'created': now()}
         atomic_write(home / 'profiles' / (repo_id + '.json'), encode(config))
         db.execute('INSERT INTO projects VALUES (?,?,?,?)',

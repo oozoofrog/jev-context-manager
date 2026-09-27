@@ -1,0 +1,13 @@
+test_build_failure_never_switches_existing_runtime (test_installer.InstallerTests.test_build_failure_never_switches_existing_runtime) ... ok
+test_conflicting_skill_requires_explicit_replacement (test_installer.InstallerTests.test_conflicting_skill_requires_explicit_replacement) ... ok
+test_failed_upgrade_restores_runtime_launcher_skill_and_manifest (test_installer.InstallerTests.test_failed_upgrade_restores_runtime_launcher_skill_and_manifest) ... ok
+test_install_and_reinstall_preserve_unrelated_files_and_backup_previous_skill (test_installer.InstallerTests.test_install_and_reinstall_preserve_unrelated_files_and_backup_previous_skill) ... ok
+test_no_skill_and_launcher_conflict (test_installer.InstallerTests.test_no_skill_and_launcher_conflict) ... ok
+test_overlapping_or_unmanaged_prefix_is_refused (test_installer.InstallerTests.test_overlapping_or_unmanaged_prefix_is_refused) ... ok
+test_remote_archive_rejects_traversal_and_symlinks (test_installer.InstallerTests.test_remote_archive_rejects_traversal_and_symlinks) ... ok
+test_remote_revision_is_resolved_before_source_download (test_installer.InstallerTests.test_remote_revision_is_resolved_before_source_download) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.098s
+
+OK

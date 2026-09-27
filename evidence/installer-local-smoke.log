@@ -1,0 +1,42 @@
+{
+  "repository": "oozoofrog/jev-context-manager",
+  "requested_ref": "main",
+  "revision": "local",
+  "source_sha256": "46fd3f64cbc930f42e8f0f5dd02a2bea5ccf01f8c716d63bb237286d09b7d581",
+  "installer": "jcm-remote-installer-v1",
+  "version": "0.1.0.dev3",
+  "prefix": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime",
+  "release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime/releases/e31c84b1c57b494ab2ed3c3afff12ea6",
+  "launcher": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/bin/jcm",
+  "skill": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/skills/astra-continuity",
+  "previous_release": null,
+  "backup": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime/backups/e31c84b1c57b494ab2ed3c3afff12ea6"
+}
+
+Installed CLI: '/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/bin/jcm'
+Codex skill: /private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/skills/astra-continuity (refresh/restart Codex if it does not appear)
+Project activation: '/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/bin/jcm' --repo /absolute/project enable --install-hooks
+No project was activated; Jev egress remains subject to explicit per-project policy.
+If needed, add the launcher directory to PATH; shell startup files were not changed.
+{"allow_egress":false,"home":"/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/private-data","hooks":{"backup":null,"changed":true,"created_project_config":true,"global_config_changed":false,"path":"/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/project/.codex/hooks.json","trust":"review_required"},"mode":"limited","repo_id":"acf912bf8b3840698af6432ac5568115","root":"/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/project"}
+{
+  "repository": "oozoofrog/jev-context-manager",
+  "requested_ref": "main",
+  "revision": "local",
+  "source_sha256": "46fd3f64cbc930f42e8f0f5dd02a2bea5ccf01f8c716d63bb237286d09b7d581",
+  "installer": "jcm-remote-installer-v1",
+  "version": "0.1.0.dev3",
+  "prefix": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime",
+  "release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime/releases/dc988b6f52ca4ea5a65a842cb8a43953",
+  "launcher": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/bin/jcm",
+  "skill": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/skills/astra-continuity",
+  "previous_release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime/releases/e31c84b1c57b494ab2ed3c3afff12ea6",
+  "backup": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime/backups/dc988b6f52ca4ea5a65a842cb8a43953"
+}
+
+Installed CLI: '/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/bin/jcm'
+Codex skill: /private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/skills/astra-continuity (refresh/restart Codex if it does not appear)
+Project activation: '/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/bin/jcm' --repo /absolute/project enable --install-hooks
+No project was activated; Jev egress remains subject to explicit per-project policy.
+If needed, add the launcher directory to PATH; shell startup files were not changed.
+{"enabled":false,"records_preserved":true}

@@ -200,7 +200,7 @@ def status(store):
     hooks = {r[0].split(':', 1)[1]: r[1] for r in store.db.execute("SELECT * FROM meta WHERE key LIKE 'hook_received:%'")}
     jobs = {r[0]: r[1] for r in store.db.execute('SELECT state,COUNT(*) FROM jobs GROUP BY state')}
     real_calls = store.db.execute("SELECT COUNT(*) FROM calls WHERE status='success'").fetchone()[0]
-    return {'origin': 'jcm', 'version': '0.1.0.dev2', 'root': policy['root'],
+    return {'origin': 'jcm', 'version': '0.1.0.dev3', 'root': policy['root'],
             'mode': 'disabled' if not policy['enabled'] else 'limited',
             'mode_reason': 'Production hook trust and complete acceptance gates are not attested.',
             'allow_egress': policy['allow_egress'], 'policy_epoch': policy['epoch'],

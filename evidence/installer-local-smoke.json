@@ -1,0 +1,18 @@
+{
+  "lane": "local",
+  "base": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g",
+  "pass": true,
+  "first_release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime/releases/e31c84b1c57b494ab2ed3c3afff12ea6",
+  "second_release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer local 8g5wza4g/runtime/releases/dc988b6f52ca4ea5a65a842cb8a43953",
+  "revision": "local",
+  "version": "0.1.0.dev3",
+  "profile_and_hooks_preserved": true,
+  "saved_hook_after_upgrade": true,
+  "previous_release_retained": true,
+  "unrelated_skill_preserved": true,
+  "observed_global_config_unchanged": true,
+  "Jev_calls": 0,
+  "skill_installed": true,
+  "fresh_Codex_skill_discovery": "not_tested",
+  "fixture_disabled": true
+}
