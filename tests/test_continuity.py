@@ -51,7 +51,7 @@ class ContinuityTests(unittest.TestCase):
         self.logs = self.base / 'transcripts'
         self.logs.mkdir()
         self.cfg = config.enable(self.home, self.root,
-                                 transcript_roots=[self.logs], max_calls=100)
+                                 transcript_roots=[self.logs])
         self.store = Store(self.cfg)
 
     def tearDown(self):
@@ -276,7 +276,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
             self.capture('old', str(i), 'must preserve ' + str(i))
         route = dispatch(self.store, self.request(), self.provider())
         self.assertNotEqual(route['dispatch'], 'blocked')
-        self.assertIn('PROTECTED_CANDIDATES_EXPANDED_BEYOND_TARGET', route['coverage']['gaps'])
+        self.assertNotIn('CANDIDATE_CEILING_MISSING_CANDIDATES', route['coverage']['gaps'])
         result = read_pack(self.store, route['pack_id'])
         self.assertEqual(result['delivery'], 'read_served')
         self.assertEqual(len(result['pack']['selected_records']), 3)
@@ -396,13 +396,12 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         with self.assertRaisesRegex(JCMError, 'PROJECT_DISABLED'):
             self.store.resolve_request(token)
 
-    def test_T18_daily_budget_stops_before_transport(self):
-        updated = self.store.change_policy(max_daily_calls=1)
+    def test_T18_legacy_daily_budget_no_longer_blocks_transport(self):
+        self.store.change_policy(max_daily_calls=1)
         provider = self.provider()
         provider.evaluate({'source': 'first'}, {'q': noul('A?')})
-        with self.assertRaisesRegex(JCMError, 'DAILY_CALL_BUDGET'):
-            provider.evaluate({'source': 'next'}, {'q': noul('A?')})
-        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM calls').fetchone()[0], 1)
+        provider.evaluate({'source': 'next'}, {'q': noul('A?')})
+        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM calls').fetchone()[0], 2)
         self.assertEqual(self.store.db.execute("SELECT COUNT(*) FROM decisions WHERE status='pending'").fetchone()[0], 0)
 
     def test_T20_forget_in_flight_invalidates_response_and_recapture(self):

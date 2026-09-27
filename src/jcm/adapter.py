@@ -7,7 +7,7 @@ import re
 import shlex
 from pathlib import Path
 
-from .config import EVENTS
+from .config import EVENTS, default_home
 from .snapshot import snapshot
 from .util import JCMError, digest
 
@@ -27,10 +27,41 @@ def internal_command(config, command):
     except ValueError:
         return False
     expected = config['cli_argv']
-    if argv[:len(expected)] != expected:
+    prefix = expected[:expected.index('--home')] if '--home' in expected else expected
+    if argv[:len(prefix)] != prefix:
         return False
-    tail = argv[len(expected):]
+    tail = argv[len(prefix):]
+    options = {}
+    while tail and tail[0] in ('--home', '--repo'):
+        if len(tail) < 2 or tail[0] in options:
+            return False
+        options[tail[0]] = tail[1]
+        tail = tail[2:]
+    # An omitted home is only equivalent when the actual default matches. Do
+    # not guess another command's working directory or accept other executables.
+    if options.get('--repo') != config['root']:
+        return False
+    if options.get('--home', str(default_home().resolve())) != config['home']:
+        return False
     if tail in (['status'], ['doctor'], ['worker', 'drain'], ['bootstrap', 'existing']):
+        return True
+    if tail[:2] == ['bootstrap', 'existing']:
+        remaining, seen = tail[2:], set()
+        while remaining:
+            flag = remaining[0]
+            if flag in seen:
+                return False
+            seen.add(flag)
+            if flag in ('--no-install-hooks', '--no-follow'):
+                remaining = remaining[1:]
+            elif flag in ('--session-id', '--transcript') and len(remaining) >= 2:
+                if flag == '--session-id' and not re.fullmatch(r'[A-Za-z0-9_-]+', remaining[1]):
+                    return False
+                if flag == '--transcript' and not Path(remaining[1]).is_absolute():
+                    return False
+                remaining = remaining[2:]
+            else:
+                return False
         return True
     if len(tail) == 4 and tail[:3] == ['bootstrap', 'new', '--request-token']:
         return bool(re.fullmatch(r'[a-f0-9]{32,64}', tail[3]))

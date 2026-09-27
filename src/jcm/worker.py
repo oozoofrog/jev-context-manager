@@ -3,7 +3,7 @@ import time
 import uuid
 
 from .provider import JevProvider, noul
-from .batching import request_size, source_span, text_spans
+from .batching import adaptive_batches, context_fits, planned_spans, source_span, split_source
 from .util import JCMError, now
 
 LABELS = {
@@ -33,19 +33,22 @@ def drain(store, provider=None, limit=4):
             policy = store.policy(epoch)
             def state(start, end):
                 return {'source': source_span(source, start, end)}
-            spans = text_spans(source['text'], lambda a,b:
-                request_size(policy, state(a,b), questions) <= policy['max_request_bytes'])
+            spans = planned_spans(source['text'], lambda a,b: context_fits(state(a,b), questions))
             results = []
-            for start, end in spans:
+            def renew():
                 store.policy(epoch)
-                # Renew between bounded HTTP calls, not one lease for the entire backfill.
                 changed = store.db.execute("UPDATE jobs SET lease_until=? WHERE event_id=? AND owner=? AND lease_until>?",
-                    (time.time() + policy['max_attempts'] * 24 + 10, event['id'], owner, time.time())).rowcount
+                    (time.time() + 40, event['id'], owner, time.time())).rowcount
                 if not changed or store.event(event['id'])['revision'] != event['revision']:
                     raise JCMError('WORKER_REVISION_OR_LEASE_CHANGED')
-                result = provider.evaluate(state(start, end), questions)
-                results.append(result)
-                decision_refs.append(result['decision_id'])
+            def evaluate(state, questions):
+                return provider.evaluate(state, questions, heartbeat=renew)
+            for start, end in spans:
+                part = source_span(source, start, end)
+                for _, result in adaptive_batches([part], lambda parts: ({'source': parts[0]}, questions),
+                                                   evaluate, split_source):
+                    results.append(result)
+                    decision_refs.append(result['decision_id'])
             labels = {name: max(r['response']['answers'][name]['noul'] for r in results) for name in LABELS}
             decision = results[0]['decision_id'] if len(results) == 1 else uuid.uuid4().hex
             store.db.execute('BEGIN IMMEDIATE')

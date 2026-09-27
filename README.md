@@ -33,7 +33,7 @@ Enable JCM for this project and adopt the current session.
 
 After that, request work as usual in a new session within the same project. JCM restores the previous context, and Codex checks the current files before continuing.
 
-JCM uses Jev automatically for enabled projects, including records captured by older versions. There is no separate transmission permission step. If the API key is missing, the API fails, or a call budget prevents a usable judgment, JCM restores available local records and marks the result as `degraded` with the actual reason.
+JCM uses Jev automatically for enabled projects, including records captured by older versions. There is no separate transmission permission step. There are no local daily-call, request-byte, or candidate-count quotas. If the API key is missing or the provider cannot produce a usable judgment, JCM restores available local records and marks the result as `degraded` with the actual reason.
 
 ## Record management
 

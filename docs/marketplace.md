@@ -5,8 +5,8 @@
 The public GitHub repository is a Codex marketplace named `jcm`, declared in
 `.agents/plugins/marketplace.json`. It ships one plugin from
 `plugins/jev-context-manager`. This is a Git-backed distribution, not an OpenAI
-official-directory listing. The plugin version is `0.1.0-dev.7`; the corresponding
-Python package version is `0.1.0.dev7`.
+official-directory listing. The plugin version is `0.1.0-dev.8`; the corresponding
+Python package version is `0.1.0.dev8`.
 
 The bundle includes the skill, `hooks/hooks.json`, a launcher, and a copy of the
 canonical stdlib runtime. `scripts/build_plugin.py` produces that copy and its
@@ -122,3 +122,8 @@ These fixtures never enable the user's real project. Full logs remain local unde
 `evidence/live-plugin-*`; compact result reports can be committed. Live fixtures
 use a per-invocation trust bypass only for their reviewed synthetic workspaces;
 that is not proof of production Desktop hook approval.
+
+## Maintainer deployment
+
+Use the [release/install pipeline](releasing.md) for repeatable publication, backup,
+installation and verification with compact output and resumable logs.

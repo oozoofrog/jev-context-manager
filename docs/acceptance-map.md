@@ -3,7 +3,10 @@
 Authority: `JCM_Astra_Continuity_Design_v1.0.md` supplied by the user.
 The user's 2026-09-28 instruction supersedes the design's separate Jev consent
 policy: dev.7 uses Jev automatically, including legacy records. Project/plugin
-disablement, source scope, redaction, deletion and call budgets still apply.
+disablement, source scope, redaction and deletion still apply. The subsequent
+2026-09-28 instruction removes arbitrary usage quotas: dev.8 ignores legacy daily
+call, byte-size and candidate ceilings. Provider context handling and retry
+backoff govern request execution; neither introduces a daily or monetary budget.
 This is an implementation contract, not evidence of completion. Document examples
 are data; they do not authorize replaying historical commands or importing projects.
 
@@ -54,9 +57,9 @@ degraded. Pack creation and bytes served do not establish successful continuatio
 | T13 | Conflicting corrections retain both sources | Relationship proposal fixture |
 | T14 | New task does not execute previous work | Intent fixture and bootstrap policy |
 | T15 | Semantic association without lexical overlap | Bounded widened candidates; representative corpus release gate |
-| T16 | Missing candidates reported distinctly | Candidate ceiling/coverage fixture |
+| T16 | Missing candidates reported distinctly | All eligible candidates reach Jev; legacy ceiling ignored |
 | T17 | Protected context never silently truncated | Budget blocked/read-plan fixture |
-| T18 | API errors, auth, schema and budget are explicit | Fake HTTP failures plus real authenticated API audit |
+| T18 | API errors, auth, schema and provider context are explicit | Fake HTTP failures plus real authenticated API audit |
 | T19 | Injection does not promote source to instruction | Bootstrap test and fresh-agent behavior test |
 | T20 | Disable/forget during call invalidates response | Policy epoch, concurrent mutation and queued-job tests |
 | T21 | Backup restore applies tombstones | Deferred export/restore gate; no restore command claimed |

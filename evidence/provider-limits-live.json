@@ -1,0 +1,60 @@
+{
+  "lane": "real_jev_synthetic_inputs",
+  "new_codex_session": false,
+  "runtime_home": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-context-live-k05r358j/private",
+  "checks": {
+    "over_80kb_request_succeeded": true,
+    "adaptive_worker_completed": true,
+    "source_reconstructed": true,
+    "server_context_error_observed": true,
+    "legacy_one_call_limit_ignored": true
+  },
+  "large_request_usage": {
+    "input_tokens": 18281,
+    "output_tokens": 20
+  },
+  "worker": {
+    "processed": 1,
+    "errors": [],
+    "lane": "real_http",
+    "decision_refs": [
+      "2ba84af0fbc14e869d8751f40a27e3f9",
+      "2ca574e2fc5547bea8e104750491da23",
+      "8520947ce28e44409a5b0e7bdbb5997b",
+      "6f28ebe81ad54ff98430419c27a54e81",
+      "346377b94ff84c4da8d7adb64cdd1485"
+    ]
+  },
+  "calls": [
+    {
+      "status": "PROVIDER_CONTEXT_LENGTH_EXCEEDED",
+      "count": 3,
+      "min_bytes": 49473,
+      "max_bytes": 97209
+    },
+    {
+      "status": "success",
+      "count": 6,
+      "min_bytes": 11323,
+      "max_bytes": 106341
+    }
+  ],
+  "diagnostics": [
+    {
+      "status": 400,
+      "request_id": "req_01a0e52e4f6b7b0682d6c945aa9025d6",
+      "detail": "{\"body\": {\"detail\": {\"error_type\": \"max_tokens_exceeded\"}}, \"truncated\": false, \"retry_headers\": {}}"
+    },
+    {
+      "status": 400,
+      "request_id": "req_01a0e52e507d7176890bfd04898eedb3",
+      "detail": "{\"body\": {\"detail\": {\"error_type\": \"max_tokens_exceeded\"}}, \"truncated\": false, \"retry_headers\": {}}"
+    },
+    {
+      "status": 400,
+      "request_id": "req_01a0e52e544c7e3cac357b500a43d4ce",
+      "detail": "{\"body\": {\"detail\": {\"error_type\": \"max_tokens_exceeded\"}}, \"truncated\": false, \"retry_headers\": {}}"
+    }
+  ],
+  "pass": true
+}

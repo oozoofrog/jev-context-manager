@@ -32,7 +32,11 @@ CREATE TABLE IF NOT EXISTS decisions (
  id TEXT PRIMARY KEY, cache_key TEXT, epoch INTEGER NOT NULL, status TEXT NOT NULL,
  request_blob TEXT NOT NULL, response_blob TEXT, model TEXT, usage TEXT, error TEXT,
  created TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS decisions_cache_lookup ON decisions(cache_key, status, model);
 CREATE TABLE IF NOT EXISTS calls (id TEXT PRIMARY KEY, day TEXT NOT NULL, bytes INTEGER NOT NULL, status TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS provider_errors (
+ call_id TEXT PRIMARY KEY, decision_id TEXT NOT NULL, status INTEGER NOT NULL,
+ request_id TEXT, detail TEXT NOT NULL, created TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS requests (
  token TEXT PRIMARY KEY, session TEXT NOT NULL, event_id TEXT NOT NULL, epoch INTEGER NOT NULL,
  created REAL NOT NULL, UNIQUE(session, event_id, epoch));
@@ -63,11 +67,13 @@ class Store:
         self.db.execute('PRAGMA synchronous=FULL')
         self.db.execute('PRAGMA foreign_keys=ON')
         version = self.db.execute('PRAGMA user_version').fetchone()[0]
-        if version not in (0, 1):
+        if version not in (0, 1, 2):
             self.db.close()
             raise JCMError('UNSUPPORTED_DATABASE_VERSION')
         self.db.executescript(SCHEMA)
-        self.db.execute('PRAGMA user_version=1')
+        # Older runtimes must not run forget against the extended schema while
+        # overlooking source-bearing provider diagnostics.
+        self.db.execute('PRAGMA user_version=2')
 
     def close(self):
         self.db.close()
@@ -234,7 +240,7 @@ class Store:
             self.db.execute('DELETE FROM meta WHERE key IN (?,?)',
                             ('bootstrap_existing:' + session, 'bootstrap_new:' + session))
             # Conservative derivative invalidation includes mixed-source model requests.
-            for table in ('requests', 'packs', 'receipts', 'decisions'):
+            for table in ('requests', 'packs', 'receipts', 'decisions', 'provider_errors'):
                 self.db.execute(f'DELETE FROM {table}')
             self.db.execute('COMMIT')
         except BaseException:

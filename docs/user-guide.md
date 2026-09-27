@@ -69,7 +69,7 @@ For a restored context pack, `quality=normal` means the normal Jev path succeede
 
 ## Large histories and paged recovery
 
-Jev retrieval is split by the encoded request size, including its questions. A large
+Jev retrieval uses soft estimates for the documented 32k state-plus-longest-question and 64k total token contexts. The estimate is not a tokenizer or an admission limit. An explicit server context rejection triggers smaller batches or source spans; an estimate alone never rejects a request. A large
 record is split at paragraph or output-line boundaries where possible; each span
 retains its source ID, revision and character offsets. Adjacent user requirements
 are compared in a separate pass so corrections can cross retrieval batches. A
@@ -77,7 +77,7 @@ requirement pair that cannot fit together is reported as unresolved rather than
 silently compared from truncated text.
 
 Successful judgments are cached. Retrying the same retrieval reuses successful
-batches and retries failed ones, subject to the existing call budget. An
+batches and retries failed ones. Confirmed context rejections also reuse their split paths. There are no local daily-call, byte-size or candidate-count quotas, including for existing profiles. An
 unassessed record remains available locally. Old per-record denial flags are
 ignored; records do not need to be imported again to use Jev.
 
@@ -183,6 +183,31 @@ Disabling the plugin in Codex stops subsequent guarded capture and its follower.
 | `TRANSCRIPT_LINE_TOO_LARGE` | A single JSONL line exceeds the 8 MB read bound. The cursor stays before that line; total transcript size is not capped at 32 MB. |
 | `PAGINATED_HISTORY_COVERAGE_PARTIAL` | Supported continuation segments were found; this does not prove that the entire earlier history was imported. |
 | `UNSUPPORTED_TRANSCRIPT_VERSION` | The session's transcript format is not supported. Do not edit its version metadata to force ingestion. |
-| Jev result is `degraded` | Check key availability, network access, and the reported provider error or call-budget limit. Jev needs no separate permission; old denial flags do not block it. |
+| Jev result is `degraded` | Check key availability, network access, and the reported provider error. Jev needs no separate permission; old denial flags do not block it. |
 | Recovery is `reading` | Read the returned page and follow `next_read_command`; the pack spans multiple bounded responses. |
 | Recovery is `blocked` | Inspect the reported reason. Even the minimum page envelope may not fit an unusually small delivery limit. A blocked pack has not been delivered. |
+
+## Provider failures and high-volume usage
+
+JCM records every attempt and returned token usage without imposing a daily request
+count or monetary budget. All eligible historical candidates are assessed; page
+sizes govern lossless delivery, not how much history can be recovered.
+
+HTTP 429/5xx and transport failures are retried up to three attempts per invocation.
+This failure-recovery bound is not a workload quota: subsequent invocations can
+retry failed work and reuse successes. The provider's `Retry-After` (seconds/date)
+or `retry-after-ms` is honored without shortening it. During long waits, project
+policy is rechecked and worker leases are renewed. Persistent failure returns an
+explicit degraded result instead of waiting forever.
+
+Private `provider_errors` rows retain status, provider request ID and a redacted
+error body and retry headers (up to 64 KiB of diagnostic body data). They are removed with derived data
+on `forget`. Generic HTTP 400 errors do not trigger arbitrary splitting; confirmed
+context failures do, including Jev's observed `detail.error_type=max_tokens_exceeded`.
+An oversized indivisible query or full relationship pair remains unresolved with
+its original local source available.
+
+The journal schema advances from v1 to v2 without dropping records. Older runtimes
+reject v2 journals rather than running deletion code unaware of the new diagnostic
+data. Back up the external store before an installed-runtime upgrade; rollback of
+the executable alone does not downgrade the journal.

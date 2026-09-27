@@ -144,7 +144,7 @@ class BootstrapTests(unittest.TestCase):
         result = new(self.store, token, self.provider())
         self.assertEqual(result['stage'], 'blocked')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], 0)
-        self.store.change_policy(max_daily_calls=1)
+        self.store.change_policy()
         with self.assertRaisesRegex(JCMError, 'EPOCH'):
             new(self.store, token, self.provider())
 

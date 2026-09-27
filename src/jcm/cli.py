@@ -19,7 +19,6 @@ def parser():
     result.add_argument('--repo', default=os.getcwd())
     sub = result.add_subparsers(dest='command', required=True)
     enable = sub.add_parser('enable')
-    enable.add_argument('--max-daily-calls', type=int, default=20)
     enable.add_argument('--install-hooks', action='store_true')
     sub.add_parser('install-hooks')
     sub.add_parser('plugin-bind')
@@ -60,9 +59,7 @@ def run(args):
     administrative = args.command in ('status', 'doctor', 'disable', 'policy', 'forget')
     binding = environment_binding() if os.environ.get('JCM_PLUGIN_ROOT') and not administrative else None
     if args.command == 'enable':
-        if not 1 <= args.max_daily_calls <= 1000:
-            raise JCMError('INVALID_DAILY_CALL_BUDGET')
-        policy = config.enable(args.home, args.repo, max_calls=args.max_daily_calls)
+        policy = config.enable(args.home, args.repo)
         if binding:
             policy = bind(policy, binding, migrate=True)
         store = Store(policy)

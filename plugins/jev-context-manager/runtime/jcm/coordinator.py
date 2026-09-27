@@ -1,7 +1,5 @@
 import json
-import re
 import shlex
-import unicodedata
 import uuid
 
 from .adapter import PARSER, recover_sources
@@ -13,13 +11,6 @@ from .util import JCMError, digest, encode, identifier, now
 from .worker import drain
 
 
-def terms(text):
-    normalized = unicodedata.normalize('NFKC', text).casefold()
-    words = set(re.findall(r'[\w./-]+', normalized))
-    compact = ''.join(c for c in normalized if not c.isspace())
-    return words | {compact[i:i + 2] for i in range(max(0, len(compact) - 1))}
-
-
 def candidates(store, request_event):
     events = [e for e in store.events() if e['role'] in ('user', 'assistant', 'tool') and e['id'] != request_event['id']]
     pending = {r[0] for r in store.db.execute("SELECT event_id FROM jobs WHERE state!='succeeded'")}
@@ -27,19 +18,9 @@ def candidates(store, request_event):
     # it does not pretend to have confirmed fine-grained task applicability.
     protected = {e['id'] for e in events if e['role'] == 'user'}
     protected.update(e['id'] for e in events[-16:] if e['id'] in pending)
-    query = terms(store.material(request_event)['text'])
-    materials = {e['id']: store.material(e) for e in events}
-    ranked = sorted(events, key=lambda e: (e['id'] in protected,
-                    len(query & terms(materials[e['id']]['text'])), e['seq']), reverse=True)
-    ceiling = store.config['candidate_ceiling']
-    selected = [e for i, e in enumerate(ranked) if i < ceiling or e['id'] in protected]
-    selected.sort(key=lambda e: e['seq'])
-    gaps = []
-    if len(events) > len(selected):
-        gaps.append('CANDIDATE_CEILING_MISSING_CANDIDATES')
-    if len(protected) > ceiling:
-        gaps.append('PROTECTED_CANDIDATES_EXPANDED_BEYOND_TARGET')
-    return selected, protected, pending, gaps
+    # Every eligible source receives a Jev judgment. Packing controls request
+    # shape, not admission; no top-N cutoff silently excludes older evidence.
+    return events, protected, pending, []
 
 
 def dispatch(store, token, provider=None):

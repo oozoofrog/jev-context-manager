@@ -1,14 +1,16 @@
-"""Byte-bounded Jev selection with source spans and conservative partial results."""
-from .provider import choice, retrieval_questions
+"""Provider-context-aware batching, without local workload quotas."""
+import math
+
+from .provider import CONTEXT_ERROR, choice, retrieval_questions
 from .util import JCMError, digest, encode
 
 STOP_ERRORS = {'PROVIDER_HTTP_401', 'PROVIDER_HTTP_403', 'PROVIDER_CREDENTIAL_UNAVAILABLE',
-               'PROVIDER_DAILY_CALL_BUDGET_EXCEEDED', 'POLICY_EPOCH_CHANGED',
+               'POLICY_EPOCH_CHANGED',
                'PROJECT_DISABLED', 'SOURCE_FORGOTTEN'}
 
 
 def text_spans(text, fits):
-    """Unicode character offsets; measure the actual encoded request, not tokens."""
+    """Unicode character offsets; the fit predicate is a packing hint."""
     start = 0
     while start < len(text) or (start == 0 and not text):
         low, high = start, len(text)
@@ -40,8 +42,6 @@ def batches(items, fits):
         if batch and not fits(batch + [item]):
             yield batch
             batch = []
-        if not fits([item]):
-            raise JCMError('PROVIDER_REQUEST_CONTEXT_TOO_LARGE')
         batch.append(item)
     if batch:
         yield batch
@@ -49,6 +49,66 @@ def batches(items, fits):
 
 def request_size(policy, state, questions):
     return len(encode({'model': policy['model'], 'state': state, 'questions': questions}))
+
+
+def context_fits(state, questions):
+    """Soft packing estimate, NOT a tokenizer or a pre-transmission refusal.
+
+    Jev 1.13 documents 64k total and 32k state + longest question:
+    https://docs.typesafe.ai/models (2026-09-28). UTF-8 bytes / 3 is only a
+    scheduling estimate. The server decides acceptance; explicit context errors
+    subdivide batches/spans. Even a query exceeding this estimate is attempted.
+    """
+    state_tokens = math.ceil(len(encode(state)) / 3)
+    question_tokens = [math.ceil(len(encode(q)) / 3) for q in questions.values()]
+    return (state_tokens + sum(question_tokens) <= 64_000 and
+            state_tokens + max(question_tokens, default=0) <= 32_000)
+
+
+def planned_spans(text, fits):
+    try:
+        return list(text_spans(text, fits))
+    except JCMError:
+        # An estimate must not deny a valid request or truncate its question.
+        return [(0, len(text))]
+
+
+def split_source(source):
+    text = source['text']
+    if len(text) < 2:
+        return []
+    middle = len(text) // 2
+    boundary = text.rfind('\n', middle // 2, middle)
+    if boundary >= 0:
+        middle = boundary + 1
+    start = source['span']['start']
+    return [{**source, 'text': text[a:b],
+             'span': {**source['span'], 'start': start + a, 'end': start + b}}
+            for a, b in ((0, middle), (middle, len(text)))]
+
+
+def adaptive_batches(items, make_request, evaluate, split_item=None, on_terminal=None):
+    """Split only after a confirmed provider context rejection; preserve order."""
+    try:
+        result = evaluate(*make_request(items))
+    except JCMError as error:
+        if str(error) != CONTEXT_ERROR:
+            raise
+        if len(items) > 1:
+            middle = len(items) // 2
+            children = [items[:middle], items[middle:]]
+        else:
+            children = [[part] for part in split_item(items[0])] if split_item else []
+        if not children:
+            if on_terminal:
+                on_terminal()
+                yield items, None
+                return
+            raise
+        for child in children:
+            yield from adaptive_batches(child, make_request, evaluate, split_item, on_terminal)
+        return
+    yield items, result
 
 
 def source_span(material, start, end):
@@ -66,7 +126,7 @@ def select(store, provider, materials, request_text, epoch):
     stopped = None
 
     def fits(state, questions):
-        return request_size(policy, state, questions) <= policy['max_request_bytes']
+        return context_fits(state, questions)
 
     def evaluate(state, questions, sources):
         nonlocal stopped
@@ -88,6 +148,9 @@ def select(store, provider, materials, request_text, epoch):
         except JCMError as error:
             code = str(error)
             report.update(status='failed', error=code)
+            if code == CONTEXT_ERROR:
+                report['status'] = 'context_exceeded'
+                raise
             errors.append(code)
             if code in STOP_ERRORS:
                 stopped = code
@@ -99,37 +162,50 @@ def select(store, provider, materials, request_text, epoch):
                  'scope': 'registered project; these candidates may be only part of the history',
                  'candidates': sources}, retrieval_questions(sources, relations=False))
 
-    chunks, expected, received = [], [0] * len(materials), [0] * len(materials)
+    chunks, received = [], [[] for _ in materials]
     for i, material in enumerate(materials):
         def fit_span(start, end):
             return fits(*retrieval([(i, source_span(material, start, end))]))
-        try:
-            spans = list(text_spans(material['text'], fit_span))
-        except JCMError as error:
-            errors.append(str(error))
-            continue
-        expected[i] = len(spans)
+        spans = planned_spans(material['text'], fit_span)
         chunks.extend((i, source_span(material, start, end)) for start, end in spans)
+    def split_item(item):
+        index, source = item
+        return [(index, part) for part in split_source(source)]
+    def evaluate_retrieval(state, questions):
+        return evaluate(state, questions,
+                        [dict(event_id=c['event_id'], **c['span']) for c in state['candidates']])
+    def retrieval_context_unusable():
+        nonlocal stopped
+        # Once even a single-character source fails, further splitting cannot
+        # repair the shared question/context. Preserve the remaining sources.
+        stopped = CONTEXT_ERROR
+        errors.append(CONTEXT_ERROR)
     for chunk in batches(chunks, lambda c: fits(*retrieval(c))):
-        state, questions = retrieval(chunk)
-        answer = evaluate(state, questions, [dict(event_id=c['event_id'], **c['span']) for _, c in chunk])
-        if not answer:
-            continue
-        intents.append(answer['intent']['choice'])
-        for local, (index, candidate) in enumerate(chunk):
-            assessment = assessments[index]
-            relevance = answer[f'relevance_{local}']['score']
-            omission = answer[f'omission_{local}']['noul']
-            representation = answer[f'representation_{local}']['choice']
-            assessment['relevance'] = max(assessment['relevance'] or 0, relevance)
-            assessment['omission'] = max(assessment['omission'] or 0, omission)
-            if relevance >= 1.5 or omission >= .5:
-                assessment['spans'].append(candidate['span'])
-            if expected[index] == 1:
-                assessment['representation'] = representation
-            received[index] += 1
+        for actual, answer in adaptive_batches(chunk, retrieval, evaluate_retrieval, split_item,
+                                               retrieval_context_unusable):
+            if not answer:
+                continue
+            intents.append(answer['intent']['choice'])
+            for local, (index, candidate) in enumerate(actual):
+                assessment = assessments[index]
+                relevance = answer[f'relevance_{local}']['score']
+                omission = answer[f'omission_{local}']['noul']
+                representation = answer[f'representation_{local}']['choice']
+                assessment['relevance'] = max(assessment['relevance'] or 0, relevance)
+                assessment['omission'] = max(assessment['omission'] or 0, omission)
+                if relevance >= 1.5 or omission >= .5:
+                    assessment['spans'].append(candidate['span'])
+                if candidate['span']['start'] == 0 and candidate['span']['end'] == len(materials[index]['text']):
+                    assessment['representation'] = representation
+                received[index].append((candidate['span']['start'], candidate['span']['end']))
     for i, assessment in enumerate(assessments):
-        assessment['complete'] = expected[i] > 0 and received[i] == expected[i]
+        cursor = 0
+        for start, end in received[i]:
+            if start != cursor:
+                break
+            cursor = end
+        else:
+            assessment['complete'] = bool(received[i]) and cursor == len(materials[i]['text'])
 
     # Keep adjacent user corrections together even when their retrieval batches differ.
     users = [i for i, material in enumerate(materials) if material['role'] == 'user']
@@ -152,20 +228,20 @@ def select(store, provider, materials, request_text, epoch):
         relations.append(relation)
         pair = {'left': source_span(materials[left], 0, len(materials[left]['text'])),
                 'right': source_span(materials[right], 0, len(materials[right]['text']))}
-        if not fits(*relation_request([(left, relation, pair)])):
-            relation['error'] = 'RELATION_CONTEXT_EXCEEDS_PROVIDER_BUDGET'
-            errors.append(relation['error'])
-            continue
         pairs.append((left, relation, pair))
+    def evaluate_relations(state, questions):
+        return evaluate(state, questions,
+                        [{'left': p['left']['event_id'], 'right': p['right']['event_id']} for p in state['pairs']])
     for batch in batches(pairs, lambda b: fits(*relation_request(b))):
-        state, questions = relation_request(batch)
-        answer = evaluate(state, questions, [{'left': p['left']['event_id'], 'right': p['right']['event_id']}
-                                             for _, _, p in batch])
-        for local, (_, relation, _) in enumerate(batch):
-            if answer:
-                relation.update(proposed_relationship=answer[f'relation_{local}']['choice'], status='candidate_only')
-            else:
-                relation['error'] = reports[-1]['error']
+        # A pair must be judged together. Never silently truncate either side
+        # to force a relationship decision that the server cannot support.
+        for actual, answer in adaptive_batches(batch, relation_request, evaluate_relations,
+                                               on_terminal=lambda: errors.append(CONTEXT_ERROR)):
+            for local, (_, relation, _) in enumerate(actual):
+                if answer:
+                    relation.update(proposed_relationship=answer[f'relation_{local}']['choice'], status='candidate_only')
+                else:
+                    relation['error'] = reports[-1]['error']
     intent = 'none' if not materials else 'ambiguous'
     if intents and all(a['complete'] for a in assessments):
         if set(intents) <= {'new_task', 'none'}:

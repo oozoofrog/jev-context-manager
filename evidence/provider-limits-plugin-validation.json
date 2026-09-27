@@ -1,0 +1,40 @@
+{
+  "source": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager",
+  "ref": null,
+  "fixture": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-cac4b053-orr2ht_1",
+  "live": false,
+  "host_version": "codex-cli 0.158.0-alpha.2.1",
+  "checks": {
+    "install_does_not_activate_projects": true,
+    "installed_enabled": true,
+    "installed_payload_integrity": true,
+    "no_permanent_project_hooks": true,
+    "external_storage": true,
+    "automatic_jev": true,
+    "follower_started": true,
+    "disable_stops_follower": true,
+    "disable_stops_capture": true,
+    "uninstall_removes_cache": true,
+    "uninstall_preserves_records": true,
+    "reinstall_preserves_records": true,
+    "global_configuration_unchanged": true
+  },
+  "sessions": [],
+  "pass": true,
+  "marketplace": {
+    "marketplaceName": "jcm",
+    "installedRoot": "/Volumes/eyedisk/develop/oozoofrog/jev-context-manager",
+    "alreadyAdded": false
+  },
+  "installation": {
+    "pluginId": "jev-context-manager@jcm",
+    "name": "jev-context-manager",
+    "marketplaceName": "jcm",
+    "version": "0.1.0-dev.8",
+    "installedPath": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm-plugin-cac4b053-orr2ht_1/codex/plugins/cache/jcm/jev-context-manager/0.1.0-dev.8",
+    "authPolicy": "ON_INSTALL"
+  },
+  "runtime_manifest_sha256": "f2c478410247e3e5c465e48c9fc049a535f4ea82094195b05ce401134fc06141",
+  "marketplace_revision": "3a4d814d042cea3c8b52a5275e4bec3bb965f496",
+  "fixture_disabled": true
+}

@@ -59,7 +59,7 @@ def load(home, root):
     return {**config, 'allow_egress': True}
 
 
-def enable(home, root, transcript_roots=None, max_calls=20):
+def enable(home, root, transcript_roots=None):
     home, root = Path(home).expanduser().resolve(), Path(root).resolve(strict=True)
     if (root / '.codex').is_symlink():
         raise JCMError('SYMLINK_PROJECT_CONFIG_REFUSED')
@@ -72,8 +72,7 @@ def enable(home, root, transcript_roots=None, max_calls=20):
         config = {'schema_version': 1, 'repo_id': repo_id, 'worktree_id': uuid.uuid4().hex,
                   'root': str(root), 'home': str(home), 'enabled': True, 'epoch': 1,
                   'allow_egress': True, 'model': 'jev-1.13.0',
-                  'max_daily_calls': max_calls, 'max_attempts': 3, 'max_request_bytes': 80000,
-                  'candidate_ceiling': 64, 'pack_byte_ceiling': 48000,
+                  'max_attempts': 3, 'pack_byte_ceiling': 48000,
                   'transcript_roots': [str(Path(p).expanduser().resolve()) for p in
                     (transcript_roots if transcript_roots is not None else
                      [Path(os.environ.get('CODEX_HOME', '~/.codex')).expanduser() / 'sessions'])],

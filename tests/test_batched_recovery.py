@@ -18,7 +18,12 @@ class BatchedRecoveryTests(unittest.TestCase):
     provider = fixtures.ContinuityTests.provider
 
     def budget(self, request=9000, page=7000):
-        self.cfg['max_request_bytes'] = request
+        # Simulated model context capacity, not a user-configured workload cap.
+        fits = lambda state, questions: len(encode({'model': self.cfg['model'], 'state': state, 'questions': questions})) <= request
+        for target in ('jcm.batching.context_fits', 'jcm.worker.context_fits'):
+            mocked = patch(target, side_effect=fits)
+            mocked.start()
+            self.addCleanup(mocked.stop)
         self.cfg['pack_byte_ceiling'] = page
         config.atomic_write(self.home / 'profiles' / (self.cfg['repo_id'] + '.json'), encode(self.cfg))
 
@@ -150,7 +155,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         before = self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0]
         read_pack(self.store, route['pack_id'], page=1)
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], before)
-        self.store.change_policy(max_daily_calls=1)
+        self.store.change_policy()
         with self.assertRaisesRegex(JCMError, 'INVALIDATED|EPOCH'):
             read_pack(self.store, route['pack_id'], page=2)
 
@@ -162,7 +167,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         self.assertIn('--page', result['next_read_command'])
         self.assertEqual(result['recovery_success'], 'not_attested')
 
-    def test_daily_budget_stops_batches_and_preserves_unassessed_sources(self):
+    def test_legacy_daily_budget_does_not_stop_batches(self):
         self.budget()
         for i in range(5):
             self.capture('old', str(i), str(i) * 5000, role='tool')
@@ -174,22 +179,27 @@ class BatchedRecoveryTests(unittest.TestCase):
             calls.append(body)
             return fixtures.fake_http(body, key)
         route = dispatch(self.store, token, self.provider(transport))
-        self.assertEqual(len(calls), 2)
-        self.assertIn('PROVIDER_DAILY_CALL_BUDGET_EXCEEDED', route['coverage']['gaps'])
-        pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
-        self.assertTrue(any(b['status'] == 'not_attempted' for b in pack['retrieval_batches']))
-        self.assertTrue(any(r['pending_retrieval_judgment'] for r in pack['selected_records']))
-        self.assertEqual(route['quality'], 'degraded')
+        self.assertGreater(len(calls), 2)
+        self.assertNotIn('PROVIDER_DAILY_CALL_BUDGET_EXCEEDED', route['coverage']['gaps'])
+        self.assertEqual(route['quality'], 'normal')
 
-    def test_oversized_request_never_truncated_or_sent(self):
+    def test_server_rejected_query_is_not_truncated_and_preserves_sources(self):
+        from test_provider_limits import context_error
         self.budget()
-        self.capture('old', '1', 'keep requirement')
-        token = self.request('long request ' * 3000); self.skip_classification()
-        def forbidden(*args):
-            self.fail('Oversized query must not be truncated to force a provider call')
-        route = dispatch(self.store, token, self.provider(forbidden))
-        self.assertIn('PROVIDER_REQUEST_CONTEXT_TOO_LARGE', route['coverage']['gaps'])
+        source = self.capture('old', '1', 'keep requirement')
+        query = 'long request ' * 3000
+        token = self.request(query); self.skip_classification()
+        calls = []
+        def reject(body, key):
+            calls.append(body)
+            self.assertEqual(json.loads(body)['state']['request'], query)
+            raise context_error()
+        route = dispatch(self.store, token, self.provider(reject))
+        self.assertIn('PROVIDER_CONTEXT_LENGTH_EXCEEDED', route['coverage']['gaps'])
         self.assertNotEqual(route['dispatch'], 'blocked')
+        self.assertLess(len(calls), 10)
+        pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
+        self.assertIn(source, {r['event_id'] for r in pack['selected_records']})
 
     def test_optional_large_record_selects_original_relevant_span(self):
         self.budget()
@@ -264,8 +274,13 @@ class BatchedRecoveryTests(unittest.TestCase):
         self.capture('old', '1', 'first requirement\n' * 500)
         self.capture('old', '2', 'correction applies\n' * 500)
         token = self.request(); self.skip_classification()
-        route = dispatch(self.store, token, self.provider())
-        self.assertIn('RELATION_CONTEXT_EXCEEDS_PROVIDER_BUDGET', route['coverage']['gaps'])
+        from test_provider_limits import context_error
+        def transport(body, key):
+            if 'pairs' in json.loads(body)['state']:
+                raise context_error()
+            return fixtures.fake_http(body, key)
+        route = dispatch(self.store, token, self.provider(transport))
+        self.assertIn('PROVIDER_CONTEXT_LENGTH_EXCEEDED', route['coverage']['gaps'])
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
         self.assertEqual(len(pack['selected_records']), 2)
         self.assertEqual(pack['relationship_candidates'][0]['status'], 'unresolved')
@@ -294,7 +309,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         calls = []
         def transport(body, key):
             calls.append(body)
-            self.store.change_policy(max_daily_calls=1)
+            self.store.change_policy()
             return fixtures.fake_http(body, key)
         with self.assertRaisesRegex(JCMError, 'EPOCH'):
             dispatch(self.store, token, self.provider(transport))

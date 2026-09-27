@@ -30,7 +30,7 @@ def main():
     root.mkdir()
     code = root / 'connection.py'
     code.write_text('def reconnect(paused):\n    return {"connected": True, "paused": False}\n')
-    policy = config.enable(home, root, max_calls=16)
+    policy = config.enable(home, root)
     installed = config.install_hooks(policy)
     store = Store(policy)
     evidence = REPOSITORY / 'evidence' / ('live-e2e-' + case)

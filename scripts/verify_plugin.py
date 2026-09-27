@@ -26,6 +26,7 @@ def main():
     parser.add_argument('--source', default=str(REPO))
     parser.add_argument('--ref')
     parser.add_argument('--live', action='store_true')
+    parser.add_argument('--output-dir', type=Path, help='Keep all results/logs here without changing tracked evidence pointers')
     args = parser.parse_args()
     case = uuid.uuid4().hex[:8]
     base = Path(tempfile.mkdtemp(prefix='jcm-plugin-' + case + '-')).resolve()
@@ -42,8 +43,8 @@ def main():
         (ch/'auth.json').symlink_to(user_home/'auth.json')
     else:
         env.pop('TYPESAFE_API_KEY', None)
-    evidence = REPO/'evidence'/('live-plugin-' + case)
-    evidence.mkdir()
+    evidence = args.output_dir.resolve() if args.output_dir else REPO/'evidence'/('live-plugin-' + case)
+    evidence.mkdir(parents=True, exist_ok=False)
     summary = {'source':args.source, 'ref':args.ref, 'fixture':str(base), 'live':args.live,
                'host_version':subprocess.check_output(['codex','--version'],text=True).strip(),
                'checks':{}, 'sessions':[], 'pass':False}
@@ -167,7 +168,8 @@ def main():
         summary['checks']['global_configuration_unchanged']=(user_home/'config.toml').read_bytes()==global_before
         summary['pass']=not summary.get('error') and all(summary['checks'].values())
         (evidence/'result.json').write_text(json.dumps(summary,indent=2,ensure_ascii=False)+'\n')
-        (REPO/'evidence/latest-plugin-validation.json').write_text(json.dumps({'evidence':str(evidence),'pass':summary['pass'],'live':args.live,'error':summary.get('error')},indent=2)+'\n')
+        if not args.output_dir:
+            (REPO/'evidence/latest-plugin-validation.json').write_text(json.dumps({'evidence':str(evidence),'pass':summary['pass'],'live':args.live,'error':summary.get('error')},indent=2)+'\n')
     print(json.dumps(summary,ensure_ascii=False),flush=True)
     return 0 if summary['pass'] else 1
 

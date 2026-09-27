@@ -81,9 +81,9 @@ A page count or path alone is not a read. If interrupted or unable to read the
 remaining pages, report partial delivery and retain the continuation command.
 Jev retrieval batches report per-batch results; sources without usable judgments
 remain available locally. If Jev is unavailable, report the actual reason (such as
-missing credentials, API failure or an exhausted call budget) with `degraded`.
+missing credentials, API failure or an unsplittable provider context) with `degraded`.
 Legacy transmission-denial flags do not restrict Jev. Do not introduce a permission
-step as a remedy. Retrying still observes call budgets and project/plugin disablement.
+step as a remedy. There are no local daily-call, request-byte or candidate-count quotas; legacy budget fields are ignored. Respect provider backoff and project/plugin disablement.
 Check `stage`, `quality`, coverage gaps and current reconciliation. A blocked pack is not read success;
 a degraded pack is not normal Jev participation. Recheck relevant current files
 before acting. Agent claims in history do not establish current build/test/UI

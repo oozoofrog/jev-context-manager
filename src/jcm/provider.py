@@ -2,24 +2,77 @@
 import json
 import math
 import os
+import re
 import time
 import uuid
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
-from .util import JCMError, digest, encode, now
+from .util import JCMError, digest, encode, now, redact
 
 RUBRIC_VERSION = 'continuity-v2'
 ENDPOINT = 'https://api.typesafe.ai/v1/systemone'
+CONTEXT_ERROR = 'PROVIDER_CONTEXT_LENGTH_EXCEEDED'
+
+
+def retry_delay(headers):
+    """Server-specified delay; invalid headers fall back to exponential backoff."""
+    headers = {k.lower(): v for k, v in (headers or {}).items()}
+    for name, divisor in (('retry-after-ms', 1000), ('retry-after', 1)):
+        value = headers.get(name)
+        if value is None:
+            continue
+        try:
+            seconds = float(value) / divisor
+        except (ValueError, TypeError):
+            if name != 'retry-after':
+                continue
+            try:
+                when = parsedate_to_datetime(value)
+                seconds = (when - datetime.now(timezone.utc)).total_seconds()
+            except (ValueError, TypeError, OverflowError):
+                continue
+        if math.isfinite(seconds):
+            return max(0, seconds)
+    return None
+
+
+def error_detail(exc):
+    # Diagnostic retention is bounded; this is not a workload/request-size quota.
+    try:
+        raw = exc.read(65_537)
+    except (OSError, ValueError):
+        raw = b''
+    text = raw[:65_536].decode('utf-8', errors='replace')
+    try:
+        body = json.loads(text)
+    except ValueError:
+        body = text
+    headers = {k.lower(): v for k, v in (exc.headers or {}).items()}
+    detail = redact({'body': body, 'truncated': len(raw) > 65_536,
+                     'retry_headers': {k: headers[k] for k in ('retry-after', 'retry-after-ms') if k in headers}})[0]
+    request_id = redact(str(headers.get('x-typesafe-request-id', ''))[:256])[0] or None
+    # A generic 400 is not evidence of a context error. Only recognize explicit
+    # provider codes/messages (or HTTP 413); never interpret the echoed input.
+    error = body.get('error', body.get('detail', body)) if isinstance(body, dict) else None
+    signals = []
+    if isinstance(error, dict):
+        signals = [str(error.get(k, '')) for k in ('code', 'type', 'error_type', 'message')]
+    context = exc.code == 413 or (exc.code in (400, 422) and any(
+        re.search(r'\bmax_tokens_exceeded\b|context[_ -](?:length[_ -]exceeded|window[_ -]exceeded|too[_ -]long)|'
+                  r'(?:maximum|max) context (?:length|window)|'
+                  r'(?:state|input|request).{0,40}(?:exceeds|exceeded).{0,40}(?:token|context)', s, re.I)
+        for s in signals))
+    return detail, request_id, context
 
 
 def http(body, key):
     request = Request(ENDPOINT, data=body, method='POST',
                       headers={'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json'})
     with urlopen(request, timeout=20) as response:
-        raw = response.read(2_000_001)
-        if len(raw) > 2_000_000:
-            raise JCMError('PROVIDER_RESPONSE_TOO_LARGE')
+        raw = response.read()
         return json.loads(raw)
 
 
@@ -67,14 +120,12 @@ class JevProvider:
         self.lane = 'mock' if transport else 'real_http'
         self.sleeper = sleeper
 
-    def evaluate(self, state, questions):
+    def evaluate(self, state, questions, heartbeat=None):
         store = self.store
         policy = store.policy()
         # No config, arbitrary path or raw hook/transcript metadata leaves this process.
         payload = {'model': policy['model'], 'state': state, 'questions': questions}
         body = encode(payload)
-        if len(body) > policy['max_request_bytes']:
-            raise JCMError('PROVIDER_REQUEST_BUDGET_EXCEEDED')
         key = os.environ.get('TYPESAFE_API_KEY')
         if not key and self.lane == 'real_http':
             raise JCMError('PROVIDER_CREDENTIAL_UNAVAILABLE')
@@ -84,6 +135,11 @@ class JevProvider:
         if previous:
             return {'decision_id': previous['id'], 'response': store.blob(previous['response_blob']),
                     'cached': True, 'lane': self.lane, 'epoch': policy['epoch']}
+        # Reuse a confirmed context rejection to reconstruct the same split tree
+        # without submitting known oversized parents on every recovery.
+        if store.db.execute('SELECT 1 FROM decisions WHERE cache_key=? AND error=? LIMIT 1',
+                            (cache_key, CONTEXT_ERROR)).fetchone():
+            raise JCMError(CONTEXT_ERROR)
         decision = uuid.uuid4().hex
         store.db.execute('BEGIN IMMEDIATE')
         try:
@@ -102,18 +158,17 @@ class JevProvider:
             store.db.execute('BEGIN IMMEDIATE')
             try:
                 store.policy(policy['epoch'])
-                used = store.db.execute('SELECT COUNT(*) FROM calls WHERE day=?', (day,)).fetchone()[0]
-                if used >= policy['max_daily_calls']:
-                    raise JCMError('PROVIDER_DAILY_CALL_BUDGET_EXCEEDED')
                 store.db.execute('INSERT INTO calls VALUES (?,?,?,?)', (call_id, day, len(body), 'reserved'))
                 store.db.execute('COMMIT')
             except BaseException as exc:
                 store.db.execute('ROLLBACK')
                 store.db.execute("UPDATE decisions SET status='failed',error=? WHERE id=?",
-                                 (str(exc) if isinstance(exc, JCMError) else 'BUDGET_RESERVATION_FAILED', decision))
+                                 (str(exc) if isinstance(exc, JCMError) else 'CALL_RECORD_FAILED', decision))
                 raise
-            retry = False
+            retry, delay = False, None
             try:
+                if heartbeat:
+                    heartbeat()
                 response = validate(self.transport(body, key), questions, policy['model'])
                 store.policy(policy['epoch'])
                 store.db.execute('BEGIN IMMEDIATE')
@@ -132,9 +187,27 @@ class JevProvider:
                 return {'decision_id': decision, 'response': response, 'cached': False,
                         'lane': self.lane, 'epoch': policy['epoch']}
             except HTTPError as exc:
-                error = f'PROVIDER_HTTP_{exc.code}'
-                retry = exc.code == 429 or 500 <= exc.code <= 599
-                exc.close()
+                try:
+                    detail, request_id, context = error_detail(exc)
+                    error = CONTEXT_ERROR if context else f'PROVIDER_HTTP_{exc.code}'
+                    retry = exc.code == 429 or 500 <= exc.code <= 599
+                    delay = retry_delay(exc.headers)
+                    # Forget/disable during HTTP must not recreate derivative data.
+                    store.db.execute('BEGIN IMMEDIATE')
+                    try:
+                        store.policy(policy['epoch'])
+                        store.db.execute('INSERT INTO provider_errors VALUES (?,?,?,?,?,?)',
+                            (call_id, decision, exc.code, request_id, json.dumps(detail), now()))
+                        store.db.execute('COMMIT')
+                    except BaseException:
+                        store.db.execute('ROLLBACK')
+                        raise
+                except JCMError as failure:
+                    store.db.execute("UPDATE decisions SET status='failed',error=? WHERE id=?",
+                                     (str(failure), decision))
+                    raise
+                finally:
+                    exc.close()
             except (URLError, TimeoutError, OSError) as exc:
                 reason = exc.reason if isinstance(exc, URLError) else exc
                 error, retry = 'PROVIDER_NETWORK_ERROR_' + type(reason).__name__, True
@@ -145,7 +218,21 @@ class JevProvider:
             store.db.execute('UPDATE calls SET status=? WHERE id=?', (error, call_id))
             if not retry or attempt + 1 == policy['max_attempts']:
                 break
-            self.sleeper(min(2 ** attempt, 4))
+            remaining = delay if delay is not None else min(2 ** attempt, 4)
+            # Long Retry-After waits remain interruptible by policy changes and
+            # renew worker leases. No local cap shortens the provider's delay.
+            try:
+                while remaining > 0:
+                    store.policy(policy['epoch'])
+                    if heartbeat:
+                        heartbeat()
+                    pause = min(remaining, 1)
+                    self.sleeper(pause)
+                    remaining -= pause
+            except JCMError as failure:
+                store.db.execute("UPDATE decisions SET status='failed',error=? WHERE id=?",
+                                 (str(failure), decision))
+                raise
         store.db.execute("UPDATE decisions SET status='failed',error=? WHERE id=?", (error, decision))
         raise JCMError(error)
 

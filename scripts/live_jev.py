@@ -17,7 +17,7 @@ def main():
     base = Path(tempfile.mkdtemp(prefix='jcm-live-jev-')).resolve()
     root = base / 'workspace'
     root.mkdir()
-    cfg = config.enable(base / 'store', root, max_calls=6)
+    cfg = config.enable(base / 'store', root)
     store = Store(cfg)
     try:
         def capture(session, text):
