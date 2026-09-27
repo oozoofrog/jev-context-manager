@@ -1,17 +1,19 @@
 {
-  "runtime/jcm/__init__.py": "160c1a1f4a96f7d9bf5f31856100b9e9b1fc420419c38f08ad61d962123ec73b",
+  "runtime/jcm/__init__.py": "68671422d02ee4b8504a761a34b8e65423c3488a8d8849b81090fa0bf8fc9812",
   "runtime/jcm/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
-  "runtime/jcm/adapter.py": "930394a371288c44deb0509a2349a838268e6653c68b9a005ecc8fb36af55733",
-  "runtime/jcm/bootstrap.py": "b745f525a14c4c902a6ebbad81be2acb2e3aeed84419b7d7d3e438e2fe7bb609",
-  "runtime/jcm/cli.py": "a53aa3462f66723410ec72686d3cd3204a89d683fc49cc4c976e138c246e1d7a",
+  "runtime/jcm/adapter.py": "47c0f9a55ed91ed52293b075f258429ab7aac62132ae790a5a338fad2b1257c0",
+  "runtime/jcm/batching.py": "d9ad8f5747f2e57af173e9b60d7eae6a88cfc3c9b143bfcd17d9e7d472e890f0",
+  "runtime/jcm/bootstrap.py": "01d79105f2a2f3c77bfb3f2f8a396d0a182fe726896a2005478af595ee357aee",
+  "runtime/jcm/cli.py": "7afab36cfc3ba57e2a778502af74757d9b54416636eeb9f54ba9c88df837b4a2",
   "runtime/jcm/config.py": "f4939d1cc0ec5b1185157846ecd627d7aa6ea7bee0839e2a9e21a926b48797b3",
-  "runtime/jcm/coordinator.py": "4f3e1159d95dcbbac240ba842dc2a7cfc7d38dfda52ffaabf9b7154e81a5e607",
+  "runtime/jcm/coordinator.py": "0f38523b927ab143ecb9d8a1f8989f51616a3c25aad47456764033b303bf493c",
+  "runtime/jcm/delivery.py": "9488717b1312939dc89abd3ccc7e60fd3269594cbb4ea7ecd52b26d32d36ecd3",
   "runtime/jcm/follower.py": "5c97da789f9f6bb767d04a28ffe6fa49b9a89a474b8ff1564772df6fb8ee1ae4",
   "runtime/jcm/plugin.py": "07fdcd9fa8ceb47ab9b2493392d7e5aa0721942f7d2b64b5fd8771726ec58281",
-  "runtime/jcm/provider.py": "9aa16978d890abed1062ea13a42db954336d3d54b0e4c7b472897b4dd20fb212",
+  "runtime/jcm/provider.py": "953a3cca833f08caa5f9bb63e980814c7d734b785ca1279ed557f073685f8ed5",
   "runtime/jcm/snapshot.py": "f6a820b91823a69dba93c3e32c164fa4ca224357b3e491959e062992688e1608",
   "runtime/jcm/store.py": "29e20bc8f6a007b96e6f757fdf95181089b21050c885fe5b6116d1db0fa9da32",
   "runtime/jcm/util.py": "a8974ba69aa1e8aa02ccc4314dfdd48d3118e1703102351d5cf5d083031273fc",
-  "runtime/jcm/worker.py": "ee2a7db7c2ba9b7f3dc8e4b21da6df00f1b1aa9d31204be5f409b8f0807a2ca2",
-  "skills/astra-continuity/SKILL.md": "f02ef552e372f21bd16ab8b094a32813969a4b26c56eeaada747bed4935dc72d"
+  "runtime/jcm/worker.py": "c76c72c5f27398e7744aee0203ee75adbf814a99c75018d9ba6ae5d362a4f5fd",
+  "skills/astra-continuity/SKILL.md": "37407451bad91d64065464dbdc838e2e6f50c88a5fb8548a216f677d3f27e75a"
 }

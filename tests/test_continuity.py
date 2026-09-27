@@ -270,15 +270,17 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.assertEqual(pack['dispatch'], 'new_task')
         self.assertEqual(pack['selected_records'], [])
 
-    def test_T16_T17_protected_budget_overflow_is_blocked(self):
+    def test_T16_T17_protected_candidates_expand_without_silent_loss(self):
         self.store.config['candidate_ceiling'] = 2
         for i in range(3):
             self.capture('old', str(i), 'must preserve ' + str(i))
         route = dispatch(self.store, self.request(), self.provider())
-        self.assertEqual(route['dispatch'], 'blocked')
+        self.assertNotEqual(route['dispatch'], 'blocked')
+        self.assertIn('PROTECTED_CANDIDATES_EXPANDED_BEYOND_TARGET', route['coverage']['gaps'])
         result = read_pack(self.store, route['pack_id'])
-        self.assertEqual(result['delivery'], 'created')
-        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], 0)
+        self.assertEqual(result['delivery'], 'read_served')
+        self.assertEqual(len(result['pack']['selected_records']), 3)
+        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], 1)
 
     def test_T17_large_required_pack_does_not_silently_truncate(self):
         self.capture('old', '1', 'constraint ' * 200)

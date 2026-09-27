@@ -36,6 +36,7 @@ def parser():
     route.add_argument('--request-token', required=True)
     read = sub.add_parser('read')
     read.add_argument('--pack', required=True)
+    read.add_argument('--page', type=int, default=1)
     inspect = sub.add_parser('inspect')
     inspect.add_argument('--record', required=True)
     worker = sub.add_parser('worker')
@@ -119,7 +120,7 @@ def run(args):
         if args.command == 'dispatch':
             return dispatch(store, args.request_token)
         if args.command == 'read':
-            return read_pack(store, args.pack)
+            return read_pack(store, args.pack, args.page)
         if args.command == 'inspect':
             store.policy()
             return {'origin': 'jcm', 'source': store.material(store.event(identifier(args.record)))}

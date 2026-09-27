@@ -64,6 +64,38 @@ Useful fields in the response:
 
 For a restored context pack, `quality=normal` means the normal Jev path succeeded. `degraded` means JCM used a fallback; inspect the reported reason. `stage=blocked` means the pack was not delivered. The project status value `mode=limited` alone does not mean recording has stopped.
 
+## Large histories and paged recovery
+
+Jev retrieval is split by the encoded request size, including its questions. A large
+record is split at paragraph or output-line boundaries where possible; each span
+retains its source ID, revision and character offsets. Adjacent user requirements
+are compared in a separate pass so corrections can cross retrieval batches. A
+requirement pair that cannot fit together is reported as unresolved rather than
+silently compared from truncated text.
+
+Successful judgments are cached. Retrying the same retrieval reuses successful
+batches and retries failed ones, subject to the existing call budget. A denied or
+unassessed record remains available locally; enabling transmission later does not
+retroactively authorize records captured while it was denied. No batch raises
+those permissions or budgets.
+
+Large recovery packs return `stage=reading`, `delivery=page_served` and a
+`next_read_command`. Read each page and follow that exact command until it is null.
+You can explicitly reread a page with:
+
+```sh
+"$JCM" --repo "$PROJECT" read --pack PACK_ID --page 2
+```
+
+Each page contains `entries` with paths into the immutable pack. Oversized text
+fields carry character offsets; records keep their source IDs. Snapshot metadata
+is paged too. No original text is silently truncated. Page hashes and read receipts
+track delivery; repeating a page does not count as reading a different one.
+`pagination.remaining_pages` reports pages not yet served, and `read_served` is
+reached only after every page has been served. These receipts do not prove that an
+agent consumed the content or resumed work correctly. Interrupted reading remains
+partial and can continue without generating a new pack.
+
 ## Stop, resume, or delete records
 
 Ask the skill to perform the action for the current project:
@@ -150,4 +182,5 @@ Disabling the plugin in Codex stops subsequent guarded capture and its follower.
 | `PAGINATED_HISTORY_COVERAGE_PARTIAL` | Supported continuation segments were found; this does not prove that the entire earlier history was imported. |
 | `UNSUPPORTED_TRANSCRIPT_VERSION` | The session's transcript format is not supported. Do not edit its version metadata to force ingestion. |
 | Jev result is `degraded` | Check `allow_egress`, key availability, network access, and the reported provider error or call-budget limit. Older records captured with transmission denied remain denied. |
-| Recovery is `blocked` | Inspect and resolve the reported coverage or size limit before retrying. A blocked pack has not been delivered. |
+| Recovery is `reading` | Read the returned page and follow `next_read_command`; the pack spans multiple bounded responses. |
+| Recovery is `blocked` | Inspect the reported reason. Even the minimum page envelope may not fit an unusually small delivery limit. A blocked pack has not been delivered. |

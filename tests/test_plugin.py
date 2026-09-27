@@ -164,6 +164,30 @@ class PluginTests(unittest.TestCase):
         self.assertEqual(len(self.store.events()), 1)
         require_active(updated['plugin'])
 
+    def test_bundled_cli_reads_all_pages_without_global_or_egress_changes(self):
+        self.setup_plugin()
+        self.bind()
+        self.store.change_policy(allow_egress=False)
+        self.capture('old', '1', 'retained requirement\n' * 5000)
+        event = self.capture('fresh', 'now', 'continue previous work')
+        token = self.store.request('fresh', event)
+        command = [str(self.plugin / 'scripts/jcm'), '--repo', str(self.root),
+                   'bootstrap', 'new', '--request-token', token]
+        responses = []
+        while command:
+            proc = subprocess.run(command, env=self.env, cwd=self.root, capture_output=True)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertLessEqual(len(proc.stdout), self.cfg['pack_byte_ceiling'])
+            result = json.loads(proc.stdout)
+            responses.append(result)
+            command = shlex.split(result['next_read_command']) if result.get('next_read_command') else None
+        self.assertGreater(len(responses), 1)
+        self.assertEqual(responses[0]['stage'], 'reading')
+        self.assertEqual(responses[-1]['stage'], 'read_served')
+        self.assertTrue(responses[-1]['pagination']['all_pages_served'])
+        self.assertFalse(config.load(self.home, self.root)['allow_egress'])
+        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM calls').fetchone()[0], 0)
+
     def test_wrong_distribution_binding_rejected(self):
         self.setup_plugin()
         with self.assertRaisesRegex(JCMError, 'PLUGIN_INACTIVE'):

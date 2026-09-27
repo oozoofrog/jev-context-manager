@@ -1,0 +1,44 @@
+{
+  "validation": "real Jev; synthetic fixture only; six-call cap; one attempt per request",
+  "quality": "normal",
+  "dispatch": "ready",
+  "calls": [
+    {
+      "bytes": 4169,
+      "status": "success"
+    },
+    {
+      "bytes": 4399,
+      "status": "success"
+    },
+    {
+      "bytes": 4464,
+      "status": "success"
+    }
+  ],
+  "batch_count": 3,
+  "batches": [
+    {
+      "bytes": 4169,
+      "status": "success"
+    },
+    {
+      "bytes": 4399,
+      "status": "success"
+    },
+    {
+      "bytes": 4464,
+      "status": "success"
+    }
+  ],
+  "relationships": [
+    "corrects"
+  ],
+  "decision_lanes": [
+    "real_http",
+    "real_http",
+    "real_http"
+  ],
+  "semantic_error": null,
+  "selected_records": 2
+}

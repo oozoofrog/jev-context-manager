@@ -1,0 +1,15 @@
+{
+  "validation": "real blocked-pack text and snapshot; isolated store, no project changes or Jev calls",
+  "input_pack_bytes": 783693,
+  "input_records": 64,
+  "pages": 21,
+  "max_response_bytes": 47710,
+  "ceiling": 48000,
+  "first_stage": "reading",
+  "last_delivery": "read_served",
+  "all_pages_served": true,
+  "lossless_reconstruction": true,
+  "original_text_preserved": true,
+  "provider_calls": 0,
+  "content_hash": "8ea4121c27cc514a4fd1a72d629654c44f2b0cefcb067dfd302a75a77233cd99"
+}

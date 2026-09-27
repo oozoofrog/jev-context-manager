@@ -5,8 +5,8 @@
 The public GitHub repository is a Codex marketplace named `jcm`, declared in
 `.agents/plugins/marketplace.json`. It ships one plugin from
 `plugins/jev-context-manager`. This is a Git-backed distribution, not an OpenAI
-official-directory listing. The plugin version is `0.1.0-dev.5`; the corresponding
-Python package version is `0.1.0.dev5`.
+official-directory listing. The plugin version is `0.1.0-dev.6`; the corresponding
+Python package version is `0.1.0.dev6`.
 
 The bundle includes the skill, `hooks/hooks.json`, a launcher, and a copy of the
 canonical stdlib runtime. `scripts/build_plugin.py` produces that copy and its
