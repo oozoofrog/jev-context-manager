@@ -27,7 +27,8 @@ class PluginTests(unittest.TestCase):
 
     def setup_plugin(self):
         self.codex = self.base / 'codex'
-        self.plugin = self.codex / 'plugins/cache/jcm/jev-context-manager/0.1.0-dev.4'
+        version = json.loads((REPO / 'plugins/jev-context-manager/.codex-plugin/plugin.json').read_text())['version']
+        self.plugin = self.codex / 'plugins/cache/jcm/jev-context-manager' / version
         shutil.copytree(REPO / 'plugins/jev-context-manager', self.plugin)
         self.settings = self.codex / 'config.toml'
         self.settings.write_text('[plugins."' + PLUGIN_ID + '"]\nenabled = true\n')
@@ -154,7 +155,7 @@ class PluginTests(unittest.TestCase):
         self.setup_plugin()
         self.capture('old', 't', 'keep')
         self.bind()
-        version2 = self.plugin.with_name('0.1.0-dev.5')
+        version2 = self.plugin.with_name(self.plugin.name + '+upgrade')
         shutil.copytree(self.plugin, version2)
         shutil.rmtree(self.plugin)
         updated = bind(self.cfg, {**self.binding, 'root': str(version2)})

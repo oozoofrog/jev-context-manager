@@ -23,16 +23,47 @@ def session_id(value=None):
     return value
 
 
+def discover_all(store, session, path=None):
+    matches = {Path(path)} if path else set()
+    name = re.compile(r'.+-' + re.escape(session) + r'(?:_[A-Za-z0-9-]+)?\.jsonl')
+    for root in (() if path else store.config['transcript_roots']):
+        # Inspect exact session names only, including Codex paginated segments.
+        matches.update(p.resolve() for p in Path(root).rglob('*' + session + '*.jsonl')
+                       if name.fullmatch(p.name) and not p.is_symlink())
+    if not matches:
+        raise JCMError('TRANSCRIPT_NOT_FOUND')
+    supported, rejected = [], []
+    for candidate in sorted(matches):
+        try:
+            source = transcript_path(store, candidate, session)
+        except JCMError as error:
+            if str(error) != 'UNSUPPORTED_TRANSCRIPT_VERSION':
+                raise
+            rejected.append(str(candidate))
+            continue
+        with source.open('rb') as stream:
+            meta = json.loads(stream.readline(1_000_001))['payload']
+        base = meta.get('history_base')
+        ordinal = 0
+        if base is not None:
+            if not isinstance(base, dict):
+                raise JCMError('UNSUPPORTED_PAGINATED_HISTORY_BASE')
+            ordinal = base.get('end_ordinal_exclusive')
+            if base.get('thread_id') != session or type(ordinal) is not int or ordinal < 0:
+                raise JCMError('UNSUPPORTED_PAGINATED_HISTORY_BASE')
+            store.gap('PAGINATED_HISTORY_COVERAGE_PARTIAL', str(source))
+        supported.append((ordinal, source))
+    if not supported:
+        raise JCMError('UNSUPPORTED_TRANSCRIPT_VERSION')
+    if len({ordinal for ordinal, _ in supported}) != len(supported):
+        raise JCMError('TRANSCRIPT_DISCOVERY_AMBIGUOUS')
+    for candidate in rejected:
+        store.gap('UNSUPPORTED_TRANSCRIPT_VERSION', candidate)
+    return [source for _, source in sorted(supported)]
+
+
 def discover(store, session, path=None):
-    if path:
-        return transcript_path(store, path, session)
-    matches = set()
-    for root in store.config['transcript_roots']:
-        # Inspect names for this exact id only; never read other session bodies.
-        matches.update(p.resolve() for p in Path(root).rglob('*-' + session + '.jsonl') if not p.is_symlink())
-    if len(matches) != 1:
-        raise JCMError('TRANSCRIPT_NOT_FOUND' if not matches else 'TRANSCRIPT_DISCOVERY_AMBIGUOUS')
-    return transcript_path(store, matches.pop(), session)
+    return discover_all(store, session, path)[-1]
 
 
 def existing(store, session=None, path=None, install=True, follow=True):
@@ -40,24 +71,42 @@ def existing(store, session=None, path=None, install=True, follow=True):
     session = session_id(session)
     if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
         raise JCMError('SOURCE_FORGOTTEN')
-    source = discover(store, session, path)
-    register_transcript(store, source, session)
-    row = store.db.execute('SELECT * FROM sources WHERE session=? AND path=?', (session, str(source))).fetchone()
     before = store.db.execute('SELECT COUNT(*) FROM events WHERE session=?', (session,)).fetchone()[0]
-    recover_source(store, row)
+    error = None
+    sources = []
+    for source in discover_all(store, session, path):
+        key = register_transcript(store, source, session)
+        row = store.db.execute('SELECT * FROM sources WHERE key=?', (key,)).fetchone()
+        try:
+            recover_source(store, row)
+        except (JCMError, OSError) as exc:
+            error = str(exc) if isinstance(exc, JCMError) else 'TRANSCRIPT_UNAVAILABLE'
+        row = store.db.execute('SELECT * FROM sources WHERE key=?', (row['key'],)).fetchone()
+        try:
+            size = source.stat().st_size
+        except OSError:
+            size = None
+        sources.append({**dict(row), 'source_bytes': size,
+                        'backlog_bytes': max(0, size - row['offset']) if size is not None else None})
+        if row['status'] not in ('read_to_offset', 'partial_line'):
+            error = error or row['status']
+    ready = error is None
     after = store.db.execute('SELECT COUNT(*) FROM events WHERE session=?', (session,)).fetchone()[0]
     try:
-        installed = config.install_hooks(store.policy()) if install else None
+        installed = config.install_hooks(store.policy()) if install and ready else None
     except PermissionError:
         raise JCMError('PROJECT_HOOK_INSTALL_PERMISSION_DENIED') from None
     from .follower import start, follower_status
-    follower = start(store, row['key']) if follow else follower_status(store, row['key'])
+    follower = start(store, row['key']) if follow and ready else follower_status(store, row['key'])
     current = store.db.execute("SELECT id FROM events WHERE session=? AND role='user' ORDER BY seq DESC LIMIT 1", (session,)).fetchone()
-    token = store.request(session, current[0]) if current else None
+    token = store.request(session, current[0]) if current and ready else None
     result = {'origin': 'jcm', 'bootstrap': 'existing', 'session_id': session,
+              'stage': 'captured' if ready else 'blocked', 'error': error,
+              'source_bytes': sources[-1]['source_bytes'],
+              'backlog_bytes': sources[-1]['backlog_bytes'], 'sources': sources,
               'new_events': after - before, 'session_event_count': after,
               'source': dict(store.db.execute('SELECT * FROM sources WHERE key=?', (row['key'],)).fetchone()),
-              'capture': 'local_transcript_follower' if follower['running'] else 'registered_for_next_recovery',
+              'capture': ('local_transcript_follower' if follower['running'] else 'registered_for_next_recovery') if ready else 'blocked',
               'follower': follower, 'hooks': installed, 'hook_hot_reload': 'not_attested',
               'current_snapshot': snapshot(store.config['root']), 'historical_verification': 'not_established',
               'request_token': token, 'read_command': shlex.join(store.config['cli_argv'] +

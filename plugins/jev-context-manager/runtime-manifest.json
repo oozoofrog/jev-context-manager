@@ -1,8 +1,8 @@
 {
-  "runtime/jcm/__init__.py": "46d86d3221582c3b2fd2cf4af9d5734531aebd4be5a9f6ae262874d189605e93",
+  "runtime/jcm/__init__.py": "160c1a1f4a96f7d9bf5f31856100b9e9b1fc420419c38f08ad61d962123ec73b",
   "runtime/jcm/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
-  "runtime/jcm/adapter.py": "a7efa8827fab8ad0b9c5b44d83e568f4be99f03cea0193e4adb3f00704cfa6f0",
-  "runtime/jcm/bootstrap.py": "37afc4d381cb957a81af0dee328b17f2cf9006539b39fcc06b17376149710985",
+  "runtime/jcm/adapter.py": "930394a371288c44deb0509a2349a838268e6653c68b9a005ecc8fb36af55733",
+  "runtime/jcm/bootstrap.py": "b745f525a14c4c902a6ebbad81be2acb2e3aeed84419b7d7d3e438e2fe7bb609",
   "runtime/jcm/cli.py": "a53aa3462f66723410ec72686d3cd3204a89d683fc49cc4c976e138c246e1d7a",
   "runtime/jcm/config.py": "f4939d1cc0ec5b1185157846ecd627d7aa6ea7bee0839e2a9e21a926b48797b3",
   "runtime/jcm/coordinator.py": "4f3e1159d95dcbbac240ba842dc2a7cfc7d38dfda52ffaabf9b7154e81a5e607",
@@ -13,5 +13,5 @@
   "runtime/jcm/store.py": "29e20bc8f6a007b96e6f757fdf95181089b21050c885fe5b6116d1db0fa9da32",
   "runtime/jcm/util.py": "a8974ba69aa1e8aa02ccc4314dfdd48d3118e1703102351d5cf5d083031273fc",
   "runtime/jcm/worker.py": "ee2a7db7c2ba9b7f3dc8e4b21da6df00f1b1aa9d31204be5f409b8f0807a2ca2",
-  "skills/astra-continuity/SKILL.md": "525682ec317e9428e0c50a869e025f0ac6edd5f44091434b62fc152bb7885098"
+  "skills/astra-continuity/SKILL.md": "f02ef552e372f21bd16ab8b094a32813969a4b26c56eeaada747bed4935dc72d"
 }

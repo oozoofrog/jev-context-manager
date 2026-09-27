@@ -58,6 +58,8 @@ Useful fields in the response:
 | `followers[].running` | Whether an adopted session's local follower is running |
 | `plugin.active` | Whether the persisted plugin state and installed bundle pass JCM's checks; hook trust is separate |
 | `allow_egress` | Whether eligible records may be sent to Jev |
+| `bootstraps[].stage` | For existing-session adoption: `captured` or `blocked`; a blocked scan has not activated capture |
+| `bootstraps[].sources` | At adoption time: validated segments with durable cursors and remaining bytes |
 | `gaps` | Missing or unsupported source coverage |
 
 For a restored context pack, `quality=normal` means the normal Jev path succeeded. `degraded` means JCM used a fallback; inspect the reported reason. `stage=blocked` means the pack was not delivered. The project status value `mode=limited` alone does not mean recording has stopped.
@@ -144,6 +146,8 @@ Disabling the plugin in Codex stops subsequent guarded capture and its follower.
 | No new events | Check the project root, project enablement, and hook trust. For an already running session, adopt it and check the follower. |
 | `CURRENT_SESSION_ID_MISSING_OR_AMBIGUOUS` | Run adoption inside the intended Codex session, or specify its exact `--session-id`. |
 | `TRANSCRIPT_NOT_FOUND` | Confirm the session ID and transcript location. If needed, add `--transcript /absolute/path/to/session.jsonl`; it must be inside the admitted transcript roots. |
+| `TRANSCRIPT_LINE_TOO_LARGE` | A single JSONL line exceeds the 8 MB read bound. The cursor stays before that line; total transcript size is not capped at 32 MB. |
+| `PAGINATED_HISTORY_COVERAGE_PARTIAL` | Supported continuation segments were found; this does not prove that the entire earlier history was imported. |
 | `UNSUPPORTED_TRANSCRIPT_VERSION` | The session's transcript format is not supported. Do not edit its version metadata to force ingestion. |
 | Jev result is `degraded` | Check `allow_egress`, key availability, network access, and the reported provider error or call-budget limit. Older records captured with transmission denied remain denied. |
 | Recovery is `blocked` | Inspect and resolve the reported coverage or size limit before retrying. A blocked pack has not been delivered. |

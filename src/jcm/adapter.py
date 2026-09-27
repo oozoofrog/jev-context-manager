@@ -1,6 +1,8 @@
 """Codex hook v1 and explicitly probed 0.158.0-alpha.2.1 JSONL adapter."""
 import fcntl
+import hashlib
 import json
+import os
 import re
 import shlex
 from pathlib import Path
@@ -10,7 +12,8 @@ from .snapshot import snapshot
 from .util import JCMError, digest
 
 SUPPORTED_TRANSCRIPTS = {'0.158.0-alpha.2.1'}
-PARSER = 'codex-0.158-public-items-v1'
+PARSER = 'codex-0.158-public-items-v2'
+MAX_LINE_BYTES = 8_000_000
 
 
 def internal_command(config, command):
@@ -84,6 +87,30 @@ def register_transcript(store, path, session):
         store.set_cursor({'key': key, 'session': session, 'path': str(source), 'generation': 0,
                           'offset': 0, 'prefix_hash': digest(b''), 'inode': source.stat().st_ino,
                           'status': 'registered'})
+    return key
+
+
+def without_inline_media(value):
+    """Retain public text and media references, never inline image/audio bytes."""
+    if isinstance(value, list):
+        return [without_inline_media(v) for v in value]
+    if isinstance(value, dict):
+        # Node REPL can serialize an MCP result inside a TextContent block.
+        if value.get('type') == 'text' and isinstance(value.get('text'), str):
+            try:
+                nested = json.loads(value['text'])
+            except ValueError:
+                nested = None
+            if isinstance(nested, dict) and isinstance(nested.get('content'), list):
+                cleaned = without_inline_media(nested)
+                if cleaned != nested:
+                    value = {**value, 'text': json.dumps(cleaned, ensure_ascii=False)}
+        media = value.get('type') in ('image', 'audio', 'input_audio', 'resource')
+        return {k: without_inline_media(v) for k, v in value.items()
+                if not ((media and k in ('data', 'blob')) or (k == 'blob' and 'mimeType' in value))}
+    if isinstance(value, str) and value.startswith('data:'):
+        return '[INLINE_MEDIA_OMITTED]'
+    return value
 
 
 def public_item(record):
@@ -103,9 +130,10 @@ def public_item(record):
     if typ == 'UserMessage':
         role, kind = 'user', 'user_message'
         content = item.get('content', [])
-        if any(c.get('type') != 'text' for c in content):
+        if any(c.get('type') not in ('text', 'image', 'local_image') for c in content):
             raise JCMError('NON_TEXT_USER_CONTENT_UNSUPPORTED')
-        text = '\n'.join(c['text'] for c in content)
+        item = without_inline_media(item)
+        text = '\n'.join(c['text'] for c in content if c.get('type') == 'text')
     elif typ == 'AgentMessage' and item.get('phase') in ('commentary', 'final_answer'):
         role = 'assistant'
         kind = 'assistant_final' if item['phase'] == 'final_answer' else 'assistant_commentary'
@@ -113,6 +141,14 @@ def public_item(record):
     elif typ == 'CommandExecution':
         role, kind = 'tool', 'tool_result'
         text = json.dumps({k: item.get(k) for k in ('command', 'cwd', 'status', 'aggregated_output', 'exit_code')}, ensure_ascii=False)
+    elif typ == 'McpToolCall':
+        role, kind = 'tool', 'tool_result'
+        item = without_inline_media(item)
+        text = json.dumps({k: item.get(k) for k in ('server', 'tool', 'arguments', 'status', 'result')}, ensure_ascii=False)
+    elif typ == 'ImageView':
+        role, kind = 'tool', 'tool_result'
+        item = {k: item.get(k) for k in ('type', 'id', 'path')}
+        text = json.dumps(item, ensure_ascii=False)
     elif typ in ('Reasoning', 'Plan', 'ContextCompaction'):
         return None
     else:
@@ -135,50 +171,78 @@ def recover_source(store, row):
         current = store.db.execute('SELECT * FROM sources WHERE key=?', (row['key'],)).fetchone()
         if current is None:
             return 0
-        return _recover_source(store, current)
+        try:
+            return _recover_source(store, current)
+        except (JCMError, OSError) as error:
+            code = str(error) if isinstance(error, JCMError) else 'TRANSCRIPT_UNAVAILABLE'
+            store.gap(code, current['key'])
+            store.db.execute('UPDATE sources SET status=? WHERE key=?', ('blocked:' + code, current['key']))
+            raise
 
 
 def _recover_source(store, row):
     row = dict(row)
+    policy = store.policy()
     if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (row['session'],)).fetchone():
         return 0
     source = transcript_path(store, row['path'], row['session'])
-    data = source.read_bytes()
-    if len(data) > 32_000_000:
-        raise JCMError('TRANSCRIPT_SCAN_CEILING')
-    if (source.stat().st_ino != row['inode'] or len(data) < row['offset'] or
-            digest(data[:row['offset']]) != row['prefix_hash']):
-        row.update(generation=row['generation'] + 1, offset=0, prefix_hash=digest(b''), inode=source.stat().st_ino)
-        store.gap('TRANSCRIPT_GENERATION_CHANGED', row['key'])
     total = 0
-    while row['offset'] < len(data):
-        start = row['offset']
-        end = data.find(b'\n', start)
-        if end == -1:
-            row['status'] = 'partial_line'
-            store.set_cursor(row)
-            break
-        try:
-            record = json.loads(data[start:end])
-        except (ValueError, UnicodeDecodeError):
-            store.gap('TRANSCRIPT_MALFORMED_LINE', f'{row["key"]}:{start}')
-            row['status'] = 'malformed_line'
-            store.set_cursor(row)
-            break
-        row.update(offset=end + 1, prefix_hash=digest(data[:end + 1]), status='read_to_offset')
-        try:
-            item = public_item(record)
-        except JCMError as error:
-            store.gap(str(error), f'{row["key"]}:{start}')
-            item = None
-        if item:
-            if item['role'] == 'tool' and internal_command(store.config, item['payload']['public_item'].get('command')):
-                item['role'] = 'internal'
-                item['payload'] = {'text': '', 'origin': 'jcm_internal', 'exclusion': 'DERIVED_OUTPUT_NOT_REINGESTED'}
-            key = f'transcript:{row["key"]}:{row["generation"]}:{start}:{digest(data[start:end])}'
-            store.capture(session=row['session'], source_key=key, snapshot={}, cursor=row, **item)
-            total += 1
-        else:
+    with source.open('rb') as stream:
+        stat = os.fstat(stream.fileno())
+        prefix = hashlib.sha256()
+        remaining = row['offset']
+        # Validate the saved prefix once, in bounded blocks; never hash it per line.
+        if stat.st_ino == row['inode'] and stat.st_size >= remaining:
+            while remaining:
+                block = stream.read(min(remaining, 1_048_576))
+                if not block:
+                    break
+                prefix.update(block)
+                remaining -= len(block)
+        if remaining or prefix.hexdigest() != row['prefix_hash'] or stat.st_ino != row['inode']:
+            row.update(generation=row['generation'] + 1, offset=0, prefix_hash=digest(b''), inode=stat.st_ino)
+            prefix = hashlib.sha256()
+            stream.seek(0)
+            store.gap('TRANSCRIPT_GENERATION_CHANGED', row['key'])
+        while row['offset'] < stat.st_size:
+            store.policy(policy['epoch'])
+            if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (row['session'],)).fetchone():
+                return total
+            start = row['offset']
+            line = stream.readline(min(MAX_LINE_BYTES + 1, stat.st_size - start))
+            if len(line) > MAX_LINE_BYTES:
+                raise JCMError('TRANSCRIPT_LINE_TOO_LARGE')
+            if not line.endswith(b'\n'):
+                row['status'] = 'partial_line'
+                store.set_cursor(row)
+                break
+            try:
+                record = json.loads(line)
+                if not isinstance(record, dict):
+                    raise ValueError()
+            except (ValueError, UnicodeDecodeError):
+                store.gap('TRANSCRIPT_MALFORMED_LINE', f'{row["key"]}:{start}')
+                row['status'] = 'malformed_line'
+                store.set_cursor(row)
+                break
+            prefix.update(line)
+            row.update(offset=start + len(line), prefix_hash=prefix.hexdigest(), status='read_to_offset')
+            try:
+                item = public_item(record)
+            except JCMError as error:
+                store.gap(str(error), f'{row["key"]}:{start}')
+                item = None
+            if item:
+                if item['role'] == 'tool' and internal_command(store.config, item['payload']['public_item'].get('command')):
+                    item['role'] = 'internal'
+                    item['payload'] = {'text': '', 'origin': 'jcm_internal', 'exclusion': 'DERIVED_OUTPUT_NOT_REINGESTED'}
+                key = f'transcript:{row["key"]}:{row["generation"]}:{start}:{digest(line[:-1])}'
+                store.capture(session=row['session'], source_key=key, snapshot={}, cursor=row, **item)
+                total += 1
+            else:
+                store.set_cursor(row)
+        if row['offset'] == stat.st_size and row['status'] != 'read_to_offset':
+            row['status'] = 'read_to_offset'
             store.set_cursor(row)
     return total
 
@@ -200,6 +264,7 @@ def hook(store, payload):
         return {}
     if not isinstance(payload, dict):
         raise JCMError('HOOK_OBJECT_REQUIRED')
+    payload = without_inline_media(payload)
     event = payload.get('hook_event_name')
     session = payload.get('session_id')
     if event not in EVENTS or not isinstance(session, str) or not 1 <= len(session) <= 128:

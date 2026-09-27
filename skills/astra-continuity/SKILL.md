@@ -40,8 +40,11 @@ for its installed launcher and use the standalone project-hook workflow below.
    transcript, project and supported format. Outside a current session use an
    explicitly identified `--session-id ID` and, if needed, `--transcript PATH`.
    Never choose the newest arbitrary transcript as a substitute.
-3. Inspect `new_events`, source cursor, `follower.running`, hook install and
-   coverage. The bounded local follower covers an already running session
+3. Inspect `stage`, `new_events`, `sources`, `backlog_bytes`, `follower.running`,
+   hook install and coverage. A `blocked` stage is not capture activation; report
+   its error, durable cursor and remaining bytes. Automatic discovery includes
+   same-session paginated segments; unsupported older files remain coverage gaps.
+   The bounded local follower covers an already running session
    without assuming hooks reload immediately. `--no-install-hooks` and
    `--no-follow` intentionally reduce activation; report that boundary.
 4. If continuing work now, run the returned `read_command` and read its complete
