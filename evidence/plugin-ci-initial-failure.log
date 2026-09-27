@@ -1,0 +1,25 @@
+test	Run python -m unittest discover -s tests	﻿2026-09-27T14:44:14.9998149Z ##[group]Run python -m unittest discover -s tests
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:14.9999085Z ^[[36;1mpython -m unittest discover -s tests^[[0m
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0059429Z shell: /usr/bin/bash -e {0}
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0059696Z env:
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0059976Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0060427Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0060851Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0061230Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0061607Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0061989Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:15.0062309Z ##[endgroup]
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3960441Z .............F.................................................
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3961186Z ======================================================================
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3962021Z FAIL: test_T05_partial_line_rotation_and_duplicate_source_refs (test_continuity.ContinuityTests.test_T05_partial_line_rotation_and_duplicate_source_refs)
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3962796Z ----------------------------------------------------------------------
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3963153Z Traceback (most recent call last):
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3969334Z   File "/home/runner/work/jev-context-manager/jev-context-manager/tests/test_continuity.py", line 154, in test_T05_partial_line_rotation_and_duplicate_source_refs
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3970320Z     self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM event_sources').fetchone()[0], 2)
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3970788Z AssertionError: 1 != 2
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3970939Z 
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3971094Z ----------------------------------------------------------------------
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3971430Z Ran 63 tests in 7.200s
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3971596Z 
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.3971679Z FAILED (failures=1)
+test	Run python -m unittest discover -s tests	2026-09-27T14:44:22.4146265Z ##[error]Process completed with exit code 1.

@@ -147,8 +147,12 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         recover_source(self.store, row)
         row = self.store.db.execute('SELECT * FROM sources').fetchone()
         self.assertEqual(len(self.store.events()), 1)
-        path.unlink()
+        # Retain the rotated inode: unlink+create can immediately reuse it on
+        # Linux, which is not an observable rotation when bytes are identical.
+        rotated = path.with_suffix('.rotated')
+        path.rename(rotated)
         path.write_bytes(original + line)
+        self.assertNotEqual(path.stat().st_ino, rotated.stat().st_ino)
         recover_source(self.store, row)
         self.assertEqual(len(self.store.events()), 1)
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM event_sources').fetchone()[0], 2)
