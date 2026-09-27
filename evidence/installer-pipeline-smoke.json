@@ -1,0 +1,9 @@
+{
+  "pass": true,
+  "lane": "real_public_main_curl_pipe_bash",
+  "base": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n",
+  "revision": "f02cf73a2afdde6eb8f43b6fb4ca1f4c48dca586",
+  "version": "0.1.0.dev3",
+  "skill_installed": true,
+  "project_activated": false
+}

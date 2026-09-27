@@ -1,0 +1,27 @@
+{
+  "repository": "oozoofrog/jev-context-manager",
+  "requested_ref": "main",
+  "revision": "f02cf73a2afdde6eb8f43b6fb4ca1f4c48dca586",
+  "source_sha256": "46fd3f64cbc930f42e8f0f5dd02a2bea5ccf01f8c716d63bb237286d09b7d581",
+  "installer": "jcm-remote-installer-v1",
+  "version": "0.1.0.dev3",
+  "prefix": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/runtime",
+  "release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/runtime/releases/e0de4ebc89034089acb8305bbdc56ab0",
+  "launcher": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/bin/jcm",
+  "skill": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/skills/astra-continuity",
+  "previous_release": null,
+  "backup": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/runtime/backups/e0de4ebc89034089acb8305bbdc56ab0"
+}
+
+Installed CLI: '/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/bin/jcm'
+Codex skill: /private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/skills/astra-continuity (refresh/restart Codex if it does not appear)
+Project activation: '/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm pipeline smoke ewsxb83n/bin/jcm' --repo /absolute/project enable --install-hooks
+No project was activated; Jev egress remains subject to explicit per-project policy.
+If needed, add the launcher directory to PATH; shell startup files were not changed.
+usage: jcm bootstrap [-h] {existing,new} ...
+
+positional arguments:
+  {existing,new}
+
+options:
+  -h, --help      show this help message and exit

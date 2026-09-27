@@ -1,0 +1,18 @@
+{
+  "lane": "remote",
+  "base": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer remote 4ekato_6",
+  "pass": true,
+  "first_release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer remote 4ekato_6/runtime/releases/5cd64c19bc1e4aa7a13d9bd09d58b1b2",
+  "second_release": "/private/var/folders/tf/wn7gzzvd6l7f7_ttdx84ps880000gn/T/jcm installer remote 4ekato_6/runtime/releases/70b29720dd8e4243b19a2390bc39f5c4",
+  "revision": "f02cf73a2afdde6eb8f43b6fb4ca1f4c48dca586",
+  "version": "0.1.0.dev3",
+  "profile_and_hooks_preserved": true,
+  "saved_hook_after_upgrade": true,
+  "previous_release_retained": true,
+  "unrelated_skill_preserved": true,
+  "observed_global_config_unchanged": true,
+  "Jev_calls": 0,
+  "skill_installed": true,
+  "fresh_Codex_skill_discovery": "not_tested",
+  "fixture_disabled": true
+}

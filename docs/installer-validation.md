@@ -12,7 +12,8 @@ only project identity/config references in `.codex/jcm.json`.
 |---|---|---|
 | Existing runtime + installer regression tests | 53/53 PASS | `evidence/installer-tests.log` |
 | Local source, actual venv/pip install and upgrade | PASS | `evidence/installer-local-smoke.json` and `.log` |
-| Downloaded GitHub bootstrap and source | Pending the publication verification below | Separate remote smoke evidence |
+| Downloaded GitHub bootstrap and source | PASS | `evidence/installer-remote-smoke.json` and `.log` |
+| Public `main` curl-to-bash installation | PASS | `evidence/installer-pipeline-smoke.json` and `.log` |
 | Actual Codex fresh-session skill discovery | NOT TESTED | Skill-file installation is not proof of host discovery |
 | Actual Jev in this installer test | NOT RUN | No Jev requests; earlier continuity reports remain separate |
 
@@ -52,3 +53,19 @@ The installer retains previous releases and path-indexed backups. It restores re
 paths on ordinary activation failures; sudden process termination or power loss is not
 an atomic multi-path transaction. It does not automatically prune releases/backups or
 migrate project profiles that were originally bound to a different unmanaged Python.
+
+## Published-source verification
+
+The remote smoke downloaded `install.sh` from GitHub, which downloaded its matching
+Python installer. The installer resolved the source ref to immutable commit
+`f02cf73a2afdde6eb8f43b6fb4ca1f4c48dca586`, downloaded that archive, and installed
+`0.1.0.dev3`. Both the initial remote install and remote reinstallation passed.
+The previously saved project hook still captured a synthetic event after upgrade;
+private data and project configuration were preserved, and no Jev call was made.
+
+A separate test fetched the public `main/install.sh` through the README's
+curl-to-bash pipeline, passing isolated destination directories. It installed the
+CLI and skill successfully and ran the installed bootstrap help. Neither remote
+test installed into the developer's actual global Codex skill directory. The final
+publication after these tests adds documentation/evidence only; the tested installer
+and runtime bytes are unchanged.
