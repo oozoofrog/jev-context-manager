@@ -22,6 +22,8 @@ To use Jev, set `TYPESAFE_API_KEY` in the environment where Codex runs. Transcri
 
 ## Usage
 
+See the [user guide](docs/user-guide.md) for setup, session recovery, record management, and troubleshooting.
+
 In a new chat, review and trust the plugin's hooks, then make this request in the project you want to use:
 
 ```text
