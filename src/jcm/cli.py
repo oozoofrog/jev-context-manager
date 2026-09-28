@@ -27,6 +27,23 @@ def parser():
     policy.add_argument('--enabled', choices=['true', 'false'])
     sub.add_parser('doctor')
     sub.add_parser('status')
+    entry = sub.add_parser('entry').add_subparsers(dest='entry_mode', required=True)
+    preview = entry.add_parser('preview')
+    preview.add_argument('--session-id')
+    preview.add_argument('--page', type=int, default=1)
+    choose = entry.add_parser('choose')
+    choose.add_argument('--session-id')
+    choose.add_argument('--entry', required=True)
+    choose.add_argument('--choice', required=True, choices=['from_invocation', 'whole_session', 'resume', 'keep_disabled', 'new_task', 'continue_request'])
+    tasks = entry.add_parser('tasks')
+    tasks.add_argument('--session-id')
+    tasks.add_argument('--entry', required=True)
+    tasks.add_argument('--page', type=int, default=1)
+    tasks.add_argument('--search')
+    select = entry.add_parser('select')
+    select.add_argument('--session-id')
+    select.add_argument('--entry', required=True)
+    select.add_argument('--task', required=True)
     capture = sub.add_parser('hook')
     capture.add_argument('--stdin', action='store_true', required=True)
     route = sub.add_parser('dispatch')
@@ -58,6 +75,20 @@ def run(args):
     from .plugin import environment_binding, bind
     administrative = args.command in ('status', 'doctor', 'disable', 'policy', 'forget')
     binding = environment_binding() if os.environ.get('JCM_PLUGIN_ROOT') and not administrative else None
+    if args.command == 'entry':
+        from . import entry
+        if args.entry_mode == 'preview':
+            if binding:
+                try:
+                    previous = config.load(args.home, args.repo)
+                except JCMError as exc:
+                    if str(exc) != 'PROJECT_NOT_ENABLED':
+                        raise
+                else:
+                    bind(previous, binding, migrate=not previous.get('plugin'))
+            return entry.preview(args.home, args.repo, args.session_id, page=args.page)
+        if args.entry_mode == 'choose':
+            return entry.choose(args.home, args.repo, args.entry, args.choice, args.session_id, binding)
     if args.command == 'enable':
         policy = config.enable(args.home, args.repo)
         if binding:
@@ -81,6 +112,11 @@ def run(args):
         return config.install_hooks(policy)
     store = Store(policy)
     try:
+        if args.command == 'entry':
+            from . import entry
+            if args.entry_mode == 'tasks':
+                return entry.tasks(store, args.entry, args.session_id, args.page, args.search)
+            return entry.select_task(store, args.entry, args.task, args.session_id)
         if args.command == 'disable':
             store.change_policy(enabled=False)
             return {'enabled': False, 'records_preserved': True}

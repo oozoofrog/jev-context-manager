@@ -67,13 +67,13 @@ class Store:
         self.db.execute('PRAGMA synchronous=FULL')
         self.db.execute('PRAGMA foreign_keys=ON')
         version = self.db.execute('PRAGMA user_version').fetchone()[0]
-        if version not in (0, 1, 2):
+        if version not in (0, 1, 2, 3):
             self.db.close()
             raise JCMError('UNSUPPORTED_DATABASE_VERSION')
         self.db.executescript(SCHEMA)
-        # Older runtimes must not run forget against the extended schema while
-        # overlooking source-bearing provider diagnostics.
-        self.db.execute('PRAGMA user_version=2')
+        # Older runtimes must not ignore capture boundaries or leave work-menu
+        # derivatives behind when forgetting a session.
+        self.db.execute('PRAGMA user_version=3')
 
     def close(self):
         self.db.close()
@@ -114,9 +114,23 @@ class Store:
     def gap(self, code, detail=''):
         self.db.execute('INSERT OR REPLACE INTO gaps VALUES (?,?,?)', (code, detail, now()))
 
+    def save_metadata(self, key, value, epoch):
+        self.db.execute('BEGIN IMMEDIATE')
+        try:
+            self.policy(epoch)
+            self.db.execute('INSERT OR REPLACE INTO meta VALUES (?,?)', (key, encode(value).decode()))
+            self.db.execute('COMMIT')
+        except BaseException:
+            self.db.execute('ROLLBACK')
+            raise
+
     def capture(self, *, session, turn, kind, role, payload, snapshot, source_key,
-                identity, observed_at=None, cursor=None, failpoint=None):
+                identity, observed_at=None, cursor=None, failpoint=None, scope_admitted=False):
         policy = self.policy()
+        if policy.get('capture_scope') and not scope_admitted:
+            if cursor:
+                self.set_cursor(cursor)
+            return None
         if self.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
             return None
         admitted, redactions = redact(payload)
@@ -239,6 +253,10 @@ class Store:
             self.db.execute('DELETE FROM sources WHERE session=?', (session,))
             self.db.execute('DELETE FROM meta WHERE key IN (?,?)',
                             ('bootstrap_existing:' + session, 'bootstrap_new:' + session))
+            self.db.execute('DELETE FROM meta WHERE key IN (?,?)',
+                            ('scope_anchor:' + session, 'scope_session:' + session))
+            # Work menus are mixed-source derivatives, just like recovery packs.
+            self.db.execute("DELETE FROM meta WHERE key LIKE 'entry_catalogue:%' OR key LIKE 'entry_selection:%' OR key LIKE 'entry_control:%'")
             # Conservative derivative invalidation includes mixed-source model requests.
             for table in ('requests', 'packs', 'receipts', 'decisions', 'provider_errors'):
                 self.db.execute(f'DELETE FROM {table}')

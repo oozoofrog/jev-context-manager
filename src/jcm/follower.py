@@ -7,7 +7,7 @@ import time
 import threading
 from pathlib import Path
 
-from .adapter import recover_source
+from .adapter import discover_registered_session, recover_source
 from .util import JCMError, encode, identifier
 
 
@@ -21,6 +21,11 @@ def follower_status(store, key):
             alive = True
     except ProcessLookupError:
         pass
+    except PermissionError:
+        # EPERM is not evidence of a dead collector. The durable heartbeat is
+        # independently observed, and prevents duplicate launches in sandboxes.
+        alive = True
+        value['process_probe'] = 'permission_denied'
     value['running'] = alive and value['state'] == 'running' and time.time() - value.get('heartbeat', 0) < 10
     return value
 
@@ -63,6 +68,7 @@ def follow(store, key, idle_seconds=1800, max_seconds=86400, interval=.5):
             store.db.execute('INSERT OR REPLACE INTO meta VALUES (?,?)', ('follower:' + key, encode(value).decode()))
             return value
         try:
+            discovered_at = 0
             while True:
                 current_policy = store.policy()
                 if current_policy.get('plugin') and current_policy['cli_argv'] != store.config['cli_argv']:
@@ -72,6 +78,20 @@ def follow(store, key, idle_seconds=1800, max_seconds=86400, interval=.5):
                 if not row:
                     state = 'source_removed'
                     break
+                if time.monotonic() - discovered_at >= 5:
+                    keys = discover_registered_session(store, row['session'])
+                    discovered_at = time.monotonic()
+                    if keys and keys[-1] != key:
+                        try:
+                            recover_source(store, row)
+                        except (JCMError, OSError):
+                            pass  # recover_source retained the old-page gap.
+                        # The new page gets its own single-owner follower lock.
+                        # Keep this cursor until the successor is confirmed alive.
+                        successor = start(store, keys[-1])
+                        if successor['running']:
+                            state = 'source_advanced'
+                            break
                 stat = Path(row['path']).stat()
                 current = (stat.st_ino, stat.st_size, stat.st_mtime_ns)
                 if current != previous:

@@ -1,6 +1,6 @@
 {
   "name": "jev-context-manager",
-  "version": "0.1.0-dev.9",
+  "version": "0.1.0-dev.10",
   "description": "Automatic local Codex continuity with existing-session adoption, new-session recovery and bounded Jev judgments.",
   "author": {
     "name": "oozoofrog"
@@ -15,7 +15,7 @@
     "capabilities": [],
     "websiteURL": "https://github.com/oozoofrog/jev-context-manager",
     "defaultPrompt": [
-      "이 프로젝트에 JCM을 설정하고 현재 세션을 편입해주세요.",
+      "$jev-context-manager:astra-continuity",
       "JCM 자동 기록과 새 세션 복원 상태를 확인해주세요."
     ]
   }

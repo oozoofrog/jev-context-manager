@@ -4,6 +4,7 @@ A Codex plugin that carries working context across sessions. It automatically re
 
 ## Features
 
+- **Choose scope or work** — A bare skill invocation previews a new conversation before you choose where recording begins; managed projects offer work to continue or a new task.
 - **Automatic capture** — Saves public messages and supported tool results locally for registered sessions in enabled projects.
 - **Existing-session adoption** — Imports the history of an ongoing session and continues capturing new records.
 - **New-session recovery** — Retrieves earlier requirements and recent changes without a separate summary or handoff.

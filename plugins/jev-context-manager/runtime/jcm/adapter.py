@@ -45,6 +45,11 @@ def internal_command(config, command):
         return False
     if tail in (['status'], ['doctor'], ['worker', 'drain'], ['bootstrap', 'existing']):
         return True
+    if tail[:1] == ['entry']:
+        # Entry output contains a transient preview that may be out of scope.
+        # Reject shell operators so unrelated commands are never excluded.
+        return len(tail) >= 2 and tail[1] in ('preview', 'choose', 'tasks', 'select') and not any(
+            v in (';', '&&', '||', '|', '>') for v in tail)
     if tail[:2] == ['bootstrap', 'existing']:
         remaining, seen = tail[2:], set()
         while remaining:
@@ -155,7 +160,8 @@ def public_item(record):
         raise JCMError('UNKNOWN_TRANSCRIPT_RECORD')
     payload = record.get('payload', {})
     if payload.get('type') != 'item_completed':
-        if payload.get('type') in {'task_started', 'task_complete', 'token_count', 'turn_aborted'}:
+        if payload.get('type') in {'task_started', 'task_complete', 'token_count', 'turn_aborted',
+                                  'thread_settings_applied'}:
             return None
         raise JCMError('UNKNOWN_TRANSCRIPT_EVENT')
     item = payload.get('item', {})
@@ -219,8 +225,11 @@ def _recover_source(store, row):
     if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (row['session'],)).fetchone():
         return 0
     source = transcript_path(store, row['path'], row['session'])
+    from .scope import start_offset, boundary, allows_item
+    rule = boundary(store, row['session'])
     total = 0
     with source.open('rb') as stream:
+        admitted_start = start_offset(store, row, stream)
         stat = os.fstat(stream.fileno())
         prefix = hashlib.sha256()
         remaining = row['offset']
@@ -266,11 +275,15 @@ def _recover_source(store, row):
                 store.gap(str(error), f'{row["key"]}:{start}')
                 item = None
             if item:
+                if admitted_start is None or start < admitted_start or not allows_item(rule, item):
+                    store.set_cursor(row)
+                    continue
                 if item['role'] == 'tool' and internal_command(store.config, item['payload']['public_item'].get('command')):
                     item['role'] = 'internal'
                     item['payload'] = {'text': '', 'origin': 'jcm_internal', 'exclusion': 'DERIVED_OUTPUT_NOT_REINGESTED'}
                 key = f'transcript:{row["key"]}:{row["generation"]}:{start}:{digest(line[:-1])}'
-                store.capture(session=row['session'], source_key=key, snapshot={}, cursor=row, **item)
+                store.capture(session=row['session'], source_key=key, snapshot={}, cursor=row,
+                              scope_admitted=True, **item)
                 total += 1
             else:
                 store.set_cursor(row)
@@ -280,9 +293,36 @@ def _recover_source(store, row):
     return total
 
 
+def discover_registered_session(store, session):
+    """Discover new Codex pages only for an already registered session."""
+    if not store.db.execute('SELECT 1 FROM sources WHERE session=?', (session,)).fetchone():
+        return []
+    if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
+        return []
+    from .bootstrap import discover_all
+    try:
+        paths = discover_all(store, session)
+    except (JCMError, OSError) as error:
+        # Explicitly registered fixture/custom filenames may not be discoverable.
+        # Their already validated cursor remains usable.
+        code = str(error) if isinstance(error, JCMError) else 'TRANSCRIPT_UNAVAILABLE'
+        if code != 'TRANSCRIPT_NOT_FOUND':
+            store.gap(code, session)
+        return []
+    keys = []
+    for path in paths:
+        try:
+            keys.append(register_transcript(store, path, session))
+        except (JCMError, OSError) as error:
+            store.gap(str(error) if isinstance(error, JCMError) else 'TRANSCRIPT_UNAVAILABLE', session)
+    return keys
+
+
 def recover_sources(store):
     store.policy()
     total = 0
+    for row in store.db.execute('SELECT DISTINCT session FROM sources').fetchall():
+        discover_registered_session(store, row['session'])
     for row in store.db.execute('SELECT * FROM sources').fetchall():
         try:
             total += recover_source(store, row)
@@ -325,13 +365,23 @@ def hook(store, payload):
     elif event == 'SessionStart':
         text = str(payload.get('source', 'unknown'))
     key = identity(kind, turn, text, payload.get('tool_use_id'))
+    from .entry import bare_invocation, pending
+    from .scope import boundary, admit_prompt, allows_item
+    if event == 'UserPromptSubmit':
+        admit_prompt(store, session, turn, key)
+    rule = boundary(store, session)
+    if rule is False:
+        return {}
     admitted = ({'text': '', 'origin': 'jcm_internal', 'exclusion': 'DERIVED_OUTPUT_NOT_REINGESTED'}
                 if role == 'internal' else {'text': text, 'hook': payload})
     event_id = store.capture(session=session, turn=turn, kind=kind, role=role,
                              payload=admitted, snapshot=snapshot(store.config['root']),
-                             source_key='hook:' + session + ':' + key, identity=key)
+                             source_key='hook:' + session + ':' + key, identity=key,
+                             scope_admitted=allows_item(rule, {'role': role, 'turn': turn, 'identity': key}))
     if event_id is None:
-        return {'systemMessage': 'JCM: this source was forgotten; capture remains suppressed.'}
+        if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
+            return {'systemMessage': 'JCM: this source was forgotten; capture remains suppressed.'}
+        return {}  # An expected scope exclusion is not a missing-capture error.
     store.db.execute('INSERT OR REPLACE INTO meta VALUES (?,?)', ('hook_received:' + event, session))
     try:
         register_transcript(store, payload.get('transcript_path'), session)
@@ -340,6 +390,12 @@ def hook(store, payload):
     if event not in ('SessionEnd', 'Interrupt'):
         recover_sources(store)
     if event == 'UserPromptSubmit':
+        if bare_invocation(text) or pending(store, session):
+            command = shlex.join(store.config['cli_argv'] + ['entry', 'preview'])
+            return {'hookSpecificOutput': {'hookEventName': event, 'additionalContext':
+                'JCM skill entry or pending selection. Run ' + command +
+                '. Show the current situation and choices. Do not run bootstrap new or resume past work before selection. '
+                'If this is a concrete unrelated work request, honor it without forcing a selection; entry is not authorization.'}}
         token = store.request(session, event_id)
         command = shlex.join(store.config['cli_argv'] + ['bootstrap', 'new', '--request-token', token])
         # Only fixed trusted text, installation-owned argv and validated opaque tokens.

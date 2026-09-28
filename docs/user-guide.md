@@ -13,24 +13,28 @@ codex plugin add jev-context-manager@jcm
 
 Open a new chat and review and trust the plugin's hooks. To use Jev, provide `TYPESAFE_API_KEY` in the environment where Codex and its commands run. Setting it in a terminal does not change the environment of an already running desktop app.
 
-Installing the plugin does not activate projects. Enable each project you want JCM to record.
+Installing the plugin does not activate projects. Invoke the skill in the project you want to manage.
 
-## Start recording a project
+## Start or choose work
 
-In a chat for that project, send:
+Send only the skill mention:
 
 ```text
 $jev-context-manager:astra-continuity
-Enable JCM for this project and adopt the current session.
 ```
 
-JCM registers the project, imports the current session's supported public history, and starts capturing new records. Adoption also works for a session that began before JCM was installed.
+For a new project, JCM first previews the current conversation and briefly describes its work, decisions and remaining items. It then offers:
 
-Jev is used automatically for enabled projects. No separate transmission permission
-is required, and old transmission-denial flags do not exclude previously captured
-records. Provide `TYPESAFE_API_KEY` in the environment where Codex runs. If Jev cannot
-produce a usable judgment, local recovery remains available with `quality=degraded`
-and the actual failure reason.
+- **From this invocation**: record this skill call and subsequent user messages and work. Earlier conversation content and the preview derived from it are excluded from managed history.
+- **Whole current session**: also include the observable prior history of this conversation. Other old conversations are not automatically imported.
+
+The boundary is the original skill invocation, not the time you answer. No project is enabled and no preview is sent to Jev before you choose. Pending choices survive interruption. Answer with a number or ordinary text; you do not need JCM commands.
+
+For an already managed project, JCM shows source-backed work choices and **Start a new task**. It checks the current files before claiming old work is still open or complete. Selecting work recovers the relevant decisions, corrections and common constraints; it does not authorize unrelated historical commands. More choices remain accessible through more pages or search.
+
+For a disabled project, JCM asks whether to resume. Resuming preserves its recording scope and stored history, then shows work choices. Existing profiles retain their prior scope when updated.
+
+Jev is used automatically once a project is enabled. Provide `TYPESAFE_API_KEY` in the environment where Codex runs; no separate transmission permission is required. If Jev cannot produce a usable judgment, recovery is marked `degraded` with the actual reason.
 
 ## Continue in a new session
 
@@ -56,6 +60,8 @@ Useful fields in the response:
 
 | Field | Meaning |
 |---|---|
+| `capture_scope` | Chosen initial session and invocation boundary, or `legacy_project` for existing profiles |
+| `project_reference` | `default_registry_only` means the plugin uses its default external registry because the project directory is protected |
 | `event_count` | Number of stored events |
 | `hook_events_received` | Hook events received by this project |
 | `followers[].running` | Whether an adopted session's local follower is running |
@@ -107,7 +113,7 @@ $jev-context-manager:astra-continuity
 Stop JCM capture for this project. Keep the stored history.
 ```
 
-To resume, ask it to re-enable the project and adopt the current session again.
+To resume, invoke the skill and choose to resume recording. The existing scope is preserved.
 Disabling JCM stops both collection and Jev use for that project.
 
 Stopping capture preserves stored history. Re-enabling can recover records written to registered transcripts while capture was stopped. To exclude a particular session permanently, identify its exact session ID and ask the skill to forget it. This deletes its admitted records and prevents JCM from collecting that session again.
@@ -123,7 +129,7 @@ JCM="/absolute/path/to/installed/plugin/scripts/jcm"
 PROJECT="/absolute/path/to/project"
 ```
 
-For a new registration:
+For explicit legacy project-wide registration (bypasses the interactive scope choice):
 
 ```sh
 "$JCM" --repo "$PROJECT" enable

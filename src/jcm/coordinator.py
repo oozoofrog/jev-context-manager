@@ -12,7 +12,10 @@ from .worker import drain
 
 
 def candidates(store, request_event):
-    events = [e for e in store.events() if e['role'] in ('user', 'assistant', 'tool') and e['id'] != request_event['id']]
+    from .entry import bare_invocation
+    events = [e for e in store.events() if e['role'] in ('user', 'assistant', 'tool') and e['id'] != request_event['id']
+              and not (e['role'] == 'user' and bare_invocation(store.material(e)['text']))
+              and not store.db.execute('SELECT 1 FROM meta WHERE key=?', ('entry_control:' + e['id'],)).fetchone()]
     pending = {r[0] for r in store.db.execute("SELECT event_id FROM jobs WHERE state!='succeeded'")}
     # Unclassified user text stays protected. This first slice uses project scope;
     # it does not pretend to have confirmed fine-grained task applicability.
@@ -33,6 +36,14 @@ def dispatch(store, token, provider=None):
     current = store.event(request['event_id'])
     request_text = store.material(current)['text']
     events, protected, pending, gaps = candidates(store, current)
+    selected_task = store.db.execute('SELECT value FROM meta WHERE key=?', ('entry_selection:' + token,)).fetchone()
+    selected_task = json.loads(selected_task[0]) if selected_task else None
+    if selected_task:
+        task = store.material(store.event(selected_task['task_id']))
+        request_text = ('The user selected this historical task to continue. Recover its decisions, corrections, '
+                        'unresolved work and applicable shared constraints. Exclude unrelated tasks. Selected task: '
+                        + task['text'] + '\nCurrent selection: ' + request_text)
+        protected = {task['event_id']}
     materials = [store.material(e) for e in events]
     semantic = {'assessments': [{'complete': False, 'spans': [], 'relevance': None,
                                 'omission': None, 'representation': 'full'} for _ in materials],
@@ -48,7 +59,9 @@ def dispatch(store, token, provider=None):
     gaps.extend(semantic['errors'] + worker['errors'])
     intent = semantic['intent']
     state = 'new_task' if intent in ('new_task', 'none') else 'ready'
-    if intent == 'ambiguous':
+    if selected_task:
+        state = 'ready'
+    if intent == 'ambiguous' and not selected_task:
         state = 'ambiguous'
         gaps.append('TASK_UNRESOLVED_AFTER_PROJECT_SCOPE_EXPANSION')
     selected, excluded = [], []
@@ -101,13 +114,14 @@ def dispatch(store, token, provider=None):
             quality = 'degraded'
     store.policy(epoch)
     gaps.extend(r[0] for r in store.db.execute('SELECT code FROM gaps'))
-    gaps.extend(['HOSTED_AND_SPECIAL_TOOL_PATHS_NOT_COVERED', 'TASK_SCOPE_PROJECT_ONLY',
-                 'MODEL_OUTPUT_DELIVERY_NOT_OBSERVABLE'])
+    gaps.extend(['HOSTED_AND_SPECIAL_TOOL_PATHS_NOT_COVERED', 'MODEL_OUTPUT_DELIVERY_NOT_OBSERVABLE'])
+    if not selected_task:
+        gaps.append('TASK_SCOPE_PROJECT_ONLY')
     revision = store.db.execute('SELECT COALESCE(MAX(seq),0) FROM events').fetchone()[0]
     pack_id = uuid.uuid4().hex
     pack = {'schema_version': 1, 'origin': 'jcm', 'pack_id': pack_id, 'request_token': token,
             'repo_id': store.config['repo_id'], 'worktree_id': store.config['worktree_id'],
-            'session_id': request['session'], 'request': request_text, 'journal_read_revision': revision,
+            'session_id': request['session'], 'request': request_text, 'selected_task': selected_task, 'journal_read_revision': revision,
             'policy_epoch': epoch, 'created_at': now(), 'dispatch': state, 'quality': quality,
             'semantic_error': semantic_error, 'snapshot': after, 'reconciliation': reconcile,
             'coverage': {'state': 'partial', 'gaps': sorted(set(gaps)),
@@ -231,6 +245,8 @@ def status(store):
             'mode': 'disabled' if not policy['enabled'] else 'limited',
             'mode_reason': 'Production hook trust and complete acceptance gates are not attested.',
             'allow_egress': policy['allow_egress'], 'policy_epoch': policy['epoch'],
+            'capture_scope': policy.get('capture_scope', 'legacy_project'),
+            'project_reference': policy.get('project_reference', 'legacy'),
             'plugin': plugin_state,
             'hook_events_received': hooks, 'hook_trust': 'not_attested',
             'transcript_parser': PARSER,

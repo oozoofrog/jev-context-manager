@@ -78,3 +78,21 @@ Manual checkpoint is deliberately absent from the first-slice critical path.
 T11/T12/T18–T23 with explicit existing-session adoption and fresh-session preparation/read.
 Implementation: `bootstrap.py`, `follower.py`, lifecycle wiring in `adapter.py`.
 Evidence: `tests/test_bootstrap.py`, `scripts/live_bootstrap.py`, [report](bootstrap-validation.md).
+
+## Bare skill entry extension (2026-09-28)
+
+The user's requested flow is situation → recording scope/work choice → capture or continuation. A bare skill invocation is not an instruction to resume the last historical task.
+
+| Gate | Implementation | Evidence |
+|---|---|---|
+| E01 Preview before registration | `entry.preview`, CLI/skill | No profile/blobs/Jev before choice; real bare CLI call |
+| E02 Preserve invocation boundary | `entry.choose`, `scope`, capture admission | Prior-content canaries, waiting messages, repeated invocation, rotation/descriptor proof |
+| E03 Whole current session | `scope`, `bootstrap` | Earlier decision plus later correction in independent real CLI result |
+| E04 Work choice | `worklist`, entry selection, `coordinator` | Source-bound task IDs, shared constraints, unrelated task exclusion; real selected theme result |
+| E05 New task and ordinary request | entry state and hook routing | No past-work replay; direct concrete request during a menu |
+| E06 Disabled and interrupted state | entry state/policy | No collection/Jev before resume; retained scope and pending original boundary |
+| E07 Registration/liveness failure | `config`, `follower` | Rollback, registry-only native plugin path and probe-permission tests |
+| E08 Existing data and pagination | schema v3, `store`, adapter/follower | Records/tombstones/scope preservation; autonomous successor discovery; forgotten derivatives invalidated |
+| E09 Distribution | release pipeline | Bundle/wheel, exact-commit CI, published install, backup and fresh loader checks |
+
+See [the skill-entry validation report](skill-entry-validation.md) and its machine-readable evidence. CLI, real Jev, source/runtime fixtures, installed loading and ordinary Desktop input remain distinct evidence lanes.

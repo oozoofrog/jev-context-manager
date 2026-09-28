@@ -59,12 +59,13 @@ def load(home, root):
     return {**config, 'allow_egress': True}
 
 
-def enable(home, root, transcript_roots=None):
+def enable(home, root, transcript_roots=None, capture_scope=None):
     home, root = Path(home).expanduser().resolve(), Path(root).resolve(strict=True)
     if (root / '.codex').is_symlink():
         raise JCMError('SYMLINK_PROJECT_CONFIG_REFUSED')
     private_dir(home / 'profiles')
     with closing(connect_registry(home)) as db, db:
+        db.execute('BEGIN IMMEDIATE')
         existing = db.execute('SELECT repo_id FROM projects WHERE root=?', (str(root),)).fetchone()
         if existing:
             return load(home, root)
@@ -78,19 +79,44 @@ def enable(home, root, transcript_roots=None):
                      [Path(os.environ.get('CODEX_HOME', '~/.codex')).expanduser() / 'sessions'])],
                   'cli_argv': runtime_argv() + ['--home', str(home), '--repo', str(root)],
                   'created': now()}
-        atomic_write(home / 'profiles' / (repo_id + '.json'), encode(config))
-        db.execute('INSERT INTO projects VALUES (?,?,?,?)',
-                   (str(root), repo_id, git(root, 'rev-parse', '--absolute-git-dir'), now()))
-    local = root / '.codex'
-    if local.is_symlink():
-        raise JCMError('SYMLINK_PROJECT_CONFIG_REFUSED')
-    local.mkdir(exist_ok=True)
-    pointer = local / 'jcm.json'
-    if pointer.exists():
-        # Existing configuration is never silently replaced.
-        atomic_write(home / 'backups' / (repo_id + '-jcm.json'), pointer.read_bytes())
-    atomic_write(pointer, encode({'schema_version': 1, 'repo_id': repo_id,
-                                 'profile_ref': str(home / 'profiles' / (repo_id + '.json'))}))
+        if capture_scope is not None:
+            config['capture_scope'] = capture_scope
+        local = root / '.codex'
+        pointer = local / 'jcm.json'
+        profile = home / 'profiles' / (repo_id + '.json')
+        if pointer.is_symlink():
+            raise JCMError('SYMLINK_PROJECT_CONFIG_REFUSED')
+        original = pointer.read_bytes() if pointer.exists() else None
+        wrote_pointer = False
+        try:
+            try:
+                local.mkdir(exist_ok=True)
+                if original is not None:
+                    atomic_write(home / 'backups' / (repo_id + '-jcm.json'), original)
+                atomic_write(pointer, encode({'schema_version': 1, 'repo_id': repo_id,
+                                             'profile_ref': str(profile)}))
+                wrote_pointer = True
+                config['project_reference'] = 'written'
+            except PermissionError:
+                # Plugin hooks can resolve the default external registry without
+                # writing Codex's protected project directory. A custom home
+                # still needs the reference; never claim that it is discoverable.
+                if home != default_home().resolve() or original is not None:
+                    raise
+                config['project_reference'] = 'default_registry_only'
+            atomic_write(profile, encode(config))
+            db.execute('INSERT INTO projects VALUES (?,?,?,?)',
+                       (str(root), repo_id, git(root, 'rev-parse', '--absolute-git-dir'), now()))
+            db.commit()
+        except BaseException:
+            db.rollback()
+            if wrote_pointer:
+                if original is None:
+                    pointer.unlink(missing_ok=True)
+                else:
+                    atomic_write(pointer, original)
+            profile.unlink(missing_ok=True)
+            raise
     return config
 
 
