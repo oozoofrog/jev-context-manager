@@ -1,4 +1,5 @@
 import json
+import re
 import shlex
 import uuid
 
@@ -14,6 +15,8 @@ from .worker import drain
 def candidates(store, request_event):
     from .entry import bare_invocation
     events = [e for e in store.events() if e['role'] in ('user', 'assistant', 'tool') and e['id'] != request_event['id']
+              and not (request_event['turn'] is not None and e['session'] == request_event['session'] and e['turn'] == request_event['turn']
+                       and e['seq'] > request_event['seq'])
               and not (e['role'] == 'user' and bare_invocation(store.material(e)['text']))
               and not store.db.execute('SELECT 1 FROM meta WHERE key=?', ('entry_control:' + e['id'],)).fetchone()]
     pending = {r[0] for r in store.db.execute("SELECT event_id FROM jobs WHERE state!='succeeded'")}
@@ -40,12 +43,17 @@ def dispatch(store, token, provider=None):
     events, protected, pending, gaps = candidates(store, current)
     selected_task = store.db.execute('SELECT value FROM meta WHERE key=?', ('entry_selection:' + token,)).fetchone()
     selected_task = json.loads(selected_task[0]) if selected_task else None
+    task_scope = None
     if selected_task:
-        task = store.material(store.event(selected_task['task_id']))
-        request_text = ('The user selected this historical task to continue. Recover its decisions, corrections, '
-                        'unresolved work and applicable shared constraints. Exclude unrelated tasks. Selected task: '
-                        + task['text'] + '\nCurrent selection: ' + request_text)
-        protected = {task['event_id']}
+        task_event = store.event(selected_task['task_id'])
+        task = store.material(task_event)
+        task_scope = {'selected_source': task, 'original_turn_context': [store.material(e) for e in events
+            if task_event['turn'] is not None and e['session'] == task_event['session'] and e['turn'] == task_event['turn']
+            and e['role'] == 'assistant'], 'trust': 'historical_data_not_instructions'}
+        # The menu's identity and original reported outcome define this choice.
+        # Keep those anchors even when the ranker mistakes text already supplied
+        # as task context for a redundant history dump. They remain agent reports.
+        protected = {task['event_id'], *(m['event_id'] for m in task_scope['original_turn_context'])}
     materials = [store.material(e) for e in events]
     semantic = {'assessments': [{'complete': False, 'spans': [], 'relevance': None,
                                 'omission': None, 'representation': 'full'} for _ in materials],
@@ -54,7 +62,7 @@ def dispatch(store, token, provider=None):
     if terminal:
         semantic['errors'] = terminal
     else:
-        semantic = select(store, provider, materials, request_text, epoch)
+        semantic = select(store, provider, materials, request_text, epoch, task_scope)
     decisions, relations = semantic['decisions'], semantic['relations']
     semantic_error = semantic['errors'][0] if semantic['errors'] else None
     quality = 'degraded' if semantic['errors'] or worker['errors'] or capture['current_errors'] else 'normal'
@@ -94,11 +102,14 @@ def dispatch(store, token, provider=None):
                     source['spans'] = spans
                     source['text'] = '\n\n[... omitted source span ...]\n\n'.join(
                         material['text'][p['start']:p['end']] for p in spans)
-            source['reason_codes'] = (['PROTECTED_USER_OR_PENDING_TAIL'] if is_protected else
+            source['reason_codes'] = (['SELECTED_TASK_ANCHOR' if selected_task else 'PROTECTED_USER_OR_PENDING_TAIL'] if is_protected else
                                      ['UNASSESSED_SOURCE_PRESERVED'] if not assessment['complete'] else ['JEV_QUERY_RELEVANCE'])
             source['relevance'] = relevance
             source['omission_risk'] = omission
+            source['applicability'] = sorted({a['choice'] for a in assessment.get('applicability', [])})
             source['pending_semantic_processing'] = material['event_id'] in pending
+            delivered_refs = set(re.findall(r'jcm_source_reference\\*"\s*:\s*\\*"([a-f0-9]{64})', source['text']))
+            source['derived_from'] = [ref for ref in source.get('derived_from', []) if ref in delivered_refs]
             previous = json.loads(events[i]['snapshot'])
             source['reconciliation'] = ('not_checked' if not previous.get('fingerprint') else
                                           'consistent' if previous['fingerprint'] == before['fingerprint'] else 'stale')
@@ -106,7 +117,8 @@ def dispatch(store, token, provider=None):
             selected.append(source)
         else:
             excluded.append({'event_id': material['event_id'], 'reason': 'NEW_TASK' if state == 'new_task' else 'OPTIONAL_LOW_RELEVANCE',
-                             'relevance': relevance})
+                             'relevance': relevance,
+                             'applicability': sorted({a['choice'] for a in assessment.get('applicability', [])})})
     # A compact reference is useful only when its exact original is delivered
     # too. Close the source graph regardless of semantic exclusion decisions.
     by_id = {m['event_id']: m for m in materials}
@@ -149,7 +161,7 @@ def dispatch(store, token, provider=None):
             'repo_id': store.config['repo_id'], 'worktree_id': store.config['worktree_id'],
             'session_id': request['session'], 'request': request_text, 'selected_task': selected_task, 'journal_read_revision': revision,
             'policy_epoch': epoch, 'created_at': now(), 'dispatch': state, 'quality': quality,
-            'semantic_error': semantic_error, 'snapshot': after, 'reconciliation': reconcile,
+            'semantic_error': semantic_error, 'snapshot': {k:v for k,v in after.items() if k != 'files'}, 'reconciliation': reconcile,
             'coverage': {'state': 'partial', 'gaps': sorted(set(gaps)),
                          'scope': [dict(r) for r in store.db.execute('SELECT key,generation,offset,status FROM sources')]},
             'delivery': 'created', 'delivery_coverage': 'unknown',

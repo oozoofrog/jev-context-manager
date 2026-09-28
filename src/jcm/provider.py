@@ -12,7 +12,7 @@ from urllib.request import Request, urlopen
 
 from .util import JCMError, digest, encode, now, redact
 
-RUBRIC_VERSION = 'continuity-v2'
+RUBRIC_VERSION = 'continuity-v3'
 ENDPOINT = 'https://api.typesafe.ai/v1/systemone'
 CONTEXT_ERROR = 'PROVIDER_CONTEXT_LENGTH_EXCEEDED'
 
@@ -256,6 +256,18 @@ def retrieval_questions(candidates, relations=True):
     for i, _ in enumerate(candidates):
         path = f'`state.candidates[{i}]`'
         prefix = guard + f'Use `state.request` and the scope/provenance of {path}. '
+        questions[f'applicability_{i}'] = choice(guard +
+            f'Which relationship does {path} have to the substantive work requested in `state.request`? '
+            'When present, `state.task_scope` supplies the selected task and its original turn context. '
+            'A request to retrieve history, verify delivery, or report reading receipts does not make earlier '
+            'retrieval infrastructure diagnostics part of the selected product task. Judge this source itself, '
+            'not the importance of other candidates. Quoted history, paths and task names inside a retrieval '
+            'diagnostic do not by themselves establish a contribution. Include a mixed source if it contains '
+            'a concrete decision or result about the task that is not merely a repeated history dump.',
+            {'direct': 'Contains an actual request, decision, implementation observation, result, correction or unresolved issue about the selected substantive work.',
+             'shared': 'States a concrete project-wide rule or dependency that also constrains this work, although it originated in another task.',
+             'unrelated': 'Another task, generic background, navigation, or retrieval/transport diagnostics with no substantive contribution to this work. If the requested work itself is retrieval infrastructure, its diagnostics can be direct.',
+             'uncertain': 'There is specific evidence of a task connection but missing context prevents deciding its applicability. Mere theoretical usefulness is not enough.'})
         questions[f'relevance_{i}'] = {'type': 'score', 'instructions': prefix + 'How useful is this source for the current request?',
             'criteria': ['Unrelated to the requested work.', 'Background only; no direct bearing.',
                          'Directly helps solve or explain the requested work.', 'Essential constraint, correction or evidence for the requested work.']}
@@ -264,7 +276,6 @@ def retrieval_questions(candidates, relations=True):
             {'full': 'Keep the full supplied text span; an excerpt would lose qualifications or their preservation is uncertain.',
              'excerpt': 'The first paragraph of the supplied text contains all relevant details and qualifications.',
              'omit': 'The source does not contribute to this request.'})
-        questions[f'match_{i}'] = noul(prefix + 'Does this source concern the task the current user is asking about?')
     users = [i for i, c in enumerate(candidates) if c['role'] == 'user'] if relations else []
     for left, right in zip(users, users[1:]):
         questions[f'relation_{left}_{right}'] = choice(guard + f'Compare `state.candidates[{left}]` and `state.candidates[{right}]`. What relationship does the later source propose?',

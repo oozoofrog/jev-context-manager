@@ -118,10 +118,10 @@ def source_span(material, start, end):
                      'source_hash': digest(material['text'])}}
 
 
-def select(store, provider, materials, request_text, epoch):
+def select(store, provider, materials, request_text, epoch, task_scope=None):
     policy = store.policy(epoch)
     assessments = [{'complete': False, 'spans': [], 'relevance': None, 'omission': None,
-                    'representation': 'full'} for _ in materials]
+                    'representation': 'full', 'applicability': []} for _ in materials]
     decisions, errors, reports, relations, intents = [], [], [], [], []
     stopped = None
 
@@ -159,6 +159,7 @@ def select(store, provider, materials, request_text, epoch):
     def retrieval(chunk):
         sources = [part for _, part in chunk]
         return ({'request': request_text,
+                 'task_scope': task_scope,
                  'scope': 'registered project; these candidates may be only part of the history',
                  'candidates': sources}, retrieval_questions(sources, relations=False))
 
@@ -191,9 +192,19 @@ def select(store, provider, materials, request_text, epoch):
                 relevance = answer[f'relevance_{local}']['score']
                 omission = answer[f'omission_{local}']['noul']
                 representation = answer[f'representation_{local}']['choice']
+                applicability = answer[f'applicability_{local}']['choice']
+                applicability_probabilities = answer[f'applicability_{local}']['probabilities']
+                assessment['applicability'].append({'span': candidate['span'],
+                    'choice': applicability, 'probabilities': applicability_probabilities})
                 assessment['relevance'] = max(assessment['relevance'] or 0, relevance)
                 assessment['omission'] = max(assessment['omission'] or 0, omission)
-                if relevance >= 1.5 or omission >= .5:
+                # Applicability is a prerequisite. An omission-risk guess must
+                # not turn another task's important failure into this task's evidence.
+                # Direct and shared applicability compete as Choice options.
+                # A plurality for unrelated (e.g. .45 vs .40 + .15) does not
+                # establish that the source is more likely outside the scope.
+                if applicability == 'uncertain' or (applicability_probabilities['unrelated'] < .5 and
+                        representation != 'omit' and (relevance >= 1.5 or omission >= .5)):
                     assessment['spans'].append(candidate['span'])
                 if candidate['span']['start'] == 0 and candidate['span']['end'] == len(materials[index]['text']):
                     assessment['representation'] = representation

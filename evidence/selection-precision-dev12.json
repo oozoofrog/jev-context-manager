@@ -1,0 +1,78 @@
+{
+  "version": "0.1.0-dev.12",
+  "real_history_selection": {
+    "pass": true,
+    "lane": "frozen_real_store_clone_real_jev",
+    "checks": {
+      "normal": true,
+      "selected_task_anchors": true,
+      "required_sources": true,
+      "unrelated_sources_absent": true,
+      "raw_sources_unchanged": true,
+      "raw_blobs_verified": true,
+      "all_pages_served": true,
+      "real_provider_called": true,
+      "precision_improved": true,
+      "live_profile_unchanged": true,
+      "live_pointer_unchanged": true
+    },
+    "capture": "not_exercised_in_frozen_comparison",
+    "desktop": "not_attested",
+    "baseline": {
+      "selected": 629,
+      "excluded": 2,
+      "source_text_bytes": 6870330,
+      "pages": 235,
+      "content_hash": "9853282cc3b1abf086b062e4504c2ef925df04efa2a1a849e11c30722a12a8a6"
+    },
+    "candidate": {
+      "selected": 63,
+      "excluded": 567,
+      "source_text_bytes": 188927,
+      "pages": 17,
+      "content_hash": "fba06e1a2d2da115b8369a3c43c0c4db7eee08c965608b49dcbb2304d4853ae7"
+    },
+    "real_jev_successes": 163,
+    "completed": true,
+    "clone_disabled": true
+  },
+  "independent_cli": {
+    "pass": true,
+    "checks": {
+      "candidate_payload_matches": true,
+      "sync-project_awaiting_scope": true,
+      "sync-project_ready": true,
+      "requirements_did_not_edit_product": true,
+      "status_only_did_not_call_jev": true,
+      "natural_request_used_sync": true,
+      "sync_completed_observed_frontier": true,
+      "sync_judgment_requested": true,
+      "real_jev_called": true,
+      "sync_did_not_edit_product": true,
+      "independent_sessions": true,
+      "sync-project_paused_true": true,
+      "sync-project_paused_false": true,
+      "sync-project_protocol": true,
+      "sync-project_marker": true,
+      "sync-project_independent_pack_read": true,
+      "sync-project_real_jev_normal": true,
+      "global_config_unchanged": true
+    },
+    "real_jev_successes": 16,
+    "turns": 5,
+    "sessions": 2,
+    "desktop": "not_attested"
+  },
+  "regression": {
+    "full_suite_before_unknown_turn_guard": 161,
+    "focused_selection_tests_after_guard": 3,
+    "full_final_suite": "required_by_release_pipeline"
+  },
+  "desktop_after_install": "reported_separately",
+  "limits": [
+    "Historical coverage remains partial.",
+    "Desktop automation uses host-delegated requests, not typed user input.",
+    "No new animation quality validation.",
+    "The final missing-turn guard is covered by regression; all live selected-task records have turn IDs."
+  ]
+}
