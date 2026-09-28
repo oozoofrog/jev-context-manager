@@ -93,7 +93,7 @@ class TranscriptRecoveryTests(unittest.TestCase):
         saved = self.store.db.execute("SELECT value FROM meta WHERE key='bootstrap_existing:prior'").fetchone()
         self.assertEqual(json.loads(saved[0])['stage'], 'blocked')
 
-    def test_oversized_line_is_bounded_and_does_not_acknowledge_tail(self):
+    def test_invalid_large_line_does_not_acknowledge_tail(self):
         path = self.transcript()
         offset = path.stat().st_size
         with path.open('ab') as f:
@@ -103,7 +103,7 @@ class TranscriptRecoveryTests(unittest.TestCase):
             result = existing(self.store, 'prior', path, install=False, follow=False)
         self.assertEqual(result['stage'], 'blocked')
         self.assertEqual(result['source']['offset'], offset)
-        self.assertIn('TRANSCRIPT_LINE_TOO_LARGE', result['gaps'])
+        self.assertIn('TRANSCRIPT_MALFORMED_LINE', result['gaps'])
         self.assertEqual(result['new_events'], 0)
 
     def test_hook_mcp_media_has_same_admission_boundary(self):

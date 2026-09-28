@@ -400,7 +400,7 @@ class EntryTests(unittest.TestCase):
         self.assertNotIn('capture_scope', upgraded.policy(require_enabled=False))
         self.assertIn('KEEP-LEGACY-RECORD', str([upgraded.material(e) for e in upgraded.events()]))
         self.assertTrue(upgraded.db.execute("SELECT 1 FROM tombstones WHERE session='deleted'").fetchone())
-        self.assertEqual(upgraded.db.execute('PRAGMA user_version').fetchone()[0], 3)
+        self.assertEqual(upgraded.db.execute('PRAGMA user_version').fetchone()[0], 4)
 
     def test_known_host_settings_event_is_not_a_public_record_gap(self):
         from jcm.adapter import public_item

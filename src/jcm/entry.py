@@ -11,6 +11,8 @@ from . import config
 from .adapter import MAX_LINE_BYTES, public_item
 from .bootstrap import discover_all, session_id
 from .util import JCMError, atomic_write, digest, encode, identifier, private_dir
+from .transcript_io import read_record
+from .request_source import current_request
 
 
 def bare_invocation(text):
@@ -31,25 +33,23 @@ class Reader:
         self.gaps.append(code)
 
 
-def session_items(policy, session, path=None):
+def session_items(policy, session, path=None, requests_only=False):
     reader = Reader(policy)
     items = []
     for source in discover_all(reader, session, path):
         with source.open('rb') as stream:
-            while line := stream.readline(MAX_LINE_BYTES + 1):
-                if len(line) > MAX_LINE_BYTES:
-                    raise JCMError('TRANSCRIPT_LINE_TOO_LARGE')
-                if not line.endswith(b'\n'):
+            while line := read_record(stream):
+                if not line['complete']:
                     reader.gap('TRANSCRIPT_PARTIAL_LINE')
                     break
                 try:
-                    item = public_item(json.loads(line))
-                except (ValueError, UnicodeDecodeError):
-                    raise JCMError('TRANSCRIPT_MALFORMED_LINE') from None
+                    if line.get('error'):
+                        raise JCMError(line['error'])
+                    item = public_item(line['value'], session)
                 except JCMError as exc:
                     reader.gap(str(exc))
                     continue
-                if item:
+                if item and (not requests_only or item['role'] in ('user', 'unsupported_request')):
                     items.append(item)
     return items, sorted(set(reader.gaps))
 
@@ -87,10 +87,7 @@ def preview(home, root, session=None, path=None, page=1, roots=None):
     with locked(home, root, session) as target:
         state = json.loads(target.read_text()) if target.exists() else None
         items, gaps = session_items(policy, session, path)
-        users = [i for i in items if i['role'] == 'user']
-        if not users:
-            raise JCMError('CURRENT_REQUEST_NOT_OBSERVABLE')
-        current = users[-1]
+        current = current_request(items)
         if bare_invocation(current['payload']['text']):
             if state and state['stage'] == 'awaiting_scope':
                 # Reopening the skill while a scope choice is pending resumes
@@ -113,6 +110,14 @@ def preview(home, root, session=None, path=None, page=1, roots=None):
         result = {'origin': 'jcm', 'entry_id': state['id'], 'stage': state['stage'],
                   'session_id': session, 'scope': policy.get('capture_scope', 'legacy_project'),
                   'coverage': 'partial', 'gaps': gaps, 'preview_persisted': False}
+        if 'repo_id' in policy:
+            from .store import Store
+            from .health import capture_health
+            store = Store(policy)
+            try:
+                result['capture'] = capture_health(store)
+            finally:
+                store.close()
         if state['stage'] == 'awaiting_scope':
             if type(page) is not int or page < 1:
                 raise JCMError('INVALID_PREVIEW_PAGE')
@@ -165,6 +170,7 @@ def choose(home, root, entry_id, choice, session=None, binding=None, install=Tru
         policy = reader_policy(home, root)
         items, _ = session_items({**policy, 'transcript_roots': state['transcript_roots']}, session)
         users = [item for item in items if item['role'] == 'user']
+        current_request(items)
         if not users or users[-1]['turn'] == state['anchor']['turn']:
             raise JCMError('USER_SELECTION_REQUIRED')
         if bare_invocation(users[-1]['payload']['text']):
@@ -259,7 +265,7 @@ def tasks(store, entry_id, session=None, page=1, search=None, provider=None):
         from .bootstrap import existing
         from .scope import admit_prompt
         admit_prompt(store, session, state['anchor']['turn'], state['anchor']['identity'])
-        existing(store, session, install=False, follow=False)
+        captured = existing(store, session, install=False, follow=False)
         for event in store.events():
             if event['session'] == session and event['turn'] in state['preview_turns']:
                 store.db.execute('INSERT OR IGNORE INTO meta VALUES (?,?)', ('entry_control:' + event['id'], 'true'))
@@ -283,7 +289,25 @@ def tasks(store, entry_id, session=None, page=1, search=None, provider=None):
         shown = filtered[(page-1)*6:page*6]
         state['offered'] = sorted(set(state.get('offered', [])) | {t['id'] for t in shown})
         atomic_write(target, encode(state))
+        # Display previews are not raw-source delivery. The exact source remains
+        # addressable and task selection recovers its full relevant evidence.
+        import shlex
+        def preview_material(material):
+            text = material.get('text', '')
+            return {**material, 'text': text[:1400], 'preview': len(text) > 1400,
+                    'total_chars': len(text), 'read_command': shlex.join(store.config['cli_argv'] +
+                        ['inspect', '--record', material['event_id'], '--raw'])}
+        shown = [{**task, 'title_source': task['title_source'][:600],
+                  'source': preview_material(task['source']),
+                  'latest_evidence': [preview_material(e) for e in task['latest_evidence']]} for task in shown]
+        result = {**result, 'snapshot': {k:v for k,v in result['snapshot'].items() if k != 'files'}}
+        from .health import capture_health
+        capture = capture_health(store)
+        gaps = sorted(set(result['gaps'] + capture['current_errors'] + ([captured['error']] if captured.get('error') else [])))
         return {**result, 'tasks': shown, 'total': len(filtered), 'entry_id': entry_id,
+                'capture': capture, 'gaps': gaps, 'quality': 'degraded' if gaps else result['quality'],
+                'judgment_quality': result['quality'], 'coverage': 'partial',
+                'continuation_ready': captured['stage'] == 'captured' and capture['state'] == 'caught_up',
                 'stage': 'awaiting_task', 'new_task_available': True,
                 'next_page': page + 1 if len(filtered) > page*6 else None}
 
@@ -302,7 +326,8 @@ def select_task(store, entry_id, task_id, session=None, provider=None):
         from .bootstrap import existing, new
         captured = existing(store, session, install=True, follow=True)
         if captured['stage'] != 'captured' or not captured['request_token']:
-            raise JCMError('CURRENT_SELECTION_NOT_CAPTURED')
+            from .health import blocked_result
+            return blocked_result(store, captured.get('error') or captured.get('request_error'))
         token = captured['request_token']
         request = store.resolve_request(token)
         if store.event(request['event_id'])['turn'] == state['anchor']['turn']:

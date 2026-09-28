@@ -96,3 +96,16 @@ The user's requested flow is situation → recording scope/work choice → captu
 | E09 Distribution | release pipeline | Bundle/wheel, exact-commit CI, published install, backup and fresh loader checks |
 
 See [the skill-entry validation report](skill-entry-validation.md) and its machine-readable evidence. CLI, real Jev, source/runtime fixtures, installed loading and ordinary Desktop input remain distinct evidence lanes.
+
+## Capture repair and administration (dev.11)
+
+| Gate | Implementation | Evidence |
+|---|---|---|
+| R01 Large source preservation | `blob_storage`, transcript spooling, store transactions | >8MB valid line, interruption/retry, corruption, secret redaction, chunk GC; real blocked-store clone |
+| R02 Honest continuation state | `health`, entry/menu/selection, coordinator | Same blocker in menus and selection; current backlog versus historical gaps |
+| R03 Exact current request | `request_source`, adapter, bootstrap | Host delegation identity, ordinary/forged outputs, unsupported delivery without old-user fallback |
+| R04 Repeated source delivery | `derived`, source index, pack reference closure | Exact prior text referenced, novel text retained, original sources delivered and raw text inspectable |
+| R05 Read-only status and explicit catch-up | `health`, `sync`, CLI/skill and hook routing | Status without Jev; fixed frontier, idempotence, provider failure retains jobs; real natural-language flow |
+| R06 Existing records | schema v4, store and release backup | Earlier schemas migrate with scope/disabled/tombstone preservation; shared chunks survive unrelated deletion |
+
+See [capture and recovery validation](capture-recovery-validation.md). Prior dev.10 evidence remains historical evidence for that version.

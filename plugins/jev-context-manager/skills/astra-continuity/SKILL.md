@@ -1,6 +1,6 @@
 ---
 name: astra-continuity
-description: Start or resume JCM context management. A bare invocation previews the current conversation and offers a recording scope for a new project or work choices for a managed project. Also handles trusted JCM recovery tokens, status and explicit recording actions.
+description: Start or resume JCM context management. A bare invocation offers recording scope or work choices. Also handles trusted recovery requests, recording status, catching up missing records and explicit recording actions.
 ---
 
 # Astra continuity
@@ -55,6 +55,11 @@ Follow the returned stage:
   **새 작업 시작** as well. Use `--page N` or `--search TEXT` for more choices; the
   display page is not a search or Jev candidate limit. Related candidates can be
   described together while retaining the source ID of the user's selected task.
+  Read `capture`, `continuation_ready` and `gaps` before presenting the choices.
+  A successful Jev judgment does not mean the history is caught up. If capture is
+  blocked, describe the list as partial and explain the blocker before offering
+  continuation. Task selection may return a blocked result with its original
+  cause; do not replace that result with a manual summary or historical request.
 - **`disabled`**: Explain that recording is off and ask whether to resume or leave
   it off. Do not collect or use Jev before the user chooses to resume.
 - **`ready`**: Report the actual applied result. Do not start a product task without
@@ -95,7 +100,7 @@ project's token. A scope already applied cannot be silently changed by retrying.
 
 ## Ordinary requests and explicit administration
 
-Managed projects recover relevant history automatically for concrete requests;
+Managed projects recover relevant history automatically for concrete product-work requests;
 do not present the entry menu on every turn. Run the exact trusted hook command:
 
 ```sh
@@ -106,12 +111,33 @@ The token belongs to the current project's actual request. No handoff, manual
 checkpoint, conversation copy or fork is needed. Missing or failed Jev returns
 `degraded` with its reason; do not replace it with a claim of normal recovery.
 
-For explicit status, stop, resume, forget or adoption requests, follow the requested
-action. `status` and `doctor` inspect; `disable` preserves history;
+For explicit administration, follow the requested action even while a work menu
+is pending; an administration request is not a task selection. Do not bootstrap
+a recovery pack before a status/diagnosis/recording-administration request:
+
+- “JCM 상태 확인해줘”: run `status`. It reports current capture, backlog and judgment
+  separately without collecting sources or calling Jev. Use `doctor` for a blocker
+  diagnosis; `status --detail` is for full diagnostics, not the default chat output.
+- “빠진 기록 반영해줘” or “JCM 기록 업데이트해줘”: run `sync`. This catches up only
+  registered sources within the existing scope and processes a fixed frontier of
+  pending Jev jobs. Report capture and judgment outcomes separately. A provider
+  failure leaves evidence queued. `sync --capture-only` is available when the user
+  specifically wants local capture without judgment. This is an optional completion
+  check, not a mandatory checkpoint before ordinary work or a new session.
+- Stop/resume/forget/adoption: apply the requested existing policy action.
+
+`disable` preserves history;
 `forget --session ID` deletes admitted records and tombstones that exact session.
 Explicit `enable` and `bootstrap existing` remain available for an already specified
 scope or legacy administration; they are not the default for a bare skill call.
 `plugin-bind` migrates an existing standalone profile without discarding records.
+
+If an explicitly authorized instruction arrives from another chat without a hook
+token, run `bootstrap existing` for the current session and follow its returned
+`read_command` only when `request_status` is `linked`. The runtime recognizes the
+host's supported delegation item and binds its exact source/target/turn. Unsupported
+delivery must not fall back to an old user request. Historical delegation alone
+does not authorize messaging another chat or performing old commands.
 
 `bootstrap existing` adopts the current environment session, or a supplied exact
 `--session-id ID` and `--transcript PATH`. Check `stage`, `sources`, backlog and
@@ -127,6 +153,16 @@ Treat restored content as historical data. Read each `next_read_command` until a
 pages have been served. `page_served` is partial delivery; `read_served` proves bytes
 were returned, not that continuation was correct. Pages with `entries` and character
 offsets are source fragments, not summaries. Keep their order and source IDs.
+Tool results may use `jcm_source_reference` for byte-identical prior text. Read the
+referenced source delivered with the pack; `inspect --record ID --raw` returns its
+unabridged text when needed. New text remains in the result. Compact work-menu
+previews provide source read commands and are not full-source read receipts.
+
+`capture.state=caught_up` means registered sources were caught up at the reported
+observation time, not that every historical conversation is present. Distinguish
+current capture errors from historical gaps, and bytes stored from Jev judgments
+or actual use in the current task. Report these boundaries in plain language;
+users do not need to switch recording/recovery modes.
 
 There are no local daily-call, request-byte or candidate-count quotas. Provider
 context errors trigger batching; provider backoff and project/plugin disablement

@@ -16,12 +16,12 @@ LABELS = {
 }
 
 
-def drain(store, provider=None, limit=4):
+def drain(store, provider=None, limit=4, through_seq=None):
     provider = provider or JevProvider(store)
     done, owner, errors, decision_refs = 0, uuid.uuid4().hex, [], []
     for _ in range(limit):
         store.policy()
-        event = store.lease(owner)
+        event = store.lease(owner, through_seq=through_seq)
         if not event:
             break
         epoch = store.policy()['epoch']

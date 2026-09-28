@@ -26,7 +26,10 @@ def parser():
     policy = sub.add_parser('policy')
     policy.add_argument('--enabled', choices=['true', 'false'])
     sub.add_parser('doctor')
-    sub.add_parser('status')
+    sub.add_parser('status').add_argument('--detail', action='store_true')
+    sync = sub.add_parser('sync')
+    sync.add_argument('--capture-only', action='store_true')
+    sync.add_argument('--no-follow', action='store_true')
     entry = sub.add_parser('entry').add_subparsers(dest='entry_mode', required=True)
     preview = entry.add_parser('preview')
     preview.add_argument('--session-id')
@@ -53,6 +56,7 @@ def parser():
     read.add_argument('--page', type=int, default=1)
     inspect = sub.add_parser('inspect')
     inspect.add_argument('--record', required=True)
+    inspect.add_argument('--raw', action='store_true')
     worker = sub.add_parser('worker')
     worker.add_argument('action', choices=['drain'])
     worker.add_argument('--limit', type=int, default=4)
@@ -129,13 +133,18 @@ def run(args):
             updated = store.change_policy(**changes)
             return {'epoch': updated['epoch'], 'allow_egress': updated['allow_egress'],
                     'enabled': updated['enabled'], 'old_packs_invalidated': True}
-        if args.command in ('status', 'doctor'):
-            return status(store)
+        if args.command == 'status':
+            return status(store, args.detail)
+        if args.command == 'doctor':
+            from .health import doctor
+            return doctor(store)
+        if args.command == 'sync':
+            from .sync import sync
+            return sync(store, capture_only=args.capture_only, follow=not args.no_follow)
         if args.command == 'hook':
-            raw = sys.stdin.buffer.read(1_000_001)
-            if len(raw) > 1_000_000:
-                raise JCMError('HOOK_INPUT_TOO_LARGE')
-            return hook(store, json.loads(raw))
+            # Hooks contain one JSON record. Large results use the same blob
+            # persistence as transcript recovery rather than a separate quota.
+            return hook(store, json.load(sys.stdin))
         if args.command == 'bootstrap':
             from .bootstrap import existing, new
             if args.bootstrap_mode == 'existing':
@@ -151,7 +160,7 @@ def run(args):
             return read_pack(store, args.pack, args.page)
         if args.command == 'inspect':
             store.policy()
-            return {'origin': 'jcm', 'source': store.material(store.event(identifier(args.record)))}
+            return {'origin': 'jcm', 'source': store.material(store.event(identifier(args.record)), raw=args.raw)}
         if args.command == 'worker':
             if not 0 <= args.limit <= 64:
                 raise JCMError('INVALID_WORKER_LIMIT')

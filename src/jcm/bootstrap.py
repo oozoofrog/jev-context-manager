@@ -9,7 +9,7 @@ from . import config
 from .adapter import register_transcript, recover_source, recover_sources, transcript_path
 from .coordinator import dispatch, read_pack
 from .snapshot import snapshot
-from .util import JCMError, encode, now
+from .util import JCMError, digest, encode, now
 
 
 def session_id(value=None):
@@ -71,6 +71,21 @@ def existing(store, session=None, path=None, install=True, follow=True):
     session = session_id(session)
     if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
         raise JCMError('SOURCE_FORGOTTEN')
+    from .entry import session_items
+    from .request_source import current_request
+    from .scope import admit_prompt
+    current, request_error = None, None
+    try:
+        items, _ = session_items(store.config, session, path, requests_only=True)
+        current = current_request(items)
+        try:
+            is_current_session = session == session_id()
+        except JCMError:
+            is_current_session = False
+        if is_current_session:
+            admit_prompt(store, session, current['turn'], current['identity'])
+    except JCMError as exc:
+        request_error = str(exc)
     before = store.db.execute('SELECT COUNT(*) FROM events WHERE session=?', (session,)).fetchone()[0]
     error = None
     sources = []
@@ -98,8 +113,20 @@ def existing(store, session=None, path=None, install=True, follow=True):
         raise JCMError('PROJECT_HOOK_INSTALL_PERMISSION_DENIED') from None
     from .follower import start, follower_status
     follower = start(store, row['key']) if follow and ready else follower_status(store, row['key'])
-    current = store.db.execute("SELECT id FROM events WHERE session=? AND role='user' ORDER BY seq DESC LIMIT 1", (session,)).fetchone()
-    token = store.request(session, current[0]) if current and ready else None
+    token, request_status = None, 'not_checked'
+    if ready:
+        try:
+            if current is None:
+                raise JCMError(request_error or 'CURRENT_REQUEST_NOT_OBSERVABLE')
+            event_id = digest([store.config['repo_id'], session, current['identity']])
+            event = store.event(event_id)
+            if event['role'] != 'user':
+                raise JCMError('CURRENT_REQUEST_NOT_CAPTURED')
+            token = store.request(session, event_id)
+            request_status = 'linked'
+        except JCMError as exc:
+            request_error = str(exc)
+            request_status = 'unsupported' if request_error == 'UNSUPPORTED_CURRENT_REQUEST' else 'unavailable'
     result = {'origin': 'jcm', 'bootstrap': 'existing', 'session_id': session,
               'stage': 'captured' if ready else 'blocked', 'error': error,
               'source_bytes': sources[-1]['source_bytes'],
@@ -111,6 +138,7 @@ def existing(store, session=None, path=None, install=True, follow=True):
               'current_snapshot': snapshot(store.config['root']), 'historical_verification': 'not_established',
               'request_token': token, 'read_command': shlex.join(store.config['cli_argv'] +
                   ['bootstrap', 'new', '--request-token', token]) if token else None,
+              'request_status': request_status, 'request_error': request_error,
               'coverage': 'partial', 'gaps': [r[0] for r in store.db.execute('SELECT code FROM gaps')],
               'allow_egress': store.policy()['allow_egress'], 'provider_called': False,
               'created_at': now()}

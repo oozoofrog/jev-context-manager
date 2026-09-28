@@ -29,6 +29,8 @@ def candidates(store, request_event):
 def dispatch(store, token, provider=None):
     request = store.resolve_request(token)
     recover_sources(store)
+    from .health import capture_health
+    capture = capture_health(store)
     epoch = store.policy()['epoch']
     before = snapshot(store.config['root'])
     provider = provider or JevProvider(store)
@@ -55,7 +57,8 @@ def dispatch(store, token, provider=None):
         semantic = select(store, provider, materials, request_text, epoch)
     decisions, relations = semantic['decisions'], semantic['relations']
     semantic_error = semantic['errors'][0] if semantic['errors'] else None
-    quality = 'degraded' if semantic['errors'] or worker['errors'] else 'normal'
+    quality = 'degraded' if semantic['errors'] or worker['errors'] or capture['current_errors'] else 'normal'
+    gaps.extend(capture['current_errors'])
     gaps.extend(semantic['errors'] + worker['errors'])
     intent = semantic['intent']
     state = 'new_task' if intent in ('new_task', 'none') else 'ready'
@@ -104,6 +107,28 @@ def dispatch(store, token, provider=None):
         else:
             excluded.append({'event_id': material['event_id'], 'reason': 'NEW_TASK' if state == 'new_task' else 'OPTIONAL_LOW_RELEVANCE',
                              'relevance': relevance})
+    # A compact reference is useful only when its exact original is delivered
+    # too. Close the source graph regardless of semantic exclusion decisions.
+    by_id = {m['event_id']: m for m in materials}
+    included = {m['event_id'] for m in selected}
+    index = 0
+    while index < len(selected):
+        for ref in selected[index].get('derived_from', []):
+            if ref in included and ref in by_id:
+                for n, record in enumerate(selected):
+                    if record['event_id'] == ref:
+                        selected[n] = {**record, 'text': by_id[ref]['text'], 'representation': 'full',
+                                       'derived_from': by_id[ref].get('derived_from', [])}
+                        selected[n].pop('spans', None)
+                        break
+            if ref not in included and ref in by_id:
+                selected.append({**by_id[ref], 'representation': 'full',
+                                 'reason_codes': ['REFERENCED_SOURCE_REQUIRED'],
+                                 'pending_semantic_processing': ref in pending,
+                                 'verification_currently_applicable': False})
+                included.add(ref)
+        index += 1
+    excluded = [e for e in excluded if e['event_id'] not in included]
     after = snapshot(store.config['root'])
     reconcile = 'stale' if before['fingerprint'] != after['fingerprint'] else 'consistent'
     if reconcile == 'stale':
@@ -120,6 +145,7 @@ def dispatch(store, token, provider=None):
     revision = store.db.execute('SELECT COALESCE(MAX(seq),0) FROM events').fetchone()[0]
     pack_id = uuid.uuid4().hex
     pack = {'schema_version': 1, 'origin': 'jcm', 'pack_id': pack_id, 'request_token': token,
+            'capture': capture,
             'repo_id': store.config['repo_id'], 'worktree_id': store.config['worktree_id'],
             'session_id': request['session'], 'request': request_text, 'selected_task': selected_task, 'journal_read_revision': revision,
             'policy_epoch': epoch, 'created_at': now(), 'dispatch': state, 'quality': quality,
@@ -226,7 +252,7 @@ def read_pack(store, pack_id, page=1):
     return result
 
 
-def status(store):
+def status(store, detail=False):
     from .follower import follower_status
     policy = store.policy(require_enabled=False)
     hooks = {r[0].split(':', 1)[1]: r[1] for r in store.db.execute("SELECT * FROM meta WHERE key LIKE 'hook_received:%'")}
@@ -241,6 +267,13 @@ def status(store):
         except JCMError as error:
             plugin_state = {'id': policy['plugin']['id'], 'active': False, 'reason': str(error)}
     from . import __version__
+    from .health import capture_health
+    capture = capture_health(store)
+    bootstraps = [json.loads(r[0]) for r in store.db.execute("SELECT value FROM meta WHERE key LIKE 'bootstrap_%'")]
+    last_sync = store.db.execute("SELECT value FROM meta WHERE key='sync:last'").fetchone()
+    if not detail:
+        fields = ('bootstrap', 'session_id', 'stage', 'error', 'created_at', 'pack_id', 'request_status')
+        bootstraps = [{k: b[k] for k in fields if k in b} for b in bootstraps]
     return {'origin': 'jcm', 'version': __version__, 'root': policy['root'],
             'mode': 'disabled' if not policy['enabled'] else 'limited',
             'mode_reason': 'Production hook trust and complete acceptance gates are not attested.',
@@ -250,7 +283,9 @@ def status(store):
             'plugin': plugin_state,
             'hook_events_received': hooks, 'hook_trust': 'not_attested',
             'transcript_parser': PARSER,
-            'bootstraps': [json.loads(r[0]) for r in store.db.execute("SELECT value FROM meta WHERE key LIKE 'bootstrap_%'")],
+            'bootstraps': bootstraps, 'capture': capture,
+            'last_sync': json.loads(last_sync[0]) if last_sync else None,
+            'judgment': {'pending': sum(v for k,v in jobs.items() if k != 'succeeded'), 'states': jobs},
             'followers': [follower_status(store, r[0]) for r in store.db.execute('SELECT key FROM sources')],
             'event_count': store.db.execute('SELECT COUNT(*) FROM events').fetchone()[0],
             'queue': jobs, 'successful_provider_transport_calls': real_calls,

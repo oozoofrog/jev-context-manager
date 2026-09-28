@@ -128,7 +128,7 @@ class Acceptance:
         return state
 
     def stored_text(self, store):
-        return '\n'.join(p.read_text() for p in store.blobs.iterdir())
+        return '\n'.join(json.dumps(store.blob(p.name), ensure_ascii=False) for p in store.blobs.iterdir())
 
     def verify_recovery(self, root, session, protocol, marker=None):
         spec = importlib.util.spec_from_file_location('fixture_connection_' + root.name, root / 'connection.py')

@@ -1,0 +1,58 @@
+{
+  "version": "0.1.0-dev.11",
+  "regression": {
+    "passed": 159,
+    "failed": 0
+  },
+  "payload_manifest_sha256": "87c6ae6f8850040c0a413e7ff187ae684455d5edede3848d1680ef863e475e71",
+  "cli": {
+    "pass": true,
+    "turns": 5,
+    "independent_threads": 2,
+    "checks": {
+      "candidate_payload_matches": true,
+      "sync-project_awaiting_scope": true,
+      "sync-project_ready": true,
+      "requirements_did_not_edit_product": true,
+      "status_only_did_not_call_jev": true,
+      "natural_request_used_sync": true,
+      "sync_completed_observed_frontier": true,
+      "sync_judgment_requested": true,
+      "real_jev_called": true,
+      "sync_did_not_edit_product": true,
+      "independent_sessions": true,
+      "sync-project_paused_true": true,
+      "sync-project_paused_false": true,
+      "sync-project_protocol": true,
+      "sync-project_marker": true,
+      "sync-project_independent_pack_read": true,
+      "sync-project_real_jev_normal": true,
+      "global_config_unchanged": true
+    },
+    "real_jev_successes": 19,
+    "global_config_unchanged": true
+  },
+  "real_store_clone": {
+    "pass": true,
+    "checks": {
+      "blocked_offset_advanced": true,
+      "current_request_linked": true,
+      "retry_idempotent": true,
+      "large_blobs_persisted": true,
+      "all_event_blobs_verified": true,
+      "real_jev_menu": true,
+      "live_profile_unchanged": true,
+      "live_pointer_unchanged": true
+    },
+    "new_events": 19,
+    "real_jev_successes": 1,
+    "clone_disabled_after_validation": true
+  },
+  "desktop_selection": "not_yet_verified",
+  "product_visual_verification": "not_performed",
+  "limitations": [
+    "JSON decoding materializes one event.",
+    "Caught-up applies to registered sources at the observation time.",
+    "Source delivery does not prove product behavior."
+  ]
+}

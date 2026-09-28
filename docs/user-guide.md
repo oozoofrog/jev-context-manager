@@ -63,17 +63,59 @@ Useful fields in the response:
 | `capture_scope` | Chosen initial session and invocation boundary, or `legacy_project` for existing profiles |
 | `project_reference` | `default_registry_only` means the plugin uses its default external registry because the project directory is protected |
 | `event_count` | Number of stored events |
+| `capture.state` | `caught_up`, `catching_up`, `blocked`, `not_registered`, or `disabled`; applies to registered sources at the observation time |
+| `capture.backlog_bytes` | Bytes not yet collected from registered source files; unknown sources are reported separately |
+| `capture.current_errors` | Current blockers, separate from the historical `gaps` list |
+| `judgment.pending` | Stored events still awaiting classification; storage is not completed judgment |
 | `hook_events_received` | Hook events received by this project |
 | `followers[].running` | Whether an adopted session's local follower is running |
 | `plugin.active` | Whether the persisted plugin state and installed bundle pass JCM's checks; hook trust is separate |
 | `allow_egress` | Always `true`; retained for compatibility with older status readers |
 | `bootstraps[].stage` | For existing-session adoption: `captured` or `blocked`; a blocked scan has not activated capture |
-| `bootstraps[].sources` | At adoption time: validated segments with durable cursors and remaining bytes |
+| `capture.sources` | Current registered sources, durable cursors, remaining bytes and blockers |
 | `gaps` | Missing or unsupported source coverage |
 
-For a restored context pack, `quality=normal` means the normal Jev path succeeded. `degraded` means JCM used a fallback; inspect the reported reason. `stage=blocked` means the pack was not delivered. The project status value `mode=limited` alone does not mean recording has stopped.
+For a restored context pack, `quality=normal` means the normal Jev path succeeded. `degraded` reports a capture or judgment gap; inspect the reason. `stage=blocked` means the pack was not delivered. The project status value `mode=limited` alone does not mean recording has stopped.
+
+Work menus also return `continuation_ready` and `capture`. A successful work-list
+judgment is not proof that missing history was collected or a selected task can
+resume. If collection is blocked, the list is explicitly partial and selecting a
+task returns the underlying capture error. Source previews include commands for
+reading the unabridged records.
+
+Ask “JCM 상태 확인해줘” for status, or “빠진 기록 반영해줘” / “JCM 기록 업데이트해줘”
+to catch up. No recording/recovery mode switch is needed. `status` and `doctor`
+do not collect sources or call Jev; `doctor` adds storage and request-support
+diagnostics. `status --detail` includes historical adoption snapshots when needed.
+
+`sync` collects only already registered sources within the existing scope, then
+classifies the pending jobs observed in that run. It reports the frontier and
+remaining jobs, and stops on a provider error without discarding evidence.
+`sync --capture-only` requests local capture without judgment. Sync is optional:
+ordinary hooks and recovery use the same collector. It does not widen recording
+scope, produce a handoff, start product work, or make a completion claim about
+unobservable history. Repeating a completed sync does not reclassify unchanged jobs.
+
+Supported host-delivered `send_message_to_thread` items can be bound to their exact
+target session, turn and source. Unsupported delivery is reported rather than
+silently using the last historical user request. Quoted delegation text inside an
+ordinary tool result is never promoted to a request.
 
 ## Large histories and paged recovery
+
+Large admitted events are stored as hash-verified chunks with a durable manifest.
+The cursor advances only after storage commits. Interrupted writes can be retried,
+and session deletion removes unreferenced chunks while preserving shared data.
+There is no 1MB event or 8MB transcript-line admission ceiling. Raw JSONL reading
+spools large lines to temporary storage; JSON decoding and source processing still
+materialize one record and are not constant-memory operations for arbitrarily
+large values. Resource failures remain explicit capture blockers.
+
+Tool results that repeat exact earlier source text may carry source references in
+their recovery representation. Raw admitted audit blobs remain available through
+`inspect --record ID --raw`. Referenced source records accompany recovery packs;
+new result text is preserved. This reduces repeated judgments and delivery without
+imposing candidate-count or local call quotas.
 
 Jev retrieval uses soft estimates for the documented 32k state-plus-longest-question and 64k total token contexts. The estimate is not a tokenizer or an admission limit. An explicit server context rejection triggers smaller batches or source spans; an estimate alone never rejects a request. A large
 record is split at paragraph or output-line boundaries where possible; each span
@@ -148,6 +190,9 @@ options have been removed.
 | Action | Command |
 |---|---|
 | Check status | `"$JCM" --repo "$PROJECT" status` |
+| Diagnose capture | `"$JCM" --repo "$PROJECT" doctor` |
+| Catch up records and judgments | `"$JCM" --repo "$PROJECT" sync` |
+| Catch up local records only | `"$JCM" --repo "$PROJECT" sync --capture-only` |
 | Stop capture | `"$JCM" --repo "$PROJECT" disable` |
 | Resume JCM | `"$JCM" --repo "$PROJECT" policy --enabled true` |
 | Delete a session and block recapture | `"$JCM" --repo "$PROJECT" forget --session SESSION_ID` |

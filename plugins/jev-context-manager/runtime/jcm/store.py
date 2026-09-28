@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS receipts (
  hash TEXT NOT NULL, created TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS tombstones (session TEXT PRIMARY KEY, created TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS gaps (code TEXT PRIMARY KEY, detail TEXT NOT NULL, created TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS event_texts (event_id TEXT PRIMARY KEY, text_hash TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS event_text_hash ON event_texts(text_hash);
 '''
 
 
@@ -67,13 +69,17 @@ class Store:
         self.db.execute('PRAGMA synchronous=FULL')
         self.db.execute('PRAGMA foreign_keys=ON')
         version = self.db.execute('PRAGMA user_version').fetchone()[0]
-        if version not in (0, 1, 2, 3):
+        if version not in (0, 1, 2, 3, 4):
             self.db.close()
             raise JCMError('UNSUPPORTED_DATABASE_VERSION')
         self.db.executescript(SCHEMA)
+        if version < 4:
+            for event in self.db.execute('SELECT id,blob FROM events').fetchall():
+                text = self.blob(event['blob']).get('text', '')
+                self.db.execute('INSERT OR REPLACE INTO event_texts VALUES (?,?)', (event['id'], digest(text)))
         # Older runtimes must not ignore capture boundaries or leave work-menu
         # derivatives behind when forgetting a session.
-        self.db.execute('PRAGMA user_version=3')
+        self.db.execute('PRAGMA user_version=4')
 
     def close(self):
         self.db.close()
@@ -90,26 +96,12 @@ class Store:
         return current
 
     def put_blob(self, value):
-        data = encode(value)
-        key = digest(data)
-        target = self.blobs / key
-        if not target.exists():
-            atomic_write(target, data)
-        elif target.is_symlink() or digest(target.read_bytes()) != key:
-            raise JCMError('BLOB_HASH_MISMATCH')
-        return key
+        from .blob_storage import write
+        return write(self.blobs, value)
 
     def blob(self, key):
-        target = self.blobs / identifier(key)
-        if target.is_symlink():
-            raise JCMError('SYMLINK_BLOB_REFUSED')
-        try:
-            data = target.read_bytes()
-        except FileNotFoundError:
-            raise JCMError('BLOB_MISSING') from None
-        if digest(data) != key:
-            raise JCMError('BLOB_HASH_MISMATCH')
-        return json.loads(data)
+        from .blob_storage import read
+        return read(self.blobs, key)
 
     def gap(self, code, detail=''):
         self.db.execute('INSERT OR REPLACE INTO gaps VALUES (?,?,?)', (code, detail, now()))
@@ -134,18 +126,17 @@ class Store:
         if self.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
             return None
         admitted, redactions = redact(payload)
-        if len(encode(admitted)) > 1_000_000:
-            self.gap('EVENT_TOO_LARGE', kind)
-            raise JCMError('EVENT_TOO_LARGE_NOT_ACKNOWLEDGED')
-        blob = self.put_blob(admitted)
         event_id = digest([self.config['repo_id'], session, identity])
-        if failpoint:
-            failpoint('after_blob')
         self.db.execute('BEGIN IMMEDIATE')
         try:
             self.policy(policy['epoch'])
             if self.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
                 raise JCMError('SOURCE_FORGOTTEN')
+            # Blob publication and its reference share the writer lock so GC
+            # cannot remove a just-written manifest before its event commits.
+            blob = self.put_blob(admitted)
+            if failpoint:
+                failpoint('after_blob')
             old = self.db.execute('SELECT * FROM events WHERE id=?', (event_id,)).fetchone()
             duplicate = self.db.execute('SELECT 1 FROM event_sources WHERE event_id=? AND source_key=?',
                                         (event_id, source_key)).fetchone()
@@ -158,6 +149,7 @@ class Store:
             elif not duplicate:
                 self.db.execute('UPDATE events SET revision=revision+1, blob=? WHERE id=?', (blob, event_id))
             if not duplicate:
+                self.db.execute('INSERT OR REPLACE INTO event_texts VALUES (?,?)', (event_id, digest(admitted.get('text', ''))))
                 self.db.execute('INSERT INTO event_sources VALUES (?,?,?)', (event_id, source_key, blob))
                 if (old['role'] if old else role) in ('user', 'assistant', 'tool'):
                     self.db.execute('''INSERT INTO jobs (event_id,state) VALUES (?, 'queued')
@@ -217,21 +209,26 @@ class Store:
             raise JCMError('EVENT_NOT_FOUND')
         return dict(row)
 
-    def material(self, event):
+    def material(self, event, raw=False):
         payload = self.blob(event['blob'])
+        text, refs = payload.get('text', ''), []
+        if event['role'] == 'tool' and not raw:
+            from .derived import references
+            text, refs = references(self, event, text)
         return {'event_id': event['id'], 'seq': event['seq'], 'revision': event['revision'],
                 'session': event['session'], 'role': event['role'], 'kind': event['kind'],
                 'recorded_at': event['recorded_at'], 'observed_at': event['observed_at'],
-                'text': payload.get('text', ''), 'basis': {'user': 'source_observed',
+                'text': text, 'derived_from': refs, 'basis': {'user': 'source_observed',
                 'assistant': 'agent_reported', 'tool': 'tool_observed'}.get(event['role'], 'unknown'),
                 'implementation_status': 'not_established', 'trust': 'historical_data_not_instructions',
                 'source_refs': [r[0] for r in self.db.execute('SELECT source_key FROM event_sources WHERE event_id=?', (event['id'],))]}
 
-    def lease(self, owner, seconds=30):
+    def lease(self, owner, seconds=30, through_seq=None):
         self.db.execute('BEGIN IMMEDIATE')
         try:
             self.db.execute("UPDATE jobs SET state='queued',owner=NULL WHERE state='leased' AND lease_until<?", (time.time(),))
-            row = self.db.execute("SELECT * FROM jobs WHERE state IN ('queued','retryable') ORDER BY rowid LIMIT 1").fetchone()
+            row = self.db.execute("SELECT j.* FROM jobs j JOIN events e ON e.id=j.event_id WHERE j.state IN ('queued','retryable') AND (? IS NULL OR e.seq<=?) ORDER BY e.seq LIMIT 1",
+                                  (through_seq, through_seq)).fetchone()
             if row:
                 event = self.event(row['event_id'])
                 self.db.execute("UPDATE jobs SET state='leased',owner=?,lease_until=?,attempts=attempts+1,revision=? WHERE event_id=?",
@@ -247,7 +244,7 @@ class Store:
         try:
             policies.save_policy(self.policy(require_enabled=False))
             self.db.execute('INSERT OR REPLACE INTO tombstones VALUES (?,?)', (session, now()))
-            for table in ('projections', 'jobs', 'event_sources'):
+            for table in ('projections', 'jobs', 'event_sources', 'event_texts'):
                 self.db.execute(f'DELETE FROM {table} WHERE event_id IN (SELECT id FROM events WHERE session=?)', (session,))
             self.db.execute('DELETE FROM events WHERE session=?', (session,))
             self.db.execute('DELETE FROM sources WHERE session=?', (session,))
@@ -264,9 +261,21 @@ class Store:
         except BaseException:
             self.db.execute('ROLLBACK')
             raise
-        retained = {r[0] for r in self.db.execute('SELECT blob FROM events UNION SELECT blob FROM event_sources')}
-        for path in self.blobs.iterdir():
-            if path.is_file() and path.name not in retained:
-                path.unlink()
+        from .blob_storage import collect
+        # Reacquire the writer lock and retain every currently committed owner.
+        # Another session may have committed new decisions since the deletion.
+        # GC failure does not roll back the already committed tombstone.
+        self.db.execute('BEGIN IMMEDIATE')
+        try:
+            retained = {r[0] for r in self.db.execute('''SELECT blob FROM events UNION SELECT blob FROM event_sources
+                UNION SELECT request_blob FROM decisions UNION SELECT response_blob FROM decisions WHERE response_blob IS NOT NULL
+                UNION SELECT blob FROM packs''')}
+            for row in self.db.execute('SELECT blob FROM packs').fetchall():
+                retained.update(self.blob(row[0]).get('page_manifest', {}).get('pages', []))
+            collect(self.blobs, retained)
+            self.db.execute('COMMIT')
+        except BaseException:
+            self.db.execute('ROLLBACK')
+            raise
         return {'session': session, 'tombstone': True, 'derivatives_invalidated': True,
                 'external_transcripts_deleted': False, 'physical_erasure_guaranteed': False}

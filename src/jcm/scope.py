@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from .util import JCMError, encode
+from .transcript_io import read_record
 
 
 def boundary(store, session):
@@ -67,16 +68,13 @@ def start_offset(store, row, stream=None):
             with path.open('rb') as anchor_stream:
                 while True:
                     offset = anchor_stream.tell()
-                    line = anchor_stream.readline(MAX_LINE_BYTES + 1)
-                    if not line or not line.endswith(b'\n'):
+                    line = read_record(anchor_stream, prefix=prefix)
+                    if not line or not line['complete']:
                         break
-                    if len(line) > MAX_LINE_BYTES:
-                        raise JCMError('TRANSCRIPT_LINE_TOO_LARGE')
-                    prefix.update(line)
                     try:
-                        item = public_item(json.loads(line))
-                    except (ValueError, UnicodeDecodeError):
-                        raise JCMError('TRANSCRIPT_MALFORMED_LINE') from None
+                        if line.get('error'):
+                            raise JCMError(line['error'])
+                        item = public_item(line['value'], row['session'])
                     except JCMError:
                         continue
                     if item and item['role'] == 'user' and item['turn'] == rule['turn'] and item['identity'] == rule['identity']:
