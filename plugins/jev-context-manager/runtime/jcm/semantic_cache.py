@@ -14,6 +14,7 @@ from .provider import CONTEXT_ERROR, RUBRIC_VERSION
 from .util import JCMError, digest, encode, now
 
 VERSION = 'independent-items-v1'
+PARTITION_VERSION = 'source-partition-v1'
 
 
 def dependencies(item):
@@ -36,15 +37,18 @@ def request(context, items, builder):
 
 
 def source_items(material, context, builder):
+    # The whole-source hash is invariant across probes and resulting spans.
+    # Large tool outputs otherwise re-encode megabytes on every binary probe.
+    source_hash = digest(material['text'])
     spans = planned_spans(material['text'], lambda a, b:
-        batching.context_fits(*request(context, [source_span(material, a, b)], builder)))
-    return [source_span(material, a, b) for a, b in spans]
+        batching.context_fits(*request(context, [source_span(material, a, b, source_hash)], builder)))
+    return [source_span(material, a, b, source_hash) for a, b in spans]
 
 
 def evaluate_items(store, provider, kind, context, items, builder, epoch, splittable=True, heartbeat=None):
     policy = store.policy(epoch)
     result = {'records': [], 'errors': [], 'decisions': [], 'batches': [],
-              'cache_hits': 0, 'evaluated_units': 0}
+              'cache_hits': 0, 'evaluated_units': 0, 'partitions_reused': 0}
     stopped = None
     start = time.perf_counter()
 
@@ -52,13 +56,18 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
         return digest([VERSION, RUBRIC_VERSION, kind, policy['repo_id'], epoch, policy['model'],
                        provider.lane, context, item, builder('`state.items[0]`', item)])
 
-    def process(batch):
-        nonlocal stopped
+    def uncached(batch):
+        # Cache lookup is local work, not an egress boundary. Validate policy
+        # before and after the pass; provider reservation/publication check it
+        # again. Do not spawn a git process for every cached source unit.
+        store.policy(epoch)
         remaining = []
-        for item in batch:
-            store.policy(epoch)
+        pending = list(reversed(batch))
+        while pending:
+            item = pending.pop()
             validate_dependencies(store, [item])
-            cached = store.db.execute('SELECT * FROM semantic_items WHERE key=?', (key(item),)).fetchone()
+            item_key = key(item)
+            cached = store.db.execute('SELECT * FROM semantic_items WHERE key=?', (item_key,)).fetchone()
             if cached:
                 refs = [{**r, 'cached': True} for r in json.loads(cached['decisions'])]
                 result['records'].append({'item': item, 'answers': json.loads(cached['answer']),
@@ -66,7 +75,23 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
                 result['decisions'].extend(refs)
                 result['cache_hits'] += 1
             else:
+                partition = store.db.execute('SELECT answer FROM semantic_items WHERE key=?',
+                    (digest([PARTITION_VERSION, item_key]),)).fetchone() if splittable and 'span' in item else None
+                if partition:
+                    parts = split_source(item)
+                    if parts and [p['span'] for p in parts] == json.loads(partition[0])['children']:
+                        # A server-confirmed single-source rejection is bound to
+                        # the exact parent question/context. Restore that tree
+                        # before batching misses with new neighbouring sources.
+                        pending.extend(reversed(parts))
+                        result['partitions_reused'] += 1
+                        continue
                 remaining.append(item)
+        store.policy(epoch)
+        return remaining
+
+    def process(remaining):
+        nonlocal stopped
         if not remaining:
             return
         if stopped:
@@ -109,15 +134,32 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
                     return
                 parts = split_source(remaining[0]) if splittable and 'span' in remaining[0] else []
                 if parts:
+                    store.db.execute('BEGIN IMMEDIATE')
+                    try:
+                        store.policy(epoch)
+                        validate_dependencies(store, remaining)
+                        store.db.execute('INSERT OR REPLACE INTO semantic_items VALUES (?,?,?,?,?,?,?,?)',
+                            (digest([PARTITION_VERSION, key(remaining[0])]), PARTITION_VERSION, epoch, policy['model'],
+                             encode(dependencies(remaining[0])).decode(),
+                             encode({'children': [p['span'] for p in parts], 'reason': code,
+                                     'request_hash': report['request_hash']}).decode(), '[]', now()))
+                        store.db.execute('COMMIT')
+                    except BaseException:
+                        store.db.execute('ROLLBACK')
+                        raise
                     for part in parts:
-                        process([part])
+                        process(uncached([part]))
                     return
             result['errors'].append(code)
             if code in STOP_ERRORS or code == CONTEXT_ERROR:
                 stopped = code
 
-    for batch in batches(items, lambda batch: batching.context_fits(*request(context, batch, builder))):
+    # Only misses need provider-context packing. Previously even a fully cached
+    # task rebuilt and sized every candidate batch before consulting the cache.
+    for batch in batches(uncached(items), lambda batch: batching.context_fits(*request(context, batch, builder))):
         process(batch)
+    store.policy(epoch)
+    validate_dependencies(store, items)
     # Cached units and adaptive children can complete in a different order.
     result['records'].sort(key=lambda r: (r['item'].get('event_id', ''), r['item'].get('span', {}).get('start', 0)))
     result['errors'] = sorted(set(result['errors']))

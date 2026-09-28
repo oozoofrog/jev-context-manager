@@ -1,4 +1,5 @@
 """Task-scoped, independent source judgments; lexical rank is never admission."""
+from collections import defaultdict
 from .provider import choice, noul, retrieval_questions
 from .semantic_cache import evaluate_items, source_items
 from .classification import LABELS, classify
@@ -34,8 +35,13 @@ def select(store, provider, materials, request_text, epoch, task_scope=None):
     result['classification_evaluated_units'] = classification['evaluated_units']
     assessments = []
     intents = []
+    records_by_source, labels_by_source = defaultdict(list), defaultdict(list)
+    for record in result['records']:
+        records_by_source[record['item']['event_id']].append(record)
+    for record in classification['records']:
+        labels_by_source[record['item']['event_id']].append(record)
     for material in materials:
-        records = [r for r in result['records'] if r['item']['event_id'] == material['event_id']]
+        records = records_by_source[material['event_id']]
         assessment = {'complete': False, 'spans': [], 'relevance': None, 'omission': None,
                       'representation': 'full', 'applicability': [], 'labels': {}, 'decisions': [], 'evidence_spans': []}
         cursor = 0
@@ -52,8 +58,8 @@ def select(store, provider, materials, request_text, epoch, task_scope=None):
             if applicability['choice'] == 'uncertain' or (applicability['probabilities']['unrelated'] < .5 and
                     answers['representation']['choice'] != 'omit' and (relevance >= 1.5 or omission >= .5)):
                 assessment['spans'].append(span)
-            classifications = [r for r in classification['records'] if r['item']['event_id'] == material['event_id']
-                               and r['item']['span']['start'] < span['end'] and r['item']['span']['end'] > span['start']]
+            classifications = [r for r in labels_by_source[material['event_id']]
+                               if r['item']['span']['start'] < span['end'] and r['item']['span']['end'] > span['start']]
             labels = {k: max((r['answers'][k]['noul'] for r in classifications), default=0) for k in LABELS}
             assessment['evidence_spans'].append({'span': span, 'labels': labels, 'decisions': record['decisions']})
             for name, value in labels.items():

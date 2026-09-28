@@ -381,3 +381,147 @@ class TaskReuseTests(IndependentCacheTests):
         self.assertEqual(pack['metrics']['relation_units_evaluated'], 0)
         self.assertIn(tool, {r['event_id'] for r in pack['selected_records']})
         self.assertTrue(all(a['implementation_status'] == 'not_established' for a in pack['task_frame']['assertions']))
+
+
+class ResumePerformanceTests(unittest.TestCase):
+    """Exercise resumptions without wall-clock assertions on test machines."""
+    tearDown = fixtures.ContinuityTests.tearDown
+    capture = fixtures.ContinuityTests.capture
+    provider = fixtures.ContinuityTests.provider
+    transport = TaskReuseTests.transport
+    read_view = TaskReuseTests.read_view
+    items = IndependentCacheTests.items
+    evaluate = IndependentCacheTests.evaluate
+
+    def setUp(self):
+        fixtures.ContinuityTests.setUp(self)
+        self.sent = []
+
+    def selected_request(self, anchor, session):
+        from jcm.util import encode
+        event = self.capture(session, 'selection', 'Select this previously offered task.')
+        token = self.store.request(session, event)
+        self.store.db.execute('INSERT INTO meta VALUES (?,?)', ('entry_control:' + event, 'true'))
+        self.store.db.execute('INSERT INTO meta VALUES (?,?)', ('entry_selection:' + token,
+            encode({'task_id': anchor, 'entry_id': session}).decode()))
+        return token
+
+    def selected_pack(self, token):
+        from jcm.coordinator import dispatch
+        route = dispatch(self.store, token, self.provider(self.transport))
+        return self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
+
+    def test_a_b_a_reuses_prior_sources_and_new_correction_is_only_delta(self):
+        a = self.capture('history', 'a', 'Task A: Use delay 5 seconds. Preserve protocol 47.')
+        b = self.capture('history', 'b', 'Task B: Export color palette.')
+        original = self.transport
+        def scoped(body, key):
+            import json
+            response = original(body, key)
+            payload = json.loads(body)
+            for name, question in payload['questions'].items():
+                if not name.endswith('_applicability'):
+                    continue
+                item = payload['state']['items'][int(name.split('_')[0][1:])]
+                scope = payload['state']['context']['request']
+                unrelated = ('Task A:' in scope and item['text'].startswith('Task B:')) or ('Task B:' in scope and item['text'].startswith('Task A:'))
+                selected = 'unrelated' if unrelated else 'direct'
+                response['answers'][name].update(choice=selected, probabilities={v: float(v == selected) for v in question['criteria']})
+            return response
+        self.transport = scoped
+        first = self.selected_pack(self.selected_request(a, 'a1'))
+        other = self.selected_pack(self.selected_request(b, 'b1'))
+        sent_before = len(self.sent)
+        returned = self.selected_pack(self.selected_request(a, 'a2'))
+        self.assertNotEqual(first['task_frame']['task_id'], other['task_frame']['task_id'])
+        self.assertEqual(first['task_frame']['task_id'], returned['task_frame']['task_id'])
+        self.assertEqual({s['event_id'] for s in first['selected_records']}, {s['event_id'] for s in returned['selected_records']})
+        # The new selection message may be classified by the worker; historical
+        # sources must not be sent again.
+        self.assertTrue(all(item.get('event_id') not in {a, b}
+            for request in self.sent[sent_before:] for item in request['state'].get('items', [])))
+        self.assertEqual(returned['metrics']['source_units_evaluated'], 0)
+        self.assertNotIn(b, {s['event_id'] for s in returned['selected_records']})
+        correction = self.capture('history', 'correction', 'Correction: Task A: use delay 8 seconds.')
+        updated = self.selected_pack(self.selected_request(a, 'a3'))
+        self.assertEqual(updated['metrics']['source_units_evaluated'], 1)
+        self.assertEqual(updated['metrics']['source_units_reused'], 2)
+        assertions = updated['task_frame']['assertions']
+        self.assertTrue(any(s['event_id'] == correction for s in assertions))
+        self.assertTrue(any('delay 5' in s['text'] and s['state'] == 'disputed' for s in assertions))
+        self.assertTrue(any('protocol 47' in s['text'] and s['state'] == 'active_evidence' for s in assertions))
+        self.assertTrue(self.read_view(updated)[0]['required_context_complete'])
+
+    def test_warm_cache_does_not_pack_sources_for_egress(self):
+        from unittest.mock import patch
+        source = self.capture('history', 'one', 'Keep pause state.')
+        self.evaluate([source])
+        items = self.items([source], {'goal': 'connection'})
+        with patch('jcm.batching.context_fits', side_effect=AssertionError('Cached evidence must not be packed')):
+            result = evaluate_items(self.store, self.provider(), 'fixture', {'goal': 'connection'},
+                                    items, builder, self.cfg['epoch'])
+        self.assertEqual(result['cache_hits'], 1)
+
+    def test_disable_during_cache_scan_is_checked_before_return(self):
+        source = self.capture('history', 'one', 'Keep pause state.')
+        self.evaluate([source])
+        items = self.items([source], {'goal': 'connection'})
+        def disable(path, item):
+            self.store.change_policy(enabled=False)
+            return builder(path, item)
+        with self.assertRaisesRegex(JCMError, 'PROJECT_DISABLED'):
+            evaluate_items(self.store, self.provider(), 'fixture', {'goal': 'connection'},
+                           items, disable, self.cfg['epoch'])
+
+    def test_large_source_is_hashed_once_and_all_spans_survive(self):
+        from unittest.mock import patch
+        from jcm.util import digest
+        text = 'One exact evidence line.\n' * 16000
+        source = self.capture('history', 'large', text)
+        material = self.store.material(self.store.event(source))
+        with patch('jcm.semantic_cache.digest', wraps=digest) as hashing:
+            items = source_items(material, {'goal': 'connection'}, builder)
+        self.assertEqual(hashing.call_count, 1)
+        self.assertGreater(len(items), 1)
+        self.assertEqual(''.join(i['text'] for i in items), text)
+        self.assertTrue(all(i['span']['source_hash'] == digest(text) for i in items))
+
+    def test_revision_change_during_cached_scan_cannot_return_stale_evidence(self):
+        source = self.capture('history', 'one', 'Keep pause state.')
+        self.evaluate([source])
+        items = self.items([source], {'goal': 'connection'})
+        def changed(path, item):
+            self.store.db.execute('UPDATE events SET revision=revision+1 WHERE id=?', (source,))
+            return builder(path, item)
+        with self.assertRaisesRegex(JCMError, 'SEMANTIC_DEPENDENCY_CHANGED'):
+            evaluate_items(self.store, self.provider(), 'fixture', {'goal': 'connection'},
+                           items, changed, self.cfg['epoch'])
+
+    def test_adaptive_partition_reused_before_mixing_with_new_evidence(self):
+        import json
+        from jcm.provider import CONTEXT_ERROR
+        old = self.capture('history', 'large', 'original evidence\n' * 1000)
+        calls = []
+        def transport(body, key):
+            payload = json.loads(body)
+            calls.append(payload)
+            if any(len(i.get('text', '')) > 2000 for i in payload['state']['items']):
+                raise JCMError(CONTEXT_ERROR)
+            return fixtures.fake_http(body, key)
+        provider = self.provider(transport)
+        first = self.evaluate([old], provider=provider)
+        self.assertFalse(first['errors'])
+        self.assertGreater(first['evaluated_units'], 1)
+        count = len(calls)
+        new = self.capture('history', 'new', 'A newly added requirement.')
+        result = self.evaluate([new, old], provider=provider)
+        self.assertEqual(result['evaluated_units'], 1)
+        self.assertEqual(result['cache_hits'], first['evaluated_units'])
+        self.assertGreater(result['partitions_reused'], 0)
+        self.assertTrue(all(item['event_id'] == new for call in calls[count:] for item in call['state']['items']))
+        self.assertEqual(''.join(r['item']['text'] for r in result['records'] if r['item']['event_id'] == old), 'original evidence\n' * 1000)
+        changed = self.evaluate([old], {'goal': 'different scope'}, provider=provider)
+        self.assertEqual(changed['partitions_reused'], 0)
+        self.assertEqual(changed['cache_hits'], 0)
+        self.store.forget_session('history')
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM semantic_items').fetchone()[0], 0)

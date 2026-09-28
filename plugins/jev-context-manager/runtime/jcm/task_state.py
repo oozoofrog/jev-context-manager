@@ -173,6 +173,7 @@ def project(store, provider, identity, materials, selected, assessments, epoch, 
             categories = ['requirement' if material['role'] == 'user' else 'context']
         spans = assessment.get('spans', []) if selected_source.get('representation') == 'spans' else []
         repeated = {}
+        source_hash = digest(material['text'])
         assertion_ranges = assertion_spans(material['text']) if material['role'] == 'user' else ((a, b, a, b) for a,b in blocks(material['text']))
         for start, end, block_start, block_end in assertion_ranges:
             if spans and not any(s['start'] < end and s['end'] > start for s in spans):
@@ -184,7 +185,7 @@ def project(store, provider, identity, materials, selected, assessments, epoch, 
                 continue
             assertion_id = digest([VERSION, task_id, material['event_id'], material['revision'], start, end])
             assertions.append({'id': assertion_id, 'event_id': material['event_id'], 'revision': material['revision'],
-                'span': {'start': start, 'end': end, 'source_hash': digest(material['text'])},
+                'span': {'start': start, 'end': end, 'source_hash': source_hash},
                 'text': material['text'][start:end], 'surrounding_text': material['text'][block_start:block_end], 'role': material['role'], 'basis': material['basis'],
                 'categories': categories, 'state': 'active_evidence', 'implementation_status': 'not_established',
                 'decisions': assessment.get('decisions', []), 'occurrences': [occurrence]})

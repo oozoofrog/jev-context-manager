@@ -79,3 +79,9 @@ The fixed-corpus repeat used 1 transport call and 5,338 request bytes, compared 
 5 calls and 55,323 bytes cold. Old source reassessment was zero. The correction used
 5 calls and 118,057 bytes with 20 new relation units, so this example establishes
 repeat reuse, not a general reduction in every request or total workload cost.
+
+## Resume performance
+
+The dev.14 cache traversal, adaptive partition reuse, and delivery sizing changes
+are documented in [large-history resume performance](resume-performance.md).
+They preserve existing source judgments and the schema-5 storage contract.

@@ -13,6 +13,11 @@ def text_spans(text, fits):
     """Unicode character offsets; the fit predicate is a packing hint."""
     start = 0
     while start < len(text) or (start == 0 and not text):
+        # Most records fit whole. Avoid repeatedly serializing their full task
+        # context during a binary search that will choose the same endpoint.
+        if fits(start, len(text)):
+            yield start, len(text)
+            return
         low, high = start, len(text)
         if not fits(start, start):
             raise JCMError('PROVIDER_REQUEST_CONTEXT_TOO_LARGE')
@@ -111,11 +116,11 @@ def adaptive_batches(items, make_request, evaluate, split_item=None, on_terminal
     yield items, result
 
 
-def source_span(material, start, end):
+def source_span(material, start, end, source_hash=None):
     return {**{k: material[k] for k in ('event_id', 'revision', 'role', 'kind', 'basis')},
             'text': material['text'][start:end],
             'span': {'start': start, 'end': end, 'total_chars': len(material['text']),
-                     'source_hash': digest(material['text'])}}
+                     'source_hash': source_hash if source_hash is not None else digest(material['text'])}}
 
 
 def select(store, provider, materials, request_text, epoch, task_scope=None):

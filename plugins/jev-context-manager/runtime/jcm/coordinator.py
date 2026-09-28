@@ -198,6 +198,7 @@ def dispatch(store, token, provider=None):
         classification_units_reused=semantic.get('classification_cache_hits', 0),
         classification_units_evaluated=semantic.get('classification_evaluated_units', 0),
         source_units_reused=semantic.get('cache_hits', 0), source_units_evaluated=semantic.get('evaluated_units', 0),
+        source_partitions_reused=semantic.get('partitions_reused', 0),
         relation_units_reused=projection['cache_hits'], relation_units_evaluated=projection['evaluated_units'],
         representations_reused=representation['representation_cache_hits'],
         route_units_evaluated=identity['evaluated_units'], stages=stages,

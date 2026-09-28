@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jev-context-manager"
-version = "0.1.0.dev13"
+version = "0.1.0.dev14"
 description = "Durable automatic Codex session continuity with bounded Jev judgments"
 requires-python = ">=3.11"
 dependencies = []

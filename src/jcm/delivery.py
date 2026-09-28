@@ -27,9 +27,12 @@ def paginate(store, pack):
     content_hash = digest(pack)
     sizing_pack = {**pack, 'page_manifest': {'content_hash': content_hash}}
     # Size with long counters/next-command and room for bootstrap's wrapper fields.
+    sample = envelope(store, sizing_pack, [], 999999999, 999999999, 0, 999999999)
+    # Only entries vary. Page/content digests have fixed encoded length, so
+    # sizing need not hash each trial batch or reconstruct the whole envelope.
+    envelope_bytes = len(encode(sample)) - len(encode([]))
     def fits(entries):
-        sample = envelope(store, sizing_pack, entries, 999999999, 999999999, 0, 999999999)
-        return len(encode(sample)) + 256 <= ceiling
+        return envelope_bytes + len(encode(entries)) + 256 <= ceiling
     if not fits([]):
         raise JCMError('PACK_BUDGET_EXCEEDED_REQUIRES_SCOPED_READ')
 

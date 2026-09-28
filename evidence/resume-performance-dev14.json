@@ -1,0 +1,447 @@
+{
+  "pass": true,
+  "lane": "frozen_history_real_jev_independent_dispatch_processes",
+  "phases": {
+    "baseline_warm": {
+      "brief_evidence_hash": "6b797ac17038266aa79f01039152ada8421dd39947ac39b7e821ee9aa04049de",
+      "correction_marker_in_brief": false,
+      "delivery": {
+        "dispatch_timing": {
+          "dispatch_before_commit_seconds": 32.804341625000234,
+          "pack_persistence_seconds": 0.0536382920035976,
+          "pack_preparation_seconds": 1.2208019159952528
+        },
+        "model_consumption_or_use": "not_observable_by_jcm",
+        "optional_served_bytes": 0,
+        "required_read_completion_seconds": 2.186514,
+        "required_served_bytes": 150080,
+        "source_expansion_bytes": 0
+      },
+      "dispatch": "ready",
+      "elapsed_seconds": 32.80616425000335,
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 0,
+        "classification_units_reused": 840,
+        "failed_or_retried_calls": 0,
+        "optional_audit_content_bytes": 832373,
+        "provider_usage": {},
+        "relation_units_evaluated": 0,
+        "relation_units_reused": 543,
+        "representations_reused": 25,
+        "request_bytes": 0,
+        "required_content_bytes": 140545,
+        "route_units_evaluated": 0,
+        "search": {
+          "candidate_union_size": 194,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 0,
+          "lexical_hits": 185,
+          "prior_members": 25
+        },
+        "selection_and_state_elapsed_seconds": 31.529899665998528,
+        "source_units_evaluated": 0,
+        "source_units_reused": 857,
+        "stages": {
+          "capture_seconds": 0.01675870799954282,
+          "source_selection_seconds": 26.493831749998208,
+          "state_and_representation_seconds": 4.447673750000831,
+          "task_route_seconds": 0.007958333000715356,
+          "worker_seconds": 0.06683458400220843
+        },
+        "successful_transport_calls": 0,
+        "task_route": "explicit_selection",
+        "transport_calls": 0,
+        "transport_seconds": 0
+      },
+      "quality": "normal",
+      "required_complete": true,
+      "task_frame_hash": "2d43c0c6ae772bad1665d8320a21d05ce0eb5d3b9455c99c33a61d6f272a1029",
+      "task_id": "45d3fc7830ca8de9a01afbed56ed95edccb9616343c60cd111539003ac51a1e3",
+      "membership_sources_transmitted": 0,
+      "selected_count": 25,
+      "selected_set_hash": "947af209c10acc795724b092c6dde14c068e8e88bb1549eca76a6867eff7670b"
+    },
+    "candidate_warm": {
+      "brief_evidence_hash": "6b797ac17038266aa79f01039152ada8421dd39947ac39b7e821ee9aa04049de",
+      "correction_marker_in_brief": false,
+      "delivery": {
+        "dispatch_timing": {
+          "dispatch_before_commit_seconds": 4.179500417005329,
+          "pack_persistence_seconds": 0.04810091700346675,
+          "pack_preparation_seconds": 0.5483608750000712
+        },
+        "model_consumption_or_use": "not_observable_by_jcm",
+        "optional_served_bytes": 0,
+        "required_read_completion_seconds": 1.460305,
+        "required_served_bytes": 150110,
+        "source_expansion_bytes": 0
+      },
+      "dispatch": "ready",
+      "elapsed_seconds": 4.181278249998286,
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 0,
+        "classification_units_reused": 840,
+        "failed_or_retried_calls": 0,
+        "optional_audit_content_bytes": 832373,
+        "provider_usage": {},
+        "relation_units_evaluated": 0,
+        "relation_units_reused": 543,
+        "representations_reused": 25,
+        "request_bytes": 0,
+        "required_content_bytes": 140545,
+        "route_units_evaluated": 0,
+        "search": {
+          "candidate_union_size": 194,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 0,
+          "lexical_hits": 185,
+          "prior_members": 25
+        },
+        "selection_and_state_elapsed_seconds": 3.583036625001114,
+        "source_partitions_reused": 0,
+        "source_units_evaluated": 0,
+        "source_units_reused": 857,
+        "stages": {
+          "capture_seconds": 0.01651783299894305,
+          "source_selection_seconds": 2.7878727499992237,
+          "state_and_representation_seconds": 0.19296837499859976,
+          "task_route_seconds": 0.007953250002174173,
+          "worker_seconds": 0.08689112499996554
+        },
+        "successful_transport_calls": 0,
+        "task_route": "explicit_selection",
+        "transport_calls": 0,
+        "transport_seconds": 0
+      },
+      "quality": "normal",
+      "required_complete": true,
+      "task_frame_hash": "2d43c0c6ae772bad1665d8320a21d05ce0eb5d3b9455c99c33a61d6f272a1029",
+      "task_id": "45d3fc7830ca8de9a01afbed56ed95edccb9616343c60cd111539003ac51a1e3",
+      "membership_sources_transmitted": 0,
+      "selected_count": 25,
+      "selected_set_hash": "947af209c10acc795724b092c6dde14c068e8e88bb1549eca76a6867eff7670b"
+    },
+    "candidate_repeat": {
+      "brief_evidence_hash": "6b797ac17038266aa79f01039152ada8421dd39947ac39b7e821ee9aa04049de",
+      "correction_marker_in_brief": false,
+      "delivery": {
+        "dispatch_timing": {
+          "dispatch_before_commit_seconds": 2.8610083340026904,
+          "pack_persistence_seconds": 0.05120283299766015,
+          "pack_preparation_seconds": 0.5504913340046187
+        },
+        "model_consumption_or_use": "not_observable_by_jcm",
+        "optional_served_bytes": 0,
+        "required_read_completion_seconds": 1.530014,
+        "required_served_bytes": 150111,
+        "source_expansion_bytes": 0
+      },
+      "dispatch": "ready",
+      "elapsed_seconds": 2.8628966660035076,
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 0,
+        "classification_units_reused": 840,
+        "failed_or_retried_calls": 0,
+        "optional_audit_content_bytes": 826302,
+        "provider_usage": {},
+        "relation_units_evaluated": 0,
+        "relation_units_reused": 543,
+        "representations_reused": 25,
+        "request_bytes": 0,
+        "required_content_bytes": 140545,
+        "route_units_evaluated": 0,
+        "search": {
+          "candidate_union_size": 194,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 0,
+          "lexical_hits": 185,
+          "prior_members": 25
+        },
+        "selection_and_state_elapsed_seconds": 2.2593120000019553,
+        "source_partitions_reused": 22,
+        "source_units_evaluated": 0,
+        "source_units_reused": 857,
+        "stages": {
+          "capture_seconds": 0.0169926669987035,
+          "source_selection_seconds": 1.4504743340003188,
+          "state_and_representation_seconds": 0.19981741700030398,
+          "task_route_seconds": 0.008431458001723513,
+          "worker_seconds": 0.08524179099913454
+        },
+        "successful_transport_calls": 0,
+        "task_route": "explicit_selection",
+        "transport_calls": 0,
+        "transport_seconds": 0
+      },
+      "quality": "normal",
+      "required_complete": true,
+      "task_frame_hash": "2d43c0c6ae772bad1665d8320a21d05ce0eb5d3b9455c99c33a61d6f272a1029",
+      "task_id": "45d3fc7830ca8de9a01afbed56ed95edccb9616343c60cd111539003ac51a1e3",
+      "membership_sources_transmitted": 0,
+      "selected_count": 25,
+      "selected_set_hash": "947af209c10acc795724b092c6dde14c068e8e88bb1549eca76a6867eff7670b"
+    },
+    "switch_b_cold": {
+      "brief_evidence_hash": "a141dd478aca872f6fa7b9fe61d20a6c58f6ae128b168e334fd30088fae69601",
+      "correction_marker_in_brief": false,
+      "delivery": {
+        "dispatch_timing": {
+          "dispatch_before_commit_seconds": 91.68023458400421,
+          "pack_persistence_seconds": 0.04069399999571033,
+          "pack_preparation_seconds": 0.3632729169985396
+        },
+        "model_consumption_or_use": "not_observable_by_jcm",
+        "optional_served_bytes": 0,
+        "required_read_completion_seconds": 0.573383,
+        "required_served_bytes": 7034,
+        "source_expansion_bytes": 0
+      },
+      "dispatch": "ready",
+      "elapsed_seconds": 91.68195808299788,
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 23,
+        "classification_units_reused": 840,
+        "failed_or_retried_calls": 32,
+        "optional_audit_content_bytes": 463365,
+        "provider_usage": {
+          "input_tokens": 4138271,
+          "output_tokens": 160154
+        },
+        "relation_units_evaluated": 0,
+        "relation_units_reused": 0,
+        "representations_reused": 0,
+        "request_bytes": 16996389,
+        "required_content_bytes": 5782,
+        "route_units_evaluated": 0,
+        "search": {
+          "candidate_union_size": 366,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 23,
+          "lexical_hits": 366,
+          "prior_members": 0
+        },
+        "selection_and_state_elapsed_seconds": 91.27626479200262,
+        "source_partitions_reused": 0,
+        "source_units_evaluated": 863,
+        "source_units_reused": 0,
+        "stages": {
+          "capture_seconds": 0.018451417003234383,
+          "source_selection_seconds": 89.99193599999853,
+          "state_and_representation_seconds": 0.131823625000834,
+          "task_route_seconds": 0.008464375001494773,
+          "worker_seconds": 0.09452520800550701
+        },
+        "successful_transport_calls": 156,
+        "task_route": "explicit_selection",
+        "transport_calls": 188,
+        "transport_seconds": 76.72939938100171
+      },
+      "quality": "normal",
+      "required_complete": true,
+      "task_frame_hash": "29403fbe8f46408d99b11a38f650087c0b552266a6f7c1aea5c6c54e6e412081",
+      "task_id": "ff2c7842eb287308be928f3267d65fbac50810afc9081a2a875d88f50f345da9",
+      "membership_sources_transmitted": 792,
+      "selected_count": 1,
+      "selected_set_hash": "fba8d3ad7a2c849f31d171d7190b7c87ee63f3a9880e2b2e19c93291f69caab2"
+    },
+    "return_a": {
+      "brief_evidence_hash": "7b0903332a82e790012f1058b5c58148d861241a7cec7577dcafde9ee6e1e7a5",
+      "correction_marker_in_brief": false,
+      "delivery": {
+        "dispatch_timing": {
+          "dispatch_before_commit_seconds": 5.161016541002027,
+          "pack_persistence_seconds": 0.05586937499901978,
+          "pack_preparation_seconds": 0.564173667000432
+        },
+        "model_consumption_or_use": "not_observable_by_jcm",
+        "optional_served_bytes": 0,
+        "required_read_completion_seconds": 1.667561,
+        "required_served_bytes": 204931,
+        "source_expansion_bytes": 0
+      },
+      "dispatch": "ready",
+      "elapsed_seconds": 5.1627682500038645,
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 0,
+        "classification_units_reused": 863,
+        "failed_or_retried_calls": 0,
+        "optional_audit_content_bytes": 994398,
+        "provider_usage": {
+          "input_tokens": 136045,
+          "output_tokens": 4328
+        },
+        "relation_units_evaluated": 0,
+        "relation_units_reused": 543,
+        "representations_reused": 25,
+        "request_bytes": 376289,
+        "required_content_bytes": 193915,
+        "route_units_evaluated": 0,
+        "search": {
+          "candidate_union_size": 205,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 0,
+          "lexical_hits": 196,
+          "prior_members": 25
+        },
+        "selection_and_state_elapsed_seconds": 4.540971832997457,
+        "source_partitions_reused": 22,
+        "source_units_evaluated": 24,
+        "source_units_reused": 857,
+        "stages": {
+          "capture_seconds": 0.015508958000282291,
+          "source_selection_seconds": 3.732628999998269,
+          "state_and_representation_seconds": 0.2177488750021439,
+          "task_route_seconds": 0.007704542003921233,
+          "worker_seconds": 0.08060400000249501
+        },
+        "successful_transport_calls": 4,
+        "task_route": "explicit_selection",
+        "transport_calls": 4,
+        "transport_seconds": 2.004600625994499
+      },
+      "quality": "normal",
+      "required_complete": true,
+      "task_frame_hash": "4b547c998957b673ec0d3b7de9b54f4581c994dbf94f4e7bf1d9118e10f8b933",
+      "task_id": "45d3fc7830ca8de9a01afbed56ed95edccb9616343c60cd111539003ac51a1e3",
+      "membership_sources_transmitted": 23,
+      "selected_count": 28,
+      "selected_set_hash": "2a5a5db42494f89772cd6f2f3e945d9258e7bdd8df9a516a06e5e685a3bd0aa1"
+    },
+    "a_after_correction": {
+      "brief_evidence_hash": "cf38660a38bf3c1498c7bb6614214cf36f2a86bb29fdacac27911d33af0bc251",
+      "correction_marker_in_brief": true,
+      "delivery": {
+        "dispatch_timing": {
+          "dispatch_before_commit_seconds": 9.803202083006909,
+          "pack_persistence_seconds": 0.055326415997114964,
+          "pack_preparation_seconds": 0.570160292001674
+        },
+        "model_consumption_or_use": "not_observable_by_jcm",
+        "optional_served_bytes": 0,
+        "required_read_completion_seconds": 1.806074,
+        "required_served_bytes": 207318,
+        "source_expansion_bytes": 0
+      },
+      "dispatch": "ready",
+      "elapsed_seconds": 9.805075500000385,
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 1,
+        "classification_units_reused": 863,
+        "failed_or_retried_calls": 4,
+        "optional_audit_content_bytes": 998470,
+        "provider_usage": {
+          "input_tokens": 321823,
+          "output_tokens": 26071
+        },
+        "relation_units_evaluated": 192,
+        "relation_units_reused": 543,
+        "representations_reused": 28,
+        "request_bytes": 1595827,
+        "required_content_bytes": 196178,
+        "route_units_evaluated": 0,
+        "search": {
+          "candidate_union_size": 207,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 1,
+          "lexical_hits": 197,
+          "prior_members": 28
+        },
+        "selection_and_state_elapsed_seconds": 9.177713542005222,
+        "source_partitions_reused": 22,
+        "source_units_evaluated": 1,
+        "source_units_reused": 881,
+        "stages": {
+          "capture_seconds": 0.016538000003492925,
+          "source_selection_seconds": 2.0720196249967557,
+          "state_and_representation_seconds": 6.508825208002236,
+          "task_route_seconds": 0.009538791004160885,
+          "worker_seconds": 0.08162808400084032
+        },
+        "successful_transport_calls": 10,
+        "task_route": "explicit_selection",
+        "transport_calls": 14,
+        "transport_seconds": 5.830332374986028
+      },
+      "quality": "normal",
+      "required_complete": true,
+      "task_frame_hash": "269fd0d85f02845e22bf38b0f0f5672a9885d3453d0f7033203e15a46f644000",
+      "task_id": "45d3fc7830ca8de9a01afbed56ed95edccb9616343c60cd111539003ac51a1e3",
+      "membership_sources_transmitted": 1,
+      "selected_count": 29,
+      "selected_set_hash": "48364c49d5e813ae85ca7e34eb954f24eccbd1bb5ad4406014412661b901a2bc"
+    }
+  },
+  "checks": {
+    "same_warm_sources": true,
+    "warm_no_http": true,
+    "faster_same_input": true,
+    "baseline_same_sources": true,
+    "same_task_frame_and_brief": true,
+    "distinct_task_b": true,
+    "returned_to_same_a": true,
+    "required_sources_retained": true,
+    "unrelated_b_excluded_from_a": true,
+    "new_correction_retained": true,
+    "old_sources_not_reassessed": true,
+    "no_old_membership_source_retransmission": true,
+    "correction_only_membership_delta": true,
+    "all_normal_ready_read": true,
+    "no_optional_reads": true,
+    "original_sources_unchanged": true,
+    "live_profile_unchanged": true,
+    "live_pointer_unchanged": true,
+    "product_status_unchanged": true
+  },
+  "measurement_note": "Warm baseline and candidate share the original request/input frontier. A new selection turn also admits previously excluded later output from the original turn; those are legitimate new source units on return_a, not cache invalidation. Source retransmission checks use exact event/revision pairs.",
+  "completed": true,
+  "fixture_disabled": true,
+  "baseline_commit": "eefbbf6f9f2bef1abfbe30b77cfafe1bf2c64523",
+  "candidate_version": "0.1.0-dev.14",
+  "candidate_source_sha256": {
+    "bootstrap.py": "17126ea556ca726eee8f722a426f9f10d2df8fb1d13c07f57cb27db5454c6b20",
+    "sync.py": "2a87003031e4da67cc63291c9cf738a502da339d4bdf2adc92bc304d497c4583",
+    "worker.py": "e8418142ac3de7b03f056a4f8d58f61366e8272ed493441597ae1dcaf1d3f95f",
+    "delivery.py": "abe9df5bcee62a64390df928bcf9d9cbf53d2e9ba29fcdd22e848759361544ba",
+    "store.py": "b44ca94fd3eb1912fb44a8de0dca9b529fd251b717c565d1cfa22f4c3cc2ef98",
+    "metrics.py": "47cd6fe2f7dbd6d5cb24d4b7d90cce7f6023f3ec5fe4115f1428a928e822e423",
+    "coordinator.py": "9b182578d60ad1cf2368ca9c7653dd8cf51254fd3b79f96b9e86016fdc6d12ec",
+    "transcript_io.py": "93a3eb0de6b8c93a63a7076885e3f33767ddcc72a35f5711b3f0ce1edf0fc261",
+    "batching.py": "ad036f9ca1153c67d4a5747e49a67516a1ea5638804e8c4938c84e6516415e55",
+    "config.py": "867659fbc5e37e96180626a6d63d640893f55190f9216a41bf1dffa255cbe21b",
+    "provider.py": "f13f292d7e921dd0a6046618f3bbb9a38afb94e0bb27c02035a4a6161d375bf5",
+    "classification.py": "afb2d469e8dd61f8d550451d095992ca511ad570858bc04d0e99672d873d3fd3",
+    "util.py": "a8974ba69aa1e8aa02ccc4314dfdd48d3118e1703102351d5cf5d083031273fc",
+    "health.py": "89144a3f7bd68c0517279815afb16628bf1185efc58d2f05aad563517eecc5a7",
+    "adapter.py": "f81d70fc05394724cbc9cc02d34314dbfd9b62f94a9b7c74b6c85f9f58c38f7a",
+    "blob_storage.py": "2db8f1345e5a7c16e3708247fbd13f88e36e191aadb216a8ea329ae283854eb4",
+    "local_index.py": "e64d1b452ea80e60e032ea0a97977df12a7ae0419a7188751a07ee1f27a7fe7b",
+    "__init__.py": "fefd5b035206cc743c456a0f2a79aeec4e693b7f21f76f34c093821bc3053d78",
+    "follower.py": "f804e7adcae1a3cd8381ff96de5b19658ee26fcf3a70391e77d981483214a1f7",
+    "worklist.py": "2f0ae75deed3d2ddb93b52d4b4168e9cbb6fdbe87a25e90e0e4b9be464ac46f3",
+    "cli.py": "456aaf40f31bc9442b555eb977ebe3fc3e8a9b6012033e959a871dd52695aa72",
+    "entry.py": "5328453a136fcbc0b9c866bb387f25dc59511e27f2368082771686619cdf68a3",
+    "semantic_cache.py": "502aa624e7ed80bb065e2f4c8bcf9f08b4513f3339640bf80dc9f84898cf488b",
+    "plugin.py": "07fdcd9fa8ceb47ab9b2493392d7e5aa0721942f7d2b64b5fd8771726ec58281",
+    "request_source.py": "00e93819ade84cf9f98f43633bffb5b47d0bdb2c803970261765d82c466c8cbe",
+    "representations.py": "41dc3322b4cae82804ee4499cc18571b8bd6fec235847248c8fe505412c00010",
+    "task_state.py": "c2f2a310d2ccb311499c393e3fa572dd8359bd3c6287a48368c0c2c934541c41",
+    "derived.py": "ef3460a142d5e06e4ac2a2c5ce8381214d71157a5ff24e1af9d12c3ab89758a6",
+    "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "source_read.py": "fc0303671445b09e0ba45e602f2bd7f490894e27703d043cfc23291625cfffce",
+    "scope.py": "b5fbf5b07f166b81fbdb272155b1123619458bab4ec84abb1e33bf0f91dbf45b",
+    "snapshot.py": "f6a820b91823a69dba93c3e32c164fa4ca224357b3e491959e062992688e1608",
+    "reusable_selection.py": "eab0f30d4fde29c5c6c4265f4e4db151a8018ad394c23e8fbfdb3b6259bbd63b"
+  },
+  "corpus": {
+    "eligible_source_dependencies": 769,
+    "selected_sources": 25,
+    "membership_units": 857
+  },
+  "timing_note": "Elapsed times are independent Python dispatch processes on the same frozen enabled-store copy, without a profiler. Candidate warm includes first restoration of split hints; candidate repeat reuses those hints. Required reads are measured separately. Not Codex/Desktop UI latency or a general performance guarantee."
+}
