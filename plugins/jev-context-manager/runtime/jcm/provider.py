@@ -119,6 +119,16 @@ class JevProvider:
         self.transport = transport or http
         self.lane = 'mock' if transport else 'real_http'
         self.sleeper = sleeper
+        self.observed_decisions = []
+
+    def call(self, body, key, call_id):
+        start = time.perf_counter()
+        try:
+            return self.transport(body, key)
+        finally:
+            # An in-flight forget may remove this row. Never recreate it.
+            self.store.db.execute('UPDATE call_metrics SET elapsed=? WHERE call_id=?',
+                                  (time.perf_counter() - start, call_id))
 
     def evaluate(self, state, questions, heartbeat=None):
         store = self.store
@@ -141,6 +151,7 @@ class JevProvider:
                             (cache_key, CONTEXT_ERROR)).fetchone():
             raise JCMError(CONTEXT_ERROR)
         decision = uuid.uuid4().hex
+        self.observed_decisions.append(decision)
         store.db.execute('BEGIN IMMEDIATE')
         try:
             store.policy(policy['epoch'])
@@ -159,6 +170,7 @@ class JevProvider:
             try:
                 store.policy(policy['epoch'])
                 store.db.execute('INSERT INTO calls VALUES (?,?,?,?)', (call_id, day, len(body), 'reserved'))
+                store.db.execute('INSERT INTO call_metrics VALUES (?,?,?,NULL)', (call_id, decision, now()))
                 store.db.execute('COMMIT')
             except BaseException as exc:
                 store.db.execute('ROLLBACK')
@@ -169,7 +181,7 @@ class JevProvider:
             try:
                 if heartbeat:
                     heartbeat()
-                response = validate(self.transport(body, key), questions, policy['model'])
+                response = validate(self.call(body, key, call_id), questions, policy['model'])
                 store.policy(policy['epoch'])
                 store.db.execute('BEGIN IMMEDIATE')
                 try:

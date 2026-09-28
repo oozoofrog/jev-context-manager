@@ -124,11 +124,15 @@ are compared in a separate pass so corrections can cross retrieval batches. A
 requirement pair that cannot fit together is reported as unresolved rather than
 silently compared from truncated text.
 
-Successful judgments are cached. Retrying the same retrieval reuses successful
-batches and retries failed ones. Confirmed context rejections also reuse their split paths. There are no local daily-call, byte-size or candidate-count quotas, including for existing profiles. An
+Successful judgments are cached per independent source or source pair. Reordering
+a batch does not invalidate an unchanged judgment. Task membership is bound to a
+source-backed work identity; a changed request is checked before that identity is
+reused. Changed source revisions, policies, models, or rubrics invalidate the
+dependent judgments. Failed judgments can be retried. Confirmed context rejections also reuse their split paths. There are no local daily-call, byte-size or candidate-count quotas, including for existing profiles. An
 unassessed record remains available locally. Old per-record denial flags are
 ignored; records do not need to be imported again to use Jev.
 
+The default recovery view is `brief`: the current task frame and required evidence.
 Large recovery packs return `stage=reading`, `delivery=page_served` and a
 `next_read_command`. Read each page and follow that exact command until it is null.
 You can explicitly reread a page with:
@@ -142,9 +146,58 @@ fields carry character offsets; records keep their source IDs. Snapshot metadata
 is paged too. No original text is silently truncated. Page hashes and read receipts
 track delivery; repeating a page does not count as reading a different one.
 `pagination.remaining_pages` reports pages not yet served, and `read_served` is
-reached only after every page has been served. These receipts do not prove that an
+reached only after every required brief page has been served. Optional reads do
+not complete missing brief pages. These receipts do not prove that an
 agent consumed the content or resumed work correctly. Interrupted reading remains
 partial and can continue without generating a new pack.
+
+## Task state, evidence, and optional reads
+
+Task assertions retain their exact source offsets, revisions, origin, and judgment
+provenance. Prior assistant reports remain historical claims. A file snapshot
+change requires current-file reconciliation; recovering an old test report never
+establishes a current test result.
+
+JCM reuses classifications independently of the request and membership within the
+confirmed task scope. The local Unicode/path index tracks candidate matches; the
+current implementation still expands to all eligible source revisions through the
+cache so a missing lexical match cannot silently exclude an unassessed record.
+Rephrasing known work can reuse its source judgments. A correction evaluates new
+sources and dependent assertion pairs. Total correction cost can exceed a cold
+request when many relationships need review.
+
+`brief` contains source-grounded excerpts, preserving user constraints and uncertain
+qualifications. `detail` expands selected evidence; `full` includes each selected
+source's materialized text. Raw event data, including compacted references, is
+available through `inspect --raw`. JCM does not generate an extra prose summary.
+
+```sh
+"$JCM" --repo "$PROJECT" read --pack PACK_ID --view detail
+"$JCM" --repo "$PROJECT" read --pack PACK_ID --view full
+"$JCM" --repo "$PROJECT" read --pack PACK_ID --view audit
+"$JCM" --repo "$PROJECT" inspect --record EVENT_ID --pack PACK_ID
+"$JCM" --repo "$PROJECT" inspect --record EVENT_ID --raw
+```
+
+Follow each view's `next_read_command` to expand it. Audit data is optional and
+includes judgment details, exclusions, and capture inventory. `required_context_complete`
+means all brief pages were served; receipts do not establish model consumption or
+correct use. Provider usage and actual transmitted bytes are measured separately
+from host model tokens, which JCM cannot observe. Repeated reads count toward served bytes even when their coverage receipt already exists.
+Pack preparation/persistence and
+required-read completion timings are stored separately from selection/state timing.
+
+A candidate correction preserves both sources and marks the affected assertion as
+disputed. It does not automatically settle precedence. After reading all pages of
+both exact sources, Codex can review an explicit, whole-assertion correction using
+the returned `state confirm` command, or reject a false relationship. A newer user
+request or changed evidence requires another review. A confirmed resolution still
+represents a report, not current implementation verification.
+
+Schema 5 stores rebuildable task views, assertions, relationships, indexes, and
+representations alongside the source journal. Back up the store before upgrading;
+older runtimes reject newer schemas. Disabling and forgetting take precedence over
+cache reuse, and forgetting a session clears derived state and read receipts.
 
 ## Stop, resume, or delete records
 
@@ -231,7 +284,7 @@ Disabling the plugin in Codex stops subsequent guarded capture and its follower.
 | No new events | Check the project root, project enablement, and hook trust. For an already running session, adopt it and check the follower. |
 | `CURRENT_SESSION_ID_MISSING_OR_AMBIGUOUS` | Run adoption inside the intended Codex session, or specify its exact `--session-id`. |
 | `TRANSCRIPT_NOT_FOUND` | Confirm the session ID and transcript location. If needed, add `--transcript /absolute/path/to/session.jsonl`; it must be inside the admitted transcript roots. |
-| `TRANSCRIPT_LINE_TOO_LARGE` | A single JSONL line exceeds the 8 MB read bound. The cursor stays before that line; total transcript size is not capped at 32 MB. |
+| `TRANSCRIPT_LINE_TOO_LARGE` from an older runtime | Update the runtime. Current capture streams large records and preserves the cursor on admission failures. |
 | `PAGINATED_HISTORY_COVERAGE_PARTIAL` | Supported continuation segments were found; this does not prove that the entire earlier history was imported. |
 | `UNSUPPORTED_TRANSCRIPT_VERSION` | The session's transcript format is not supported. Do not edit its version metadata to force ingestion. |
 | Jev result is `degraded` | Check key availability, network access, and the reported provider error. Jev needs no separate permission; old denial flags do not block it. |

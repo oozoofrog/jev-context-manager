@@ -46,10 +46,36 @@ CREATE TABLE IF NOT EXISTS packs (
 CREATE TABLE IF NOT EXISTS receipts (
  id TEXT PRIMARY KEY, pack_id TEXT NOT NULL, kind TEXT NOT NULL, bytes INTEGER NOT NULL,
  hash TEXT NOT NULL, created TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS delivery_calls (
+ id TEXT PRIMARY KEY, pack_id TEXT NOT NULL, kind TEXT NOT NULL, bytes INTEGER NOT NULL, created TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS delivery_call_pack ON delivery_calls(pack_id);
 CREATE TABLE IF NOT EXISTS tombstones (session TEXT PRIMARY KEY, created TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS gaps (code TEXT PRIMARY KEY, detail TEXT NOT NULL, created TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS event_texts (event_id TEXT PRIMARY KEY, text_hash TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS event_text_hash ON event_texts(text_hash);
+CREATE TABLE IF NOT EXISTS semantic_items (
+ key TEXT PRIMARY KEY, kind TEXT NOT NULL, epoch INTEGER NOT NULL, model TEXT NOT NULL,
+ dependencies TEXT NOT NULL, answer TEXT NOT NULL, decisions TEXT NOT NULL, created TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS call_metrics (
+ call_id TEXT PRIMARY KEY, decision_id TEXT NOT NULL, started TEXT NOT NULL, elapsed REAL);
+CREATE TABLE IF NOT EXISTS source_index (
+ event_id TEXT PRIMARY KEY, revision INTEGER NOT NULL, text_hash TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS source_terms (
+ term TEXT NOT NULL, event_id TEXT NOT NULL, PRIMARY KEY(term,event_id));
+CREATE INDEX IF NOT EXISTS source_term_event ON source_terms(event_id);
+CREATE TABLE IF NOT EXISTS task_views (
+ id TEXT PRIMARY KEY, anchor_id TEXT NOT NULL, epoch INTEGER NOT NULL, model TEXT NOT NULL,
+ rubric TEXT NOT NULL, revision TEXT NOT NULL, data TEXT NOT NULL, updated TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS assertions (
+ id TEXT PRIMARY KEY, task_id TEXT NOT NULL, event_id TEXT NOT NULL, revision INTEGER NOT NULL,
+ data TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS assertion_task ON assertions(task_id);
+CREATE TABLE IF NOT EXISTS state_relations (
+ id TEXT PRIMARY KEY, task_id TEXT NOT NULL, older TEXT NOT NULL, newer TEXT NOT NULL,
+ kind TEXT NOT NULL, status TEXT NOT NULL, data TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS representations (
+ key TEXT PRIMARY KEY, task_id TEXT NOT NULL, event_id TEXT NOT NULL, revision INTEGER NOT NULL,
+ data TEXT NOT NULL);
 '''
 
 
@@ -69,7 +95,7 @@ class Store:
         self.db.execute('PRAGMA synchronous=FULL')
         self.db.execute('PRAGMA foreign_keys=ON')
         version = self.db.execute('PRAGMA user_version').fetchone()[0]
-        if version not in (0, 1, 2, 3, 4):
+        if version not in (0, 1, 2, 3, 4, 5):
             self.db.close()
             raise JCMError('UNSUPPORTED_DATABASE_VERSION')
         self.db.executescript(SCHEMA)
@@ -79,7 +105,7 @@ class Store:
                 self.db.execute('INSERT OR REPLACE INTO event_texts VALUES (?,?)', (event['id'], digest(text)))
         # Older runtimes must not ignore capture boundaries or leave work-menu
         # derivatives behind when forgetting a session.
-        self.db.execute('PRAGMA user_version=4')
+        self.db.execute('PRAGMA user_version=5')
 
     def close(self):
         self.db.close()
@@ -254,8 +280,11 @@ class Store:
                             ('scope_anchor:' + session, 'scope_session:' + session))
             # Work menus are mixed-source derivatives, just like recovery packs.
             self.db.execute("DELETE FROM meta WHERE key LIKE 'entry_catalogue:%' OR key LIKE 'entry_selection:%' OR key LIKE 'entry_control:%'")
+            self.db.execute("DELETE FROM meta WHERE key LIKE 'source_read:%' OR key LIKE 'source_pages:%' OR key LIKE 'required_read:%' OR key LIKE 'pack_timing:%'")
             # Conservative derivative invalidation includes mixed-source model requests.
-            for table in ('requests', 'packs', 'receipts', 'decisions', 'provider_errors'):
+            for table in ('requests', 'packs', 'receipts', 'delivery_calls', 'decisions', 'provider_errors',
+                          'call_metrics', 'semantic_items', 'source_index', 'source_terms', 'task_views',
+                          'assertions', 'state_relations', 'representations'):
                 self.db.execute(f'DELETE FROM {table}')
             self.db.execute('COMMIT')
         except BaseException:
@@ -271,7 +300,10 @@ class Store:
                 UNION SELECT request_blob FROM decisions UNION SELECT response_blob FROM decisions WHERE response_blob IS NOT NULL
                 UNION SELECT blob FROM packs''')}
             for row in self.db.execute('SELECT blob FROM packs').fetchall():
-                retained.update(self.blob(row[0]).get('page_manifest', {}).get('pages', []))
+                pack = self.blob(row[0])
+                retained.update(pack.get('page_manifest', {}).get('pages', []))
+                for view in pack.get('context_views', {}).values():
+                    retained.update(view.get('page_manifest', {}).get('pages', []))
             collect(self.blobs, retained)
             self.db.execute('COMMIT')
         except BaseException:

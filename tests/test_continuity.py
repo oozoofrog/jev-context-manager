@@ -18,16 +18,51 @@ from jcm.store import Store
 from jcm.util import JCMError, digest, encode
 
 
+class FixtureAnswers(dict):
+    """Keep fixture assertions readable across independent-item wire names."""
+    def canonical(self, key):
+        import re
+        match = re.fullmatch(r'(relevance|omission|representation|applicability)_(\d+)', key)
+        candidate = f'i{match[2]}_{match[1]}' if match else 'i0_intent' if key == 'intent' else key
+        return candidate if dict.__contains__(self, candidate) else key
+
+    def __getitem__(self, key):
+        return super().__getitem__(self.canonical(key))
+
+    def __contains__(self, key):
+        return super().__contains__(self.canonical(key))
+
+
+def fixture_payload(body):
+    """A test-only source-oriented view of the actual independent-item payload."""
+    payload = json.loads(body)
+    state = payload['state']
+    if not isinstance(state, dict) or 'items' not in state:
+        return payload
+    context, items = state.get('context', {}), state['items']
+    state.update({k:v for k,v in context.items() if k in ('request', 'task_scope')})
+    names = payload['questions']
+    if 'i0_relevance' in names:
+        state['candidates'] = items
+    if 'i0_requirement' in names and len(items) == 1:
+        state['source'] = items[0]
+    if 'i0_relation' in names:
+        state['pairs'] = [{'left': i['older'], 'right': i['newer']} for i in items]
+    return payload
+
+
 def fake_http(body, key):
     payload = json.loads(body)
-    answers = {}
+    answers = FixtureAnswers()
     for name, question in payload['questions'].items():
+        import re
+        semantic_name = re.sub(r'^i[0-9]+_', '', name)
         typ = question['type']
         if typ == 'noul':
-            value = 1.0 if name in ('requirement', 'correction') else 0.0
+            value = 1.0 if semantic_name in ('requirement', 'correction', 'affects_assertion') else 0.0
             answers[name] = {'type': 'noul', 'noul': value}
         elif typ == 'choice':
-            value = ('resume' if name == 'intent' else 'full' if name.startswith('representation') else 'corrects')
+            value = ('changed' if semantic_name == 'scope' else 'resume' if semantic_name == 'intent' else 'full' if semantic_name.startswith('representation') else 'corrects')
             if value not in question['criteria']:
                 value = next(iter(question['criteria']))
             answers[name] = {'type': 'choice', 'choice': value, 'confidence': 1,
@@ -76,7 +111,7 @@ class ContinuityTests(unittest.TestCase):
         self.store.db.execute("UPDATE jobs SET state='leased', owner='dead',lease_until=?", (time.time() + 900,))
         token = self.request()
         route = dispatch(self.store, token, self.provider())
-        pack = read_pack(self.store, route['pack_id'])['pack']
+        pack = read_pack(self.store, route['pack_id'], view='audit')['pack']
         ids = {r['event_id'] for r in pack['selected_records']}
         self.assertTrue({old, corrected} <= ids)
         self.assertIn(corrected, pack['included_tail_events'])
@@ -180,7 +215,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.capture('A', '1', '자동으로 재개한다')
         self.capture('B', '2', '정정: 자동 재개를 금지한다')
         route = dispatch(self.store, self.request(), self.provider())
-        pack = read_pack(self.store, route['pack_id'])['pack']
+        pack = read_pack(self.store, route['pack_id'], view='audit')['pack']
         self.assertEqual(len([r for r in pack['selected_records'] if r['role'] == 'user']), 2)
         self.assertTrue(pack['relationship_candidates'])
         self.assertTrue(all(not r['supersedes_applied'] for r in pack['relationship_candidates']))
@@ -189,7 +224,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.capture('A', '1', '아마 race condition이다. 테스트는 아직 실행하지 않았다.', 'assistant')
         self.capture('A', '2', 'patch applied', 'tool')
         route = dispatch(self.store, self.request(), self.provider())
-        pack = read_pack(self.store, route['pack_id'])['pack']
+        pack = read_pack(self.store, route['pack_id'], view='audit')['pack']
         self.assertTrue(all(r['implementation_status'] == 'not_established' for r in pack['selected_records']))
         self.assertTrue(all(not r['verification_currently_applicable'] for r in pack['selected_records']))
         for row in self.store.db.execute('SELECT * FROM projections'):
@@ -204,7 +239,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         # safety path deliberately protects them independently of relevance.
         self.store.db.execute("UPDATE jobs SET state='succeeded'")
         def transport(body, key):
-            request = json.loads(body)
+            request = fixture_payload(body)
             response = fake_http(body, key)
             if 'candidates' in request['state']:
                 query = request['state']['request']
@@ -218,7 +253,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         for query in ('Implement error handling', 'Documentation for reconnect'):
             token = self.request(query)
             route = dispatch(self.store, token, self.provider(transport))
-            packs.append({r['event_id'] for r in read_pack(self.store, route['pack_id'])['pack']['selected_records']})
+            packs.append({r['event_id'] for r in read_pack(self.store, route['pack_id'], view='audit')['pack']['selected_records']})
         self.assertIn(constraint, packs[0] & packs[1])
         self.assertIn(code, packs[0])
         self.assertNotIn(docs, packs[0])
@@ -231,10 +266,10 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.capture('old', '1', 'test passed at previous snapshot')
         path.write_text('new')
         route = dispatch(self.store, self.request(), self.provider())
-        pack = read_pack(self.store, route['pack_id'])['pack']
+        pack = read_pack(self.store, route['pack_id'], view='audit')['pack']
         self.assertEqual(pack['selected_records'][0]['reconciliation'], 'stale')
         path.write_text('newer')
-        result = read_pack(self.store, route['pack_id'])
+        result = read_pack(self.store, route['pack_id'], view='audit')
         self.assertEqual(result['current_reconciliation'], 'stale')
 
     def test_T12_cross_project_and_symlink_refused(self):
@@ -266,7 +301,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
                 a.update(choice='new_task', probabilities={k: float(k == 'new_task') for k in a['probabilities']})
             return response
         route = dispatch(self.store, self.request('새 작업: 시 한 편 써줘'), self.provider(transport))
-        pack = read_pack(self.store, route['pack_id'])['pack']
+        pack = read_pack(self.store, route['pack_id'], view='audit')['pack']
         self.assertEqual(pack['dispatch'], 'new_task')
         self.assertEqual(pack['selected_records'], [])
 
@@ -277,7 +312,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         route = dispatch(self.store, self.request(), self.provider())
         self.assertNotEqual(route['dispatch'], 'blocked')
         self.assertNotIn('CANDIDATE_CEILING_MISSING_CANDIDATES', route['coverage']['gaps'])
-        result = read_pack(self.store, route['pack_id'])
+        result = read_pack(self.store, route['pack_id'], view='audit')
         self.assertEqual(result['delivery'], 'read_served')
         self.assertEqual(len(result['pack']['selected_records']), 3)
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], 1)
@@ -299,7 +334,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.assertEqual(route['quality'], 'degraded')
         self.assertIn('PROVIDER_HTTP_401', route['coverage']['gaps'])
         self.assertEqual(len(calls), 1)  # auth failure suppresses subsequent calls in this dispatch
-        self.assertIn('never automatically unpause', str(read_pack(self.store, route['pack_id'])))
+        self.assertIn('never automatically unpause', str(read_pack(self.store, route['pack_id'], view='audit')))
 
     def test_T18_transient_retry_reserves_each_attempt(self):
         count = []
@@ -364,7 +399,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         before = [dict(r) for r in self.store.events()]
         calls = []
         def transport(body, key):
-            calls.append(json.loads(body))
+            calls.append(fixture_payload(body))
             return fake_http(body, key)
         result = dispatch(self.store, token, self.provider(transport))
         self.assertEqual(result['quality'], 'normal')
@@ -392,7 +427,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         route = dispatch(self.store, token, self.provider())
         self.store.change_policy(enabled=False)
         with self.assertRaisesRegex(JCMError, 'PACK_MISSING_OR_INVALIDATED'):
-            read_pack(self.store, route['pack_id'])
+            read_pack(self.store, route['pack_id'], view='audit')
         with self.assertRaisesRegex(JCMError, 'PROJECT_DISABLED'):
             self.store.resolve_request(token)
 
@@ -419,7 +454,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.capture('old', '1', 'preserve me')
         route = dispatch(self.store, self.request(), self.provider())
         self.assertEqual(status(self.store)['pack_delivery'], {'created': 1})
-        result = read_pack(self.store, route['pack_id'])
+        result = read_pack(self.store, route['pack_id'], view='audit')
         self.assertEqual(result['delivery'], 'read_served')
         self.assertEqual(result['delivery_coverage'], 'unknown')
         self.assertNotIn('agent_acknowledged', str(status(self.store)))

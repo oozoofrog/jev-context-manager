@@ -1,0 +1,213 @@
+{
+  "pass": true,
+  "checks": {
+    "candidate_payload_matches": true,
+    "reuse-project_awaiting_scope": true,
+    "reuse-project_ready": true,
+    "recording_kept_product": true,
+    "reuse-project_paused_true": true,
+    "reuse-project_paused_false": true,
+    "reuse-project_protocol": true,
+    "reuse-project_marker": true,
+    "reuse-project_independent_pack_read": true,
+    "reuse-project_real_jev_normal": true,
+    "recovered_initial_delay": true,
+    "implementation_required_context_read": true,
+    "implementation_normal": true,
+    "implementation_task_frame": true,
+    "current_correction_used": true,
+    "correction_required_context_read": true,
+    "correction_normal": true,
+    "correction_task_frame": true,
+    "three_independent_sessions": true,
+    "same_task_identity": true,
+    "global_config_unchanged": true,
+    "jcm_commands_succeeded": true
+  },
+  "sessions": [
+    {
+      "name": "bare",
+      "thread": "01a0e8b1-e592-7202-a758-3d4bb07cf474",
+      "resume": null,
+      "seconds": 25.1,
+      "exit_code": 0,
+      "host_reported_usage": [
+        {
+          "input_tokens": 38995,
+          "cached_input_tokens": 29952,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 567,
+          "reasoning_output_tokens": 248
+        }
+      ]
+    },
+    {
+      "name": "requirements",
+      "thread": "01a0e8b1-e592-7202-a758-3d4bb07cf474",
+      "resume": "01a0e8b1-e592-7202-a758-3d4bb07cf474",
+      "seconds": 30.32,
+      "exit_code": 0,
+      "host_reported_usage": [
+        {
+          "input_tokens": 128143,
+          "cached_input_tokens": 116352,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1105,
+          "reasoning_output_tokens": 327
+        }
+      ]
+    },
+    {
+      "name": "independent-implementation",
+      "thread": "01a0e8b2-bc28-76d1-a006-b6bb37cb8721",
+      "resume": null,
+      "seconds": 70.97,
+      "exit_code": 0,
+      "host_reported_usage": [
+        {
+          "input_tokens": 123064,
+          "cached_input_tokens": 111488,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1729,
+          "reasoning_output_tokens": 374
+        }
+      ]
+    },
+    {
+      "name": "independent-correction",
+      "thread": "01a0e8b3-d17f-7f93-9864-a2e78957f612",
+      "resume": null,
+      "seconds": 57.76,
+      "exit_code": 0,
+      "host_reported_usage": [
+        {
+          "input_tokens": 84845,
+          "cached_input_tokens": 72832,
+          "cache_write_input_tokens": 0,
+          "output_tokens": 1316,
+          "reasoning_output_tokens": 138
+        }
+      ]
+    }
+  ],
+  "lane": "real_cli_and_real_jev",
+  "desktop": "not_attested",
+  "implementation": {
+    "metrics": {
+      "astra_input_tokens": "not_observable_by_jcm",
+      "classification_units_evaluated": 0,
+      "classification_units_reused": 7,
+      "failed_or_retried_calls": 0,
+      "optional_audit_content_bytes": 16096,
+      "provider_usage": {
+        "input_tokens": 12485,
+        "output_tokens": 1500
+      },
+      "relation_units_evaluated": 0,
+      "relation_units_reused": 0,
+      "representations_reused": 0,
+      "request_bytes": 43683,
+      "required_content_bytes": 7565,
+      "route_units_evaluated": 0,
+      "search": {
+        "candidate_union_size": 6,
+        "expanded_to_all_source_revisions": true,
+        "index_refreshed": 7,
+        "lexical_hits": 6,
+        "prior_members": 0
+      },
+      "selection_and_state_elapsed_seconds": 1.4558184170000459,
+      "source_units_evaluated": 7,
+      "source_units_reused": 0,
+      "stages": {
+        "capture_seconds": 0.13885887499964156,
+        "source_selection_seconds": 0.4518796670008669,
+        "state_and_representation_seconds": 0.054058249999798136,
+        "task_route_seconds": 0.014653707999968901,
+        "worker_seconds": 0.669001083000694
+      },
+      "successful_transport_calls": 3,
+      "task_route": "cold_scope_expansion",
+      "transport_calls": 3,
+      "transport_seconds": 0.7682089170002655
+    },
+    "delivery": {
+      "dispatch_timing": {
+        "dispatch_before_commit_seconds": 1.481083249999756,
+        "pack_persistence_seconds": 0.00924408399987442,
+        "pack_preparation_seconds": 0.0160187080000469
+      },
+      "required_read_completion_seconds": 0.06483,
+      "required_served_bytes": 8896,
+      "optional_served_bytes": 0,
+      "source_expansion_bytes": 0,
+      "model_consumption_or_use": "not_observable_by_jcm"
+    },
+    "task_id": "2071786d1822f498f9502b75644cf093ad8c4e31930f09be5d90ba4710f58625",
+    "pack_id": "cf66081be9ac459db22c0c70221ff623"
+  },
+  "correction": {
+    "metrics": {
+      "astra_input_tokens": "not_observable_by_jcm",
+      "classification_units_evaluated": 9,
+      "classification_units_reused": 9,
+      "failed_or_retried_calls": 0,
+      "optional_audit_content_bytes": 25549,
+      "provider_usage": {
+        "input_tokens": 51845,
+        "output_tokens": 5389
+      },
+      "relation_units_evaluated": 15,
+      "relation_units_reused": 0,
+      "representations_reused": 2,
+      "request_bytes": 160278,
+      "required_content_bytes": 10239,
+      "route_units_evaluated": 1,
+      "search": {
+        "candidate_union_size": 16,
+        "expanded_to_all_source_revisions": true,
+        "index_refreshed": 11,
+        "lexical_hits": 16,
+        "prior_members": 2
+      },
+      "selection_and_state_elapsed_seconds": 3.61662270800025,
+      "source_units_evaluated": 11,
+      "source_units_reused": 7,
+      "stages": {
+        "capture_seconds": 0.16250420800042775,
+        "source_selection_seconds": 0.9397434160000557,
+        "state_and_representation_seconds": 0.6282537090000915,
+        "task_route_seconds": 0.3210587499997928,
+        "worker_seconds": 1.406335042000137
+      },
+      "successful_transport_calls": 6,
+      "task_route": "confirmed_scope_reuse",
+      "transport_calls": 6,
+      "transport_seconds": 2.4721163340000203
+    },
+    "delivery": {
+      "dispatch_timing": {
+        "dispatch_before_commit_seconds": 3.6441903330005516,
+        "pack_persistence_seconds": 0.00970729099935852,
+        "pack_preparation_seconds": 0.01785841699984303
+      },
+      "required_read_completion_seconds": 0.073631,
+      "required_served_bytes": 11572,
+      "optional_served_bytes": 0,
+      "source_expansion_bytes": 0,
+      "model_consumption_or_use": "not_observable_by_jcm"
+    },
+    "task_id": "2071786d1822f498f9502b75644cf093ad8c4e31930f09be5d90ba4710f58625",
+    "pack_id": "4b5ba74027ae44ae97037dbdf25ac20f"
+  },
+  "cumulative_transport": [
+    {
+      "status": "success",
+      "calls": 16,
+      "request_bytes": 231439
+    }
+  ],
+  "global_config_unchanged": true,
+  "measurement_note": "Pack metrics describe the last successful dispatch. cumulative_transport includes all fixture calls, including background classification and earlier attempts. Host usage comes directly from Codex turn.completed records and includes the entire agent turn.",
+  "fixture_disabled": true
+}

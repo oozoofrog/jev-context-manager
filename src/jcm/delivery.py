@@ -7,10 +7,11 @@ from .util import JCMError, digest, encode
 
 def envelope(store, pack, entries, page, count, served, next_page, reconciliation='consistent'):
     complete = served == count
-    command = (shlex.join(store.config['cli_argv'] + ['read', '--pack', pack['pack_id'], '--page', str(next_page)])
+    command = (shlex.join(store.config['cli_argv'] + ['read', '--pack', pack['pack_id'], '--page', str(next_page)] +
+                         (['--view', pack['view']] if pack.get('view') else []))
                if next_page is not None else None)
     return {'origin': 'jcm', 'pack_id': pack['pack_id'], 'dispatch': pack['dispatch'], 'quality': pack['quality'],
-            'session_id': pack['session_id'], 'stage': 'read_served' if complete else 'reading',
+            'session_id': pack['session_id'], 'view': pack.get('view', 'audit'), 'stage': 'read_served' if complete else 'reading',
             'delivery': 'read_served' if complete else 'page_served', 'delivery_coverage': 'unknown',
             'recovery_success': 'not_attested', 'current_reconciliation': reconciliation,
             'source_use_policy': pack['source_use_policy'], 'content_hash': pack['page_manifest']['content_hash'],

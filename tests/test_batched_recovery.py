@@ -39,7 +39,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         calls = []
         def transport(body, key):
             self.assertLessEqual(len(body), 9000)
-            calls.append(json.loads(body))
+            calls.append(fixtures.fixture_payload(body))
             return fixtures.fake_http(body, key)
         provider = self.provider(transport)
         route = dispatch(self.store, token, provider)
@@ -61,7 +61,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         token = self.request(); self.skip_classification()
         calls = []
         def transport(body, key):
-            calls.append(json.loads(body))
+            calls.append(fixtures.fixture_payload(body))
             return fixtures.fake_http(body, key)
         route = dispatch(self.store, token, self.provider(transport))
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
@@ -79,7 +79,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         calls = []; failed = []
         def transport(body, key):
             calls.append(body)
-            if len(calls) == 2:
+            if 'i0_relevance' in json.loads(body)['questions'] and not failed:
                 failed.append(body)
                 raise HTTPError('https://api.typesafe.ai', 503, 'temporary', {}, None)
             return fixtures.fake_http(body, key)
@@ -103,7 +103,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         self.store.db.execute('UPDATE events SET egress=0')
         calls = []
         def transport(body, key):
-            calls.append(json.loads(body))
+            calls.append(fixtures.fixture_payload(body))
             return fixtures.fake_http(body, key)
         route = dispatch(self.store, token, self.provider(transport))
         self.assertEqual(route['quality'], 'normal')
@@ -122,16 +122,16 @@ class BatchedRecoveryTests(unittest.TestCase):
             route = dispatch(self.store, token, self.provider())
         self.assertNotEqual(route['dispatch'], 'blocked')
         original = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
-        first = read_pack(self.store, route['pack_id'])
+        first = read_pack(self.store, route['pack_id'], view='audit')
         self.assertEqual(first['delivery'], 'page_served')
         count = first['pagination']['page_count']
         self.assertGreater(count, 2)
-        last = read_pack(self.store, route['pack_id'], page=count)
+        last = read_pack(self.store, route['pack_id'], page=count, view='audit')
         self.assertEqual(last['delivery'], 'page_served')
         self.assertFalse(last['pagination']['all_pages_served'])
         pages = {1: first, count: last}
         for page in range(2, count):
-            pages[page] = read_pack(self.store, route['pack_id'], page=page)
+            pages[page] = read_pack(self.store, route['pack_id'], page=page, view='audit')
         self.assertEqual(pages[count-1]['delivery'], 'read_served')
         self.assertTrue(pages[count-1]['pagination']['all_pages_served'])
         for result in pages.values():
@@ -151,13 +151,13 @@ class BatchedRecoveryTests(unittest.TestCase):
                     target[key] = prior + entry['text']
                 else:
                     target[key] = json.loads(json.dumps(entry['value']))
-        self.assertEqual(reconstructed, {k:v for k,v in original.items() if k != 'page_manifest'})
+        self.assertEqual(reconstructed, {**{k:v for k,v in original.items() if k not in ('page_manifest', 'context_views')}, 'view': 'audit'})
         before = self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0]
-        read_pack(self.store, route['pack_id'], page=1)
+        read_pack(self.store, route['pack_id'], page=1, view='audit')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], before)
         self.store.change_policy()
         with self.assertRaisesRegex(JCMError, 'INVALIDATED|EPOCH'):
-            read_pack(self.store, route['pack_id'], page=2)
+            read_pack(self.store, route['pack_id'], page=2, view='audit')
 
     def test_bootstrap_pagination_is_reading_until_complete(self):
         self.budget()
@@ -192,8 +192,11 @@ class BatchedRecoveryTests(unittest.TestCase):
         calls = []
         def reject(body, key):
             calls.append(body)
-            self.assertEqual(json.loads(body)['state']['request'], query)
-            raise context_error()
+            payload = fixtures.fixture_payload(body)
+            if 'candidates' in payload['state']:
+                self.assertEqual(payload['state']['request'], query)
+                raise context_error()
+            return fixtures.fake_http(body, key)
         route = dispatch(self.store, token, self.provider(reject))
         self.assertIn('PROVIDER_CONTEXT_LENGTH_EXCEEDED', route['coverage']['gaps'])
         self.assertNotEqual(route['dispatch'], 'blocked')
@@ -208,7 +211,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         token = self.request('find failure reproduction'); self.skip_classification()
         def transport(body, key):
             response = fixtures.fake_http(body, key)
-            for i, candidate in enumerate(json.loads(body)['state'].get('candidates', [])):
+            for i, candidate in enumerate(fixtures.fixture_payload(body)['state'].get('candidates', [])):
                 if 'IMPORTANT' in candidate['text']:
                     response['answers'][f'relevance_{i}'].update(score=3, probabilities={str(n):float(n == 3) for n in range(4)})
             return response
@@ -276,7 +279,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         token = self.request(); self.skip_classification()
         from test_provider_limits import context_error
         def transport(body, key):
-            if 'pairs' in json.loads(body)['state']:
+            if 'pairs' in fixtures.fixture_payload(body)['state']:
                 raise context_error()
             return fixtures.fake_http(body, key)
         route = dispatch(self.store, token, self.provider(transport))
@@ -293,7 +296,7 @@ class BatchedRecoveryTests(unittest.TestCase):
         first = read_pack(self.store, route['pack_id'])
         self.assertEqual(first['delivery'], 'page_served')
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
-        (self.store.blobs / pack['page_manifest']['pages'][1]).write_text('tampered')
+        (self.store.blobs / pack['context_views']['brief']['page_manifest']['pages'][1]).write_text('tampered')
         with self.assertRaisesRegex(JCMError, 'BLOB_HASH_MISMATCH'):
             read_pack(self.store, route['pack_id'], page=2)
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], 1)

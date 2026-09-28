@@ -31,7 +31,7 @@ class SelectionPrecisionTests(unittest.TestCase):
         token, ids = self.selected_fixture()
         observed = []
         def transport(body, key):
-            payload = json.loads(body)
+            payload = fixtures.fixture_payload(body)
             result = fixtures.fake_http(body, key)
             if 'candidates' in payload['state']:
                 observed.append(payload['state'])

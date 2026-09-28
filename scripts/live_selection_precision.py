@@ -64,7 +64,7 @@ def main():
         for event in store.events():
             store.blob(event['blob'])
         result['checks']['raw_blobs_verified'] = True
-        count = len(pack.get('page_manifest', {}).get('pages', [])) or 1
+        count = len(pack.get('context_views', {}).get('brief', pack).get('page_manifest', {}).get('pages', [])) or 1
         first = read_pack(store, route['pack_id'])
         for page in range(2, count + 1):
             last = read_pack(store, route['pack_id'], page)
@@ -73,7 +73,8 @@ def main():
         for name, value in [('baseline', baseline), ('candidate', pack)]:
             result[name] = {'selected': len(value['selected_records']), 'excluded': len(value['excluded_records']),
                 'source_text_bytes': sum(len(r['text'].encode()) for r in value['selected_records']),
-                'pages': len(value.get('page_manifest', {}).get('pages', [])) or 1,
+                'pages': len(value.get('context_views', {}).get('brief', value).get('page_manifest', {}).get('pages', [])) or 1,
+                'page_view': 'brief' if 'context_views' in value else 'legacy',
                 'content_hash': value.get('page_manifest', {}).get('content_hash', digest(value))}
         result['real_jev_successes'] = store.db.execute("SELECT COUNT(*) FROM calls WHERE status='success'").fetchone()[0] - prior_calls
         result['checks']['real_provider_called'] = result['real_jev_successes'] > 0

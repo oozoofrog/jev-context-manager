@@ -73,12 +73,35 @@ def internal_command(config, command):
         return True
     if len(tail) == 4 and tail[:3] == ['bootstrap', 'new', '--request-token']:
         return bool(re.fullmatch(r'[a-f0-9]{32,64}', tail[3]))
-    if len(tail) == 5 and tail[0:2] == ['read', '--pack'] and tail[3] == '--page':
-        return bool(re.fullmatch(r'[a-f0-9]{32,64}', tail[2]) and re.fullmatch(r'[1-9][0-9]*', tail[4]))
-    flags = {'dispatch': '--request-token', 'read': '--pack', 'inspect': '--record'}
-    if len(tail) == 4 and tail[:2] == ['inspect', '--record'] and tail[3] == '--raw':
-        return bool(re.fullmatch(r'[a-f0-9]{32,64}', tail[2]))
-    return len(tail) == 3 and tail[0] in flags and tail[1] == flags[tail[0]] and bool(re.fullmatch(r'[a-f0-9]{32,64}', tail[2]))
+    if tail[:1] == ['state']:
+        return (len(tail) == 6 and tail[:3] == ['state', 'confirm', '--relation'] and
+                bool(re.fullmatch(r'[a-f0-9]{32,64}', tail[3])) and tail[4] == '--resolution' and
+                tail[5] in ('confirmed', 'rejected'))
+    if tail[:1] in (['read'], ['inspect'], ['dispatch']):
+        flags = {'read': '--pack', 'inspect': '--record', 'dispatch': '--request-token'}
+        action = tail[0]
+        if len(tail) < 3 or tail[1] != flags[action] or not re.fullmatch(r'[a-f0-9]{32,64}', tail[2]):
+            return False
+        remaining, seen = tail[3:], set()
+        while remaining:
+            flag = remaining[0]
+            if flag in seen:
+                return False
+            seen.add(flag)
+            if flag == '--raw' and action == 'inspect':
+                remaining = remaining[1:]
+                continue
+            if len(remaining) < 2:
+                return False
+            value = remaining[1]
+            allowed = ((flag == '--page' and action in ('read', 'inspect') and re.fullmatch(r'[1-9][0-9]*', value)) or
+                       (flag == '--view' and action == 'read' and value in ('brief', 'detail', 'full', 'audit')) or
+                       (flag == '--pack' and action == 'inspect' and re.fullmatch(r'[a-f0-9]{32,64}', value)))
+            if not allowed:
+                return False
+            remaining = remaining[2:]
+        return True
+    return False
 
 
 def identity(kind, turn, text, tool_id=None):

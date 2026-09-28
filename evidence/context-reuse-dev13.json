@@ -1,0 +1,225 @@
+{
+  "pass": true,
+  "lane": "real_jev_synthetic_three_session_ids",
+  "independent_codex_session": false,
+  "desktop": "not_attested",
+  "stages": {
+    "cold": {
+      "pack_id": "3fc63b674c7c41dab3424ebeb8930b1e",
+      "quality": "normal",
+      "task_id": "18733107d15aa2d6dd020e2a187a68ab1eef48cf8080438fb6bc095c5e2d194d",
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 3,
+        "classification_units_reused": 2,
+        "failed_or_retried_calls": 0,
+        "optional_audit_content_bytes": 39725,
+        "provider_usage": {
+          "input_tokens": 14772,
+          "output_tokens": 1676
+        },
+        "relation_units_evaluated": 0,
+        "relation_units_reused": 0,
+        "representations_reused": 0,
+        "request_bytes": 55323,
+        "required_content_bytes": 12237,
+        "route_units_evaluated": 0,
+        "search": {
+          "candidate_union_size": 5,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 5,
+          "lexical_hits": 5,
+          "prior_members": 0
+        },
+        "source_units_evaluated": 5,
+        "source_units_reused": 0,
+        "stages": {
+          "capture_seconds": 0.014664040999377903,
+          "source_selection_seconds": 18.820174999999836,
+          "state_and_representation_seconds": 0.34370304200001556,
+          "task_route_seconds": 0.012669791999542213,
+          "worker_seconds": 33.242402666999624
+        },
+        "successful_transport_calls": 5,
+        "task_route": "cold_scope_expansion",
+        "transport_calls": 5,
+        "transport_seconds": 51.90125075099968,
+        "selection_and_state_elapsed_seconds": 52.532756582999355
+      },
+      "delivery": {
+        "required_read_completion_seconds": 0.063797,
+        "required_served_bytes": 13432,
+        "optional_served_bytes": 0,
+        "source_expansion_bytes": 0,
+        "model_consumption_or_use": "not_observable_by_jcm"
+      },
+      "required_context_complete": true,
+      "required_sources_present": true,
+      "other_task_absent": true,
+      "verification_not_promoted": true,
+      "late_exception_preserved": true,
+      "brief_reduces_log": true,
+      "delay_value_states": [
+        "active_evidence"
+      ],
+      "unaffected_protocol_states": [
+        "active_evidence"
+      ],
+      "delay_states": [
+        "active_evidence",
+        "active_evidence"
+      ],
+      "current_update_present": false
+    },
+    "repeat": {
+      "pack_id": "c6f7abb3ceda4e7ca3e7fe2bc480c85f",
+      "quality": "normal",
+      "task_id": "18733107d15aa2d6dd020e2a187a68ab1eef48cf8080438fb6bc095c5e2d194d",
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 0,
+        "classification_units_reused": 5,
+        "failed_or_retried_calls": 0,
+        "optional_audit_content_bytes": 39487,
+        "provider_usage": {
+          "input_tokens": 2879,
+          "output_tokens": 85
+        },
+        "relation_units_evaluated": 0,
+        "relation_units_reused": 0,
+        "representations_reused": 4,
+        "request_bytes": 5338,
+        "required_content_bytes": 12221,
+        "route_units_evaluated": 1,
+        "search": {
+          "candidate_union_size": 5,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 0,
+          "lexical_hits": 5,
+          "prior_members": 4
+        },
+        "source_units_evaluated": 0,
+        "source_units_reused": 5,
+        "stages": {
+          "capture_seconds": 0.015164000000368105,
+          "source_selection_seconds": 0.073312624999744,
+          "state_and_representation_seconds": 0.02595933399970818,
+          "task_route_seconds": 0.27846695900007035,
+          "worker_seconds": 0.06196749999980966
+        },
+        "successful_transport_calls": 1,
+        "task_route": "confirmed_scope_reuse",
+        "transport_calls": 1,
+        "transport_seconds": 0.2063704170004712,
+        "selection_and_state_elapsed_seconds": 0.5177463330001046
+      },
+      "delivery": {
+        "required_read_completion_seconds": 0.0629,
+        "required_served_bytes": 13413,
+        "optional_served_bytes": 0,
+        "source_expansion_bytes": 0,
+        "model_consumption_or_use": "not_observable_by_jcm"
+      },
+      "required_context_complete": true,
+      "required_sources_present": true,
+      "other_task_absent": true,
+      "verification_not_promoted": true,
+      "late_exception_preserved": true,
+      "brief_reduces_log": true,
+      "delay_value_states": [
+        "active_evidence"
+      ],
+      "unaffected_protocol_states": [
+        "active_evidence"
+      ],
+      "delay_states": [
+        "active_evidence",
+        "active_evidence"
+      ],
+      "current_update_present": false
+    },
+    "correction": {
+      "pack_id": "7694d614d46e4f08b8400aff06eaf461",
+      "quality": "normal",
+      "task_id": "18733107d15aa2d6dd020e2a187a68ab1eef48cf8080438fb6bc095c5e2d194d",
+      "metrics": {
+        "astra_input_tokens": "not_observable_by_jcm",
+        "classification_units_evaluated": 2,
+        "classification_units_reused": 5,
+        "failed_or_retried_calls": 0,
+        "optional_audit_content_bytes": 47577,
+        "provider_usage": {
+          "input_tokens": 39580,
+          "output_tokens": 3468
+        },
+        "relation_units_evaluated": 20,
+        "relation_units_reused": 0,
+        "representations_reused": 4,
+        "request_bytes": 118057,
+        "required_content_bytes": 16059,
+        "route_units_evaluated": 1,
+        "search": {
+          "candidate_union_size": 7,
+          "expanded_to_all_source_revisions": true,
+          "index_refreshed": 2,
+          "lexical_hits": 7,
+          "prior_members": 4
+        },
+        "source_units_evaluated": 2,
+        "source_units_reused": 5,
+        "stages": {
+          "capture_seconds": 0.015398334000565228,
+          "source_selection_seconds": 0.672531582999909,
+          "state_and_representation_seconds": 0.7096701250002297,
+          "task_route_seconds": 0.3459987079995699,
+          "worker_seconds": 18.68319458299993
+        },
+        "successful_transport_calls": 5,
+        "task_route": "confirmed_scope_reuse",
+        "transport_calls": 5,
+        "transport_seconds": 19.782538374001888,
+        "selection_and_state_elapsed_seconds": 20.508624084000076
+      },
+      "delivery": {
+        "required_read_completion_seconds": 0.069088,
+        "required_served_bytes": 17253,
+        "optional_served_bytes": 0,
+        "source_expansion_bytes": 0,
+        "model_consumption_or_use": "not_observable_by_jcm"
+      },
+      "required_context_complete": true,
+      "required_sources_present": true,
+      "other_task_absent": true,
+      "verification_not_promoted": true,
+      "late_exception_preserved": true,
+      "brief_reduces_log": true,
+      "delay_value_states": [
+        "disputed"
+      ],
+      "unaffected_protocol_states": [
+        "active_evidence"
+      ],
+      "delay_states": [
+        "disputed",
+        "active_evidence"
+      ],
+      "current_update_present": true
+    }
+  },
+  "checks": {
+    "normal_all_stages": true,
+    "recall_all_stages": true,
+    "verification_not_promoted": true,
+    "same_task_identity": true,
+    "repeat_no_source_reassessment": true,
+    "repeat_less_transport_bytes": true,
+    "current_correction_applied": true,
+    "brief_reduces_log": true,
+    "unaffected_protocol_preserved": true,
+    "required_delivery_complete": true,
+    "audit_not_required": true,
+    "real_calls_made": true
+  },
+  "fixture_disabled": true,
+  "measurement_note": "The recorded interval ends before pack pagination and persistence. Field renamed from the pre-release dispatch_elapsed_seconds label to state its measured boundary. Later runtime also records pack timings separately."
+}

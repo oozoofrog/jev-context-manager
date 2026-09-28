@@ -61,7 +61,7 @@ class ProviderLimitsTests(unittest.TestCase):
             calls.append(body)
             if len(body) > 9000:
                 raise context_error()
-            accepted.append(json.loads(body))
+            accepted.append(fixtures.fixture_payload(body))
             return fixtures.fake_http(body, key)
         provider = self.provider(transport)
         route = dispatch(self.store, token, provider)
@@ -93,7 +93,7 @@ class ProviderLimitsTests(unittest.TestCase):
         token = self.request(); self.store.db.execute("UPDATE jobs SET state='succeeded'")
         observed = set()
         def transport(body, key):
-            observed.update(c['event_id'] for c in json.loads(body)['state'].get('candidates', []))
+            observed.update(c['event_id'] for c in fixtures.fixture_payload(body)['state'].get('candidates', []))
             return fixtures.fake_http(body, key)
         dispatch(self.store, token, self.provider(transport))
         self.assertEqual(observed, ids)
@@ -104,7 +104,9 @@ class ProviderLimitsTests(unittest.TestCase):
         token = self.request(query); self.store.db.execute("UPDATE jobs SET state='succeeded'")
         observed = []
         def transport(body, key):
-            observed.append(json.loads(body)['state']['request'])
+            state = fixtures.fixture_payload(body)['state']
+            if 'candidates' in state:
+                observed.append(state['request'])
             return fixtures.fake_http(body, key)
         route = dispatch(self.store, token, self.provider(transport))
         self.assertEqual(route['quality'], 'normal')
@@ -124,7 +126,7 @@ class ProviderLimitsTests(unittest.TestCase):
         def transport(body, key):
             if len(body) > 6000:
                 raise context_error()
-            accepted.append(json.loads(body)['state']['source']['text'])
+            accepted.append(fixtures.fixture_payload(body)['state']['source']['text'])
             return fixtures.fake_http(body, key)
         result = drain(self.store, self.provider(transport), limit=1)
         self.assertEqual(result['processed'], 1)
@@ -178,7 +180,7 @@ class ProviderLimitsTests(unittest.TestCase):
         self.store.db.execute('PRAGMA user_version=1')
         self.store.close()
         self.store = Store(self.cfg)
-        self.assertEqual(self.store.db.execute('PRAGMA user_version').fetchone()[0], 4)
+        self.assertEqual(self.store.db.execute('PRAGMA user_version').fetchone()[0], 5)
         self.assertEqual(self.store.material(self.store.event(event))['text'], 'retained during schema migration')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM provider_errors').fetchone()[0], 0)
         self.store.db.execute('PRAGMA user_version=999')

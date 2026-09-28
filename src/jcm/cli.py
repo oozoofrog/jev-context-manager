@@ -54,9 +54,16 @@ def parser():
     read = sub.add_parser('read')
     read.add_argument('--pack', required=True)
     read.add_argument('--page', type=int, default=1)
+    read.add_argument('--view', choices=['brief', 'detail', 'full', 'audit'], default='brief')
+    state = sub.add_parser('state').add_subparsers(dest='state_mode', required=True)
+    confirm = state.add_parser('confirm')
+    confirm.add_argument('--relation', required=True)
+    confirm.add_argument('--resolution', required=True, choices=['confirmed', 'rejected'])
     inspect = sub.add_parser('inspect')
     inspect.add_argument('--record', required=True)
     inspect.add_argument('--raw', action='store_true')
+    inspect.add_argument('--page', type=int, default=1)
+    inspect.add_argument('--pack')
     worker = sub.add_parser('worker')
     worker.add_argument('action', choices=['drain'])
     worker.add_argument('--limit', type=int, default=4)
@@ -157,10 +164,13 @@ def run(args):
         if args.command == 'dispatch':
             return dispatch(store, args.request_token)
         if args.command == 'read':
-            return read_pack(store, args.pack, args.page)
+            return read_pack(store, args.pack, args.page, args.view)
+        if args.command == 'state':
+            from .task_state import confirm
+            return confirm(store, identifier(args.relation), args.resolution)
         if args.command == 'inspect':
-            store.policy()
-            return {'origin': 'jcm', 'source': store.material(store.event(identifier(args.record)), raw=args.raw)}
+            from .source_read import inspect_source
+            return inspect_source(store, identifier(args.record), args.page, args.raw, args.pack)
         if args.command == 'worker':
             if not 0 <= args.limit <= 64:
                 raise JCMError('INVALID_WORKER_LIMIT')
