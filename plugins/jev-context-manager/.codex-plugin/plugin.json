@@ -1,6 +1,6 @@
 {
   "name": "jev-context-manager",
-  "version": "0.1.0-dev.15",
+  "version": "1.0.0",
   "description": "Automatic local Codex continuity with existing-session adoption, new-session recovery and bounded Jev judgments.",
   "author": {
     "name": "oozoofrog"

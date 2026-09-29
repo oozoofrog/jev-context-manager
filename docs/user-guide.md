@@ -132,7 +132,11 @@ dependent judgments. Failed judgments can be retried. Confirmed context rejectio
 unassessed record remains available locally. Old per-record denial flags are
 ignored; records do not need to be imported again to use Jev.
 
-The default recovery view is `brief`: the current task frame and required evidence.
+The default recovery view is `brief`: the current task frame and evidence needed
+for the current question. Continuing implementation, asking only about exceptions,
+and diagnosing a specific failure can use different excerpts from the same task.
+The default view can include a complete source when the question needs it; `brief`
+is the required delivery view, not a fixed truncation level.
 Large recovery packs return `stage=reading`, `delivery=page_served` and a
 `next_read_command`. Read each page and follow that exact command until it is null.
 You can explicitly reread a page with:
@@ -166,9 +170,18 @@ Rephrasing known work can reuse its source judgments. A correction evaluates new
 sources and dependent assertion pairs. Total correction cost can exceed a cold
 request when many relationships need review.
 
-`brief` contains source-grounded excerpts, preserving user constraints and uncertain
-qualifications. `detail` expands selected evidence; `full` includes each selected
-source's materialized text. Raw event data, including compacted references, is
+`brief` contains source-grounded excerpts, preserving user statements, task-wide
+constraints, exceptions, corrections, unresolved issues and uncertain qualifications.
+A separate judgment checks whether two questions need the same evidence and depth;
+matching the same task alone does not reuse a question's selection. Changed relative
+references (such as the latest error) require a new selection when history changes.
+Uncertain selection retains source text. Failed selection marks recovery degraded.
+
+`detail` and `full` expand the task's evidence, including sources deferred by the
+current question. Audit `selected_records` describes the current selection;
+`task_records` retains task membership and `query_context` records the question
+route and source-level choices. Task state is never overwritten with the smaller
+question selection. Raw event data, including compacted references, is
 available through `inspect --raw`. JCM does not generate an extra prose summary.
 
 ```sh

@@ -62,7 +62,9 @@ def fake_http(body, key):
             value = 1.0 if semantic_name in ('requirement', 'correction', 'affects_assertion') else 0.0
             answers[name] = {'type': 'noul', 'noul': value}
         elif typ == 'choice':
-            value = ('changed' if semantic_name == 'scope' else 'resume' if semantic_name == 'intent' else 'full' if semantic_name.startswith('representation') else 'corrects')
+            value = ('changed' if semantic_name == 'scope' else 'resume' if semantic_name == 'intent' else
+                     'same' if semantic_name == 'same_property' else
+                     'optional' if semantic_name.startswith('preservation_') else 'full' if semantic_name.startswith('representation') else 'corrects')
             if value not in question['criteria']:
                 value = next(iter(question['criteria']))
             answers[name] = {'type': 'choice', 'choice': value, 'confidence': 1,
@@ -251,12 +253,27 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
                     answer = response['answers'][f'relevance_{i}']
                     score = 3 if high else 0
                     answer.update(score=score, probabilities={str(j): float(j == score) for j in range(4)})
+            for name, question in request['questions'].items():
+                if name.endswith('_correction'):
+                    response['answers'][name]['noul'] = 0
+                if '_query_' not in name or name.endswith('_query_equivalence'):
+                    continue
+                item = request['state']['items'][int(name.split('_')[0][1:])]
+                text = ''.join(p['text'] for p in item['paragraphs'])
+                query = request['state']['context']['request']
+                high = ('Documentation' in query and 'documentation' in text) or ('Implement' in query and 'Implementation' in text)
+                value = ('brief' if name.endswith('_query_level') else 'core') if high else 'omit'
+                response['answers'][name].update(choice=value, probabilities={v: float(v == value) for v in question['criteria']})
             return response
         packs = []
         for query in ('Implement error handling', 'Documentation for reconnect'):
             token = self.request(query)
             route = dispatch(self.store, token, self.provider(transport))
-            packs.append({r['event_id'] for r in read_pack(self.store, route['pack_id'], view='audit')['pack']['selected_records']})
+            packs.append({r['event_id'] for r in read_pack(self.store, route['pack_id'])['pack']['selected_records']})
+            # Both sources remain in reusable task state, even if the current
+            # question doesn't need one of them in its required delivery.
+            audit = read_pack(self.store, route['pack_id'], view='audit')['pack']
+            self.assertTrue({code, docs} <= {r['event_id'] for r in audit['task_records']})
         self.assertIn(constraint, packs[0] & packs[1])
         self.assertIn(code, packs[0])
         self.assertNotIn(docs, packs[0])

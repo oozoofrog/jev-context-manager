@@ -9,6 +9,7 @@ A Codex plugin that carries working context across sessions. It automatically re
 - **Existing-session adoption** — Imports the history of an ongoing session and continues capturing new records.
 - **New-session recovery** — Retrieves earlier requirements and recent changes without a separate summary or handoff.
 - **Reusable task context** — Reuses source classifications, task membership, and evidence representations across sessions; new corrections reassess their source dependencies.
+- **Question-specific context** — Selects evidence and detail for the current question, separately from task identity. Equivalent questions can reuse selections while constraints and corrections remain preserved.
 - **Layered recovery** — Restores the task frame and essential evidence first. Detailed sources and judgment audit data are available separately.
 - **Observed costs** — Records provider calls, transmitted bytes, returned usage, cache reuse, and context delivery. Host model consumption is reported separately when observable.
 

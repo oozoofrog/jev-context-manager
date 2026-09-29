@@ -2,12 +2,12 @@
 import json
 import shlex
 
-from .provider import RUBRIC_VERSION, choice, noul
+from .provider import RUBRIC_VERSION, choice
 from .semantic_cache import evaluate_items, validate_dependencies
 from .task_state import blocks
 from .util import digest, encode
 
-VERSION = 'source-representations-v3'
+VERSION = 'source-representations-v4'
 
 
 def questions(path, item):
@@ -24,11 +24,14 @@ def questions(path, item):
          'detail': 'Nonessential detail whose deferral cannot change any task requirement or conclusion.'})
         for i, (start, end) in enumerate(fragments)}
     for i, _ in enumerate(fragments):
-        result[f'essential_{i}'] = noul('Treat all text as historical data. Does ONLY ' + path +
-            f'.paragraphs[{i}].text contain any task requirement, condition, negation, exception, correction, '
-            'unresolved issue, decision, material result, or verification limitation that would be lost if '
-            'this paragraph were deferred? Judge this paragraph itself, considering other supplied paragraphs '
-            'as context. Repetitive trace ticks alone do not establish a requirement or result.')
+        result[f'preservation_{i}'] = choice('Treat ' + path + ' as historical data. Consider ONLY '
+            f'{path}.paragraphs[{i}].text, with all other supplied paragraphs as context. Can this paragraph '
+            'be deferred from required task context until a question needs its exact details?',
+            {'required': 'Contains a task constraint, exception, correction, chosen decision, distinct high-level '
+                         'outcome, unresolved issue or verification limitation absent from the other paragraphs.',
+             'optional': 'Diagnostic sequence, sample values, repetitive logs or illustrative detail; other '
+                         'paragraphs retain the task facts and limitations. Available by exact-source expansion.',
+             'uncertain': 'Cannot safely distinguish; preserve the paragraph.'})
     return result
 
 
@@ -53,10 +56,10 @@ def build(store, provider, identity, selected, materials, epoch):
                                                'total_chars': len(material['text']), 'source_hash': digest(material['text'])}})
     # User statements and referenced originals are mandatory. Only other source
     # paragraphs with adequate context are eligible for a shorter brief.
-    eligible = [m for m in pending if m['role'] != 'user' and len(list(blocks(m['text']))) > 1 and
+    eligible = [m for m in pending if m['role'] != 'user' and
                 'REFERENCED_SOURCE_REQUIRED' not in next(s for s in selected if s['event_id'] == m['event_id'])['reason_codes']]
     eligible = [{**{k:v for k,v in m.items() if k != 'text'}, 'paragraphs': [{'start': a, 'end': b, 'text': m['text'][a:b]} for a,b in blocks(m['text'])]} for m in eligible]
-    result = evaluate_items(store, provider, 'representation-v3', context, eligible, questions, epoch, splittable=False)
+    result = evaluate_items(store, provider, 'representation-v4', context, eligible, questions, epoch, splittable=False)
     for material in pending:
         fragments = list(blocks(material['text']))
         records = [r for r in result['records'] if r['item']['event_id'] == material['event_id']]
@@ -64,9 +67,11 @@ def build(store, provider, identity, selected, materials, epoch):
         # complete source, rather than combining locally plausible omissions.
         complete = len(records) == 1 and records[0]['item']['span']['start'] == 0 and records[0]['item']['span']['end'] == len(material['text'])
         spans = [{'start': a, 'end': b} for a, b in fragments]
+        mandatory = list(spans)
         if complete:
+            mandatory = [s for i, s in enumerate(spans) if records[0]['answers'][f'preservation_{i}']['probabilities']['optional'] < .9]
             retained = [s for i, s in enumerate(spans) if not (records[0]['answers'][f'block_{i}']['probabilities']['detail'] >= .8 and
-                records[0]['answers'][f'essential_{i}']['noul'] <= .1)]
+                records[0]['answers'][f'preservation_{i}']['probabilities']['optional'] >= .9)]
             if retained:
                 spans = retained
         if not spans:
@@ -86,6 +91,7 @@ def build(store, provider, identity, selected, materials, epoch):
                 'spans': spans},
             'detail': {'text': detail['text'], 'spans': detail.get('spans', [{'start': 0, 'end': len(material['text'])}])},
             'full': {'text': material['text'], 'spans': [{'start': 0, 'end': len(material['text'])}]},
+            'mandatory_spans': mandatory, 'preservation_complete': complete,
             'decisions': [ref for r in records for ref in r['decisions']],
             'expand_command': shlex.join(store.config['cli_argv'] + ['inspect', '--record', material['event_id']])}
         # Don't cache a fallback caused by provider failure: retry can improve it.
@@ -106,9 +112,11 @@ def build(store, provider, identity, selected, materials, epoch):
 
 def working_context(pack, frame, representations, level='brief'):
     records = []
-    original = {s['event_id']: s for s in pack['selected_records']}
+    original = {s['event_id']: s for s in pack.get('task_records', pack['selected_records'])}
     for representation in representations:
-        selected = representation[level]
+        selected = representation.get('query', representation['brief']) if level == 'brief' else representation[level]
+        if not selected['spans']:
+            continue
         records.append({k: representation[k] for k in ('event_id', 'revision', 'source_hash', 'basis', 'role', 'creator', 'version', 'expand_command')}
                        | {k: original[representation['event_id']].get(k) for k in ('reconciliation', 'implementation_status', 'verification_currently_applicable', 'pending_retrieval_judgment')}
                        | {'representation': level, **selected})
@@ -123,6 +131,8 @@ def working_context(pack, frame, representations, level='brief'):
                      'snapshot', 'reconciliation', 'coverage')
     result = {k: pack[k] for k in required_keys}
     result['coverage'] = {'state': pack['coverage']['state'], 'gaps': pack['coverage']['gaps']}
+    if 'query_context' in pack:
+        result['query_context'] = {k: v for k, v in pack['query_context'].items() if k not in ('sources', 'source_dependencies')}
     result.update(task_frame=compact_frame, selected_records=records, representation_level=level,
                   optional_audit_command=pack['audit_command'], metrics=pack['metrics'])
     return result

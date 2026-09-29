@@ -76,6 +76,9 @@ CREATE TABLE IF NOT EXISTS state_relations (
 CREATE TABLE IF NOT EXISTS representations (
  key TEXT PRIMARY KEY, task_id TEXT NOT NULL, event_id TEXT NOT NULL, revision INTEGER NOT NULL,
  data TEXT NOT NULL);
+CREATE TABLE IF NOT EXISTS query_views (
+ id TEXT PRIMARY KEY, task_id TEXT NOT NULL, epoch INTEGER NOT NULL, model TEXT NOT NULL,
+ rubric TEXT NOT NULL, lane TEXT NOT NULL, data TEXT NOT NULL);
 '''
 
 
@@ -95,7 +98,7 @@ class Store:
         self.db.execute('PRAGMA synchronous=FULL')
         self.db.execute('PRAGMA foreign_keys=ON')
         version = self.db.execute('PRAGMA user_version').fetchone()[0]
-        if version not in (0, 1, 2, 3, 4, 5):
+        if version not in (0, 1, 2, 3, 4, 5, 6):
             self.db.close()
             raise JCMError('UNSUPPORTED_DATABASE_VERSION')
         self.db.executescript(SCHEMA)
@@ -103,9 +106,9 @@ class Store:
             for event in self.db.execute('SELECT id,blob FROM events').fetchall():
                 text = self.blob(event['blob']).get('text', '')
                 self.db.execute('INSERT OR REPLACE INTO event_texts VALUES (?,?)', (event['id'], digest(text)))
-        # Older runtimes must not ignore capture boundaries or leave work-menu
+        # Older runtimes must not leave question profiles or work-menu
         # derivatives behind when forgetting a session.
-        self.db.execute('PRAGMA user_version=5')
+        self.db.execute('PRAGMA user_version=6')
 
     def close(self):
         self.db.close()
@@ -284,7 +287,7 @@ class Store:
             # Conservative derivative invalidation includes mixed-source model requests.
             for table in ('requests', 'packs', 'receipts', 'delivery_calls', 'decisions', 'provider_errors',
                           'call_metrics', 'semantic_items', 'source_index', 'source_terms', 'task_views',
-                          'assertions', 'state_relations', 'representations'):
+                          'assertions', 'state_relations', 'representations', 'query_views'):
                 self.db.execute(f'DELETE FROM {table}')
             self.db.execute('COMMIT')
         except BaseException:

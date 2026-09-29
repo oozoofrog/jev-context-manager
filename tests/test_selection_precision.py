@@ -49,6 +49,12 @@ class SelectionPrecisionTests(unittest.TestCase):
                 if candidate['event_id'] == ids['omitted']:
                     answer = answers[f'representation_{i}']; answer['choice'] = 'omit'
                     answer['probabilities'] = {v: float(v == 'omit') for v in answer['probabilities']}
+            for name, question in payload['questions'].items():
+                if '_query_' not in name:
+                    continue
+                item = payload['state']['items'][int(name.split('_')[0][1:])]
+                if item.get('event_id') == ids['omitted']:
+                    result['answers'][name].update(choice='omit', probabilities={v: float(v == 'omit') for v in question['criteria']})
             return result
         route = dispatch(self.store, token, self.provider(transport))
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
@@ -87,7 +93,16 @@ class SelectionPrecisionTests(unittest.TestCase):
         token = self.request('Recover network work')
         self.store.db.execute('INSERT INTO meta VALUES (?,?)', ('entry_selection:' + token, json.dumps({'task_id': task})))
         self.store.db.execute("UPDATE jobs SET state='succeeded'")
-        route = dispatch(self.store, token, self.provider())
+        def transport(body, key):
+            payload = json.loads(body)
+            response = fixtures.fake_http(body, key)
+            for name, question in payload['questions'].items():
+                if name.endswith('_applicability'):
+                    item = payload['state']['items'][int(name.split('_')[0][1:])]
+                    value = 'unrelated' if item['event_id'] == unrelated else 'direct'
+                    response['answers'][name].update(choice=value, probabilities={v: float(v == value) for v in question['criteria']})
+            return response
+        route = dispatch(self.store, token, self.provider(transport))
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
         self.assertEqual({r['event_id'] for r in pack['selected_records']}, {task})
         self.assertIn(unrelated, {r['event_id'] for r in pack['excluded_records']})

@@ -42,7 +42,7 @@ def select(store, provider, materials, request_text, epoch, task_scope=None):
         labels_by_source[record['item']['event_id']].append(record)
     for material in materials:
         records = records_by_source[material['event_id']]
-        assessment = {'complete': False, 'spans': [], 'relevance': None, 'omission': None,
+        assessment = {'complete': False, 'spans': [], 'member_spans': [], 'relevance': None, 'omission': None,
                       'representation': 'full', 'applicability': [], 'labels': {}, 'decisions': [], 'evidence_spans': []}
         cursor = 0
         for record in records:
@@ -52,6 +52,10 @@ def select(store, provider, materials, request_text, epoch, task_scope=None):
                 cursor = span['end']
             applicability = answers['applicability']
             assessment['applicability'].append({'span': span, **applicability})
+            # Task membership is independent of what the anchor question happened
+            # to ask. A later question can need evidence with low anchor relevance.
+            if applicability['probabilities']['unrelated'] < .8:
+                assessment['member_spans'].append(span)
             relevance, omission = answers['relevance']['score'], answers['omission']['noul']
             assessment['relevance'] = max(assessment['relevance'] or 0, relevance)
             assessment['omission'] = max(assessment['omission'] or 0, omission)

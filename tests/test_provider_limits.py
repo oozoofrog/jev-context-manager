@@ -180,7 +180,7 @@ class ProviderLimitsTests(unittest.TestCase):
         self.store.db.execute('PRAGMA user_version=1')
         self.store.close()
         self.store = Store(self.cfg)
-        self.assertEqual(self.store.db.execute('PRAGMA user_version').fetchone()[0], 5)
+        self.assertEqual(self.store.db.execute('PRAGMA user_version').fetchone()[0], 6)
         self.assertEqual(self.store.material(self.store.event(event))['text'], 'retained during schema migration')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM provider_errors').fetchone()[0], 0)
         self.store.db.execute('PRAGMA user_version=999')

@@ -238,13 +238,15 @@ class Release:
         return item
 
     def release(self, wheel, fixture):
+        prerelease = '-dev.' in self.version
+        prerelease_flag = '--prerelease=' + str(prerelease).lower()
         notes = Path(self.args.notes).resolve()
         require(notes.is_file() and notes.is_relative_to(self.root), 'Release notes must be a local repository file')
         existing = self.run('release-view', ['gh', 'release', 'view', self.tag, '--repo', REPOSITORY,
                                             '--json', 'url,isDraft'], check=False)
         if existing.returncode:
             self.run('release-draft', ['gh', 'release', 'create', self.tag, '--repo', REPOSITORY,
-                '--verify-tag', '--draft', '--prerelease', '--title', 'JCM ' + self.version, '--notes-file', str(notes)])
+                '--verify-tag', '--draft', prerelease_flag, '--title', 'JCM ' + self.version, '--notes-file', str(notes)])
         assets = [Path(wheel['wheel']), Path(fixture['result'])]
         public_fixture = self.directory / f'jcm-{self.version}-plugin-validation.json'
         shutil.copy2(assets[1], public_fixture)
@@ -262,9 +264,11 @@ class Release:
                 require(sha(download / asset.name) == sha(asset), 'Existing release asset differs; refusing overwrite')
             else:
                 self.run('asset-upload', ['gh', 'release', 'upload', self.tag, str(asset), '--repo', REPOSITORY])
-        self.run('release-publish', ['gh', 'release', 'edit', self.tag, '--repo', REPOSITORY, '--draft=false'])
-        result = self.json('release-final', ['gh', 'release', 'view', self.tag, '--repo', REPOSITORY, '--json', 'url,isDraft'])
+        self.run('release-publish', ['gh', 'release', 'edit', self.tag, '--repo', REPOSITORY, '--draft=false',
+                                    prerelease_flag, '--latest=' + str(not prerelease).lower()])
+        result = self.json('release-final', ['gh', 'release', 'view', self.tag, '--repo', REPOSITORY, '--json', 'url,isDraft,isPrerelease'])
         require(not result['isDraft'], 'Release remains a draft')
+        require(result['isPrerelease'] == prerelease, 'Release channel mismatch')
         self.progress('release', result)
         return result
 

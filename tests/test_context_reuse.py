@@ -104,6 +104,11 @@ class TaskReuseTests(IndependentCacheTests):
                     from jcm.task_state import blocks
                     a,b = list(blocks(text))[int(field[6:])]
                     selected = 'detail' if text[a:b].startswith('LOG:') else 'keep'
+                elif field.startswith('query_block_'):
+                    paragraph = item['paragraphs'][int(field.removeprefix('query_block_'))]['text']
+                    selected = 'support' if paragraph.startswith('LOG:') else 'core'
+                elif field == 'query_equivalence':
+                    selected = 'same'
                 else:
                     continue
                 answer.update(choice=selected, probabilities={v: float(v == selected) for v in question['criteria']})

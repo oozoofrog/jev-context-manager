@@ -93,7 +93,14 @@ class BatchedRecoveryTests(unittest.TestCase):
         prior = len(calls)
         again = dispatch(self.store, token, provider)
         self.assertEqual(again['quality'], 'normal')
-        self.assertEqual(calls[prior:], failed)
+        retry_calls = [body for body in calls[prior:] if 'i0_relevance' in json.loads(body)['questions']]
+        self.assertEqual(retry_calls, failed)
+        # The formerly unjudged source becomes eligible for question selection
+        # only after membership succeeds. Previously selected sources stay cached.
+        newly_selected = [item['event_id'] for body in calls[prior:]
+                          if 'i0_query_level' in json.loads(body)['questions']
+                          for item in json.loads(body)['state']['items']]
+        self.assertTrue(set(newly_selected) <= {item['event_id'] for item in json.loads(failed[0])['state']['items']})
 
     def test_legacy_record_flags_do_not_skip_cross_batch_corrections(self):
         self.budget()
@@ -214,6 +221,13 @@ class BatchedRecoveryTests(unittest.TestCase):
             for i, candidate in enumerate(fixtures.fixture_payload(body)['state'].get('candidates', [])):
                 if 'IMPORTANT' in candidate['text']:
                     response['answers'][f'relevance_{i}'].update(score=3, probabilities={str(n):float(n == 3) for n in range(4)})
+            payload = json.loads(body)
+            for name, question in payload['questions'].items():
+                if '_query_block_' in name:
+                    item = payload['state']['items'][int(name.split('_')[0][1:])]
+                    paragraph = item['paragraphs'][int(name.rsplit('_', 1)[1])]['text']
+                    value = 'core' if 'IMPORTANT' in paragraph else 'omit'
+                    response['answers'][name].update(choice=value, probabilities={v: float(v == value) for v in question['criteria']})
             return response
         route = dispatch(self.store, token, self.provider(transport))
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])

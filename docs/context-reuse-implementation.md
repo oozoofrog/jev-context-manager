@@ -1,5 +1,8 @@
 # Context reuse in dev.13
 
+This is the dev.13 validation record. The subsequent question-specific delivery
+layer is documented in [Current-question context](query-context.md).
+
 Sources in the journal remain canonical. Schema 5 adds rebuildable source indexes,
 independent semantic judgments, task views, assertions, relationships and evidence
 representations. It does not change the capture scope or require manual checkpoints.

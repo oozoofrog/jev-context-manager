@@ -94,6 +94,18 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(release.other_plugins(first), release.other_plugins(second))
 
     def test_draft_release_assets_use_draft_aware_lookup(self):
+        calls = self.exercise_release('0.1.0-dev.9')
+        self.assertIn('--prerelease=true', next(c.args[1] for c in calls if c.args[0] == 'release-publish'))
+
+    def test_stable_release_is_published_as_latest_without_prerelease_flag(self):
+        calls = self.exercise_release('1.0.0')
+        publish = next(c.args[1] for c in calls if c.args[0] == 'release-publish')
+        self.assertIn('--prerelease=false', publish)
+        self.assertIn('--latest=true', publish)
+        draft = next(c.args[1] for c in calls if c.args[0] == 'release-draft')
+        self.assertIn('--prerelease=false', draft)
+
+    def exercise_release(self, version):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             notes = root / 'notes.md'; notes.write_text('Release notes')
@@ -101,17 +113,18 @@ class ReleaseTests(unittest.TestCase):
             fixture = root / 'fixture.json'; fixture.write_text('{}')
             runner = object.__new__(release.Release)
             runner.root = runner.directory = root
-            runner.version, runner.tag = '0.1.0-dev.9', 'v0.1.0-dev.9'
+            runner.version, runner.tag = version, 'v' + version
             runner.args = Mock(notes=str(notes))
             runner.progress = Mock()
-            runner.run = Mock(return_value=subprocess.CompletedProcess([], 0, '{}', ''))
+            runner.run = Mock(side_effect=lambda name, argv, **kw: subprocess.CompletedProcess([], 1 if name == 'release-view' else 0, '{}', ''))
             def response(name, argv):
                 if argv[:2] == ['gh', 'api']:
                     raise release.ReleaseError('draft release tag endpoint returns 404')
                 if argv[-1] == 'assets':
                     return {'assets': []}
-                return {'url': 'https://github.com/owner/repo/releases/tag/v1', 'isDraft': False}
+                return {'url': 'https://github.com/owner/repo/releases/tag/v1', 'isDraft': False, 'isPrerelease': '-dev.' in version}
             runner.json = Mock(side_effect=response)
             result = runner.release({'wheel': str(wheel)}, {'result': str(fixture)})
             self.assertFalse(result['isDraft'])
             self.assertEqual(sum(call.args[0] == 'asset-upload' for call in runner.run.call_args_list), 2)
+            return runner.run.call_args_list
