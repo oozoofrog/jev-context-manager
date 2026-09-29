@@ -43,12 +43,14 @@ def build(store, provider, identity, selected, materials, epoch):
     keys = {}
     for source in selected:
         material = by_id[source['event_id']]
-        key = digest([VERSION, identity['id'], context, material, epoch, policy['model'], RUBRIC_VERSION, provider.lane])
+        key = digest([VERSION, identity['id'], context, material, policy['model'], RUBRIC_VERSION, provider.lane])
         keys[material['event_id']] = key
         row = store.db.execute('SELECT data FROM representations WHERE key=?', (key,)).fetchone()
         if row:
             validate_dependencies(store, [material])
-            representations.append(json.loads(row[0])); cached += 1
+            representation = json.loads(row[0])
+            representation['expand_command'] = shlex.join(store.config['cli_argv'] + ['inspect', '--record', material['event_id']])
+            representations.append(representation); cached += 1
         else:
             # Original full text is used for qualification-aware selection, even if
             # retrieval chose a few spans. No first-paragraph shortcut is permitted.
@@ -95,7 +97,7 @@ def build(store, provider, identity, selected, materials, epoch):
             'decisions': [ref for r in records for ref in r['decisions']],
             'expand_command': shlex.join(store.config['cli_argv'] + ['inspect', '--record', material['event_id']])}
         # Don't cache a fallback caused by provider failure: retry can improve it.
-        if not result['errors']:
+        if complete or material['role'] == 'user' or not result['errors']:
             store.db.execute('BEGIN IMMEDIATE')
             try:
                 store.policy(epoch)
@@ -119,8 +121,9 @@ def working_context(pack, frame, representations, level='brief'):
             continue
         records.append({k: representation[k] for k in ('event_id', 'revision', 'source_hash', 'basis', 'role', 'creator', 'version', 'expand_command')}
                        | {k: original[representation['event_id']].get(k) for k in ('reconciliation', 'implementation_status', 'verification_currently_applicable', 'pending_retrieval_judgment')}
+                       | {k: original[representation['event_id']].get(k) for k in ('session', 'kind', 'observed_at', 'seq')}
                        | {'representation': level, **selected})
-    assertions = [{k: a[k] for k in ('id', 'event_id', 'revision', 'span', 'categories', 'state', 'implementation_status')}
+    assertions = [{k: a[k] for k in ('id', 'event_id', 'revision', 'span', 'categories', 'state', 'implementation_status', 'role', 'basis', 'source_kind', 'source_session')}
                   for a in frame['assertions']]
     compact_frame = {**frame, 'assertions': assertions,
                      'relations': [{k: r[k] for k in ('id', 'older', 'newer', 'kind', 'status', 'review_command')} for r in frame['relations']]}
@@ -131,6 +134,8 @@ def working_context(pack, frame, representations, level='brief'):
                      'snapshot', 'reconciliation', 'coverage')
     result = {k: pack[k] for k in required_keys}
     result['coverage'] = {'state': pack['coverage']['state'], 'gaps': pack['coverage']['gaps']}
+    if pack.get('detail_coverage', {}).get('deferred_sources'):
+        result['detail_coverage'] = pack['detail_coverage']
     if 'query_context' in pack:
         result['query_context'] = {k: v for k, v in pack['query_context'].items() if k not in ('sources', 'source_dependencies')}
     result.update(task_frame=compact_frame, selected_records=records, representation_level=level,

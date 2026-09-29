@@ -70,7 +70,9 @@ def paginate(store, pack):
             current = []
         current.append(entry)
     priority = ['origin', 'pack_id', 'session_id', 'request', 'dispatch', 'quality',
-                'semantic_error', 'coverage', 'source_use_policy', 'selected_records']
+                'semantic_error', 'coverage', 'source_use_policy', 'current_goal',
+                'evidence_delivery', 'record_defaults', 'source_expansion_argv', 'selected_records']
+    priority = [key for key in priority if key in pack]
     for key in priority + [k for k in pack if k not in priority]:
         value = pack[key]
         if key == 'selected_records':

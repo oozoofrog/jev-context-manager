@@ -257,6 +257,17 @@ def public_item(record, session=None):
         role, kind = 'tool', 'tool_result'
         item = {k: item.get(k) for k in ('type', 'id', 'path')}
         text = json.dumps(item, ensure_ascii=False)
+    elif typ == 'Extension' and item.get('kind') == 'image_gen.generation':
+        role, kind = 'tool', 'tool_result'
+        # Native image generation stores bare base64 in result, without a
+        # data: URL or media wrapper. Preserve source metadata, never those bytes.
+        item = without_inline_media({k:item.get(k) for k in
+            ('type','kind','id','status','revisedPrompt','transparentBackground','failure','savedPath')})
+        if any(item[k] is not None and not isinstance(item[k],str)
+               for k in ('status','revisedPrompt','savedPath')):
+            raise JCMError('UNSUPPORTED_PUBLIC_CONTENT')
+        text = json.dumps({**item,'result_media':'omitted_from_context',
+            'verification':'Generation status as recorded; current file existence, visual quality and downstream integration are not established.'},ensure_ascii=False)
     elif typ in ('FileChange', 'CollabAgentToolCall') or (typ == 'Extension' and item.get('kind') == 'web.search'):
         role, kind = 'tool', 'tool_result'
         item = without_inline_media(item)
@@ -411,7 +422,7 @@ def discover_registered_session(store, session):
 
 def recover_sources(store):
     store.policy()
-    total = 0
+    total = repair_unsupported_images(store)
     for row in store.db.execute('SELECT DISTINCT session FROM sources').fetchall():
         discover_registered_session(store, row['session'])
     for row in store.db.execute('SELECT * FROM sources').fetchall():
@@ -420,6 +431,91 @@ def recover_sources(store):
         except (JCMError, OSError) as error:
             code = str(error) if isinstance(error, JCMError) else 'TRANSCRIPT_UNAVAILABLE'
             store.gap(code, row['key'])
+    return total
+
+
+def repair_unsupported_images(store, failpoint=None):
+    """Reinterpret admitted image records in place, retaining order and lineage.
+
+    Never replay a whole transcript merely to upgrade an unsupported extension.
+    The original marker and source blob remain in event_sources for audit.
+    """
+    from .scope import boundary, start_offset, allows_item
+    from .util import redact
+    policy = store.policy()
+    total = 0
+    for event in store.db.execute("SELECT * FROM events WHERE kind='unsupported_record'").fetchall():
+        marker = store.blob(event['blob'])
+        if marker.get('error') != 'UNSUPPORTED_PUBLIC_ITEM':
+            continue
+        reference = marker.get('source', {})
+        try:
+            store.policy(policy['epoch'])
+            if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (event['session'],)).fetchone():
+                continue
+            source = transcript_path(store, reference['path'], event['session'])
+            rule = boundary(store, event['session'])
+            with source.open('rb') as stream:
+                admitted = start_offset(store, {'path': str(source), 'session': event['session']}, stream)
+                if admitted is None or reference['offset'] < admitted:
+                    continue
+                stream.seek(reference['offset'])
+                line = read_record(stream)
+            if not line or not line['complete'] or line.get('error') or line['hash'] != reference['sha256']:
+                raise JCMError('SOURCE_REPAIR_HASH_MISMATCH')
+            native = line['value'].get('payload', {}).get('item', {})
+            if not isinstance(native, dict) or native.get('type') != 'Extension' or native.get('kind') != 'image_gen.generation':
+                continue
+            item = public_item(line['value'], event['session'])
+            if not item or item['turn'] != event['turn'] or not allows_item(rule, item):
+                continue
+            canonical = digest([store.config['repo_id'], event['session'], item['identity']])
+            payload, redactions = redact({**item['payload'], 'reinterpreted_from': {
+                'event_id': event['id'], 'revision': event['revision'], 'blob': event['blob'], 'source': reference}})
+            if failpoint:
+                failpoint('before_publication')
+            store.db.execute('BEGIN IMMEDIATE')
+            try:
+                store.policy(policy['epoch'])
+                current = store.db.execute('SELECT * FROM events WHERE id=?', (event['id'],)).fetchone()
+                if (not current or current['revision'] != event['revision'] or current['blob'] != event['blob'] or
+                        boundary(store, event['session']) != rule or
+                        store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (event['session'],)).fetchone()):
+                    raise JCMError('SOURCE_CHANGED_DURING_REPAIR')
+                if canonical != event['id'] and store.db.execute('SELECT 1 FROM events WHERE id=?', (canonical,)).fetchone():
+                    raise JCMError('SOURCE_REPAIR_IDENTITY_CONFLICT')
+                blob = store.put_blob(payload)
+                store.db.execute('UPDATE events SET kind=?,role=?,blob=?,revision=revision+1,redactions=? WHERE id=?',
+                                 (item['kind'], item['role'], blob, redactions, event['id']))
+                store.db.execute('INSERT OR REPLACE INTO event_texts VALUES (?,?)', (event['id'], digest(payload['text'])))
+                store.db.execute('INSERT INTO event_sources VALUES (?,?,?)',
+                                 (event['id'], 'reinterpreted:image-generation-v1:' + reference['sha256'], blob))
+                store.db.execute('INSERT OR REPLACE INTO meta VALUES (?,?)',
+                                 ('event_alias:' + event['session'] + ':' + canonical, event['id']))
+                store.db.execute("INSERT INTO jobs(event_id,state) VALUES (?,'queued') ON CONFLICT(event_id) "
+                                 "DO UPDATE SET state='queued',owner=NULL,lease_until=NULL", (event['id'],))
+                # Existing packs may have excluded this unsupported marker and
+                # therefore have no content dependency on it. Their inventory
+                # coverage changed; pure source judgments remain reusable.
+                store.db.execute('UPDATE packs SET invalid=1')
+                # The gap table is code-scoped, so remove this code only after
+                # the last unresolved marker bearing it has been resolved.
+                unresolved = any(store.blob(row['blob']).get('error') == 'UNSUPPORTED_PUBLIC_ITEM'
+                    for row in store.db.execute("SELECT blob FROM events WHERE kind='unsupported_record'"))
+                if not unresolved:
+                    store.db.execute("DELETE FROM gaps WHERE code='UNSUPPORTED_PUBLIC_ITEM'")
+                if failpoint:
+                    failpoint('before_commit')
+                store.db.execute('COMMIT')
+                total += 1
+            except BaseException:
+                store.db.execute('ROLLBACK')
+                raise
+        except (JCMError, OSError, KeyError, TypeError) as error:
+            if store.db.execute('SELECT 1 FROM tombstones WHERE session=?', (event['session'],)).fetchone():
+                continue
+            code = str(error) if isinstance(error, JCMError) else 'SOURCE_REPAIR_UNAVAILABLE'
+            store.gap(code, event['id'])
     return total
 
 

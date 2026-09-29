@@ -16,28 +16,44 @@ def terms(text):
 
 def refresh(store, materials, epoch):
     updated = 0
+    pending = []
+
+    def commit():
+        nonlocal updated
+        if not pending:
+            return
+        store.policy(epoch)
+        store.db.execute('BEGIN IMMEDIATE')
+        try:
+            for material, signature, words in pending:
+                if store.event(material['event_id'])['revision'] != material['revision']:
+                    from .util import JCMError
+                    raise JCMError('SOURCE_CHANGED_DURING_INDEX')
+                store.db.execute('DELETE FROM source_terms WHERE event_id=?', (material['event_id'],))
+                store.db.executemany('INSERT INTO source_terms VALUES (?,?)', ((word, material['event_id']) for word in words))
+                store.db.execute('INSERT OR REPLACE INTO source_index VALUES (?,?,?)',
+                                 (material['event_id'], material['revision'], signature))
+            store.policy(epoch)
+            store.db.execute('COMMIT')
+            updated += len(pending)
+            pending.clear()
+        except BaseException:
+            store.db.execute('ROLLBACK')
+            raise
+
     for material in materials:
         signature = digest(material['text'])
         previous = store.db.execute('SELECT revision,text_hash FROM source_index WHERE event_id=?',
                                     (material['event_id'],)).fetchone()
         if previous and tuple(previous) == (material['revision'], signature):
             continue
-        words = terms(material['text'])
-        store.db.execute('BEGIN IMMEDIATE')
-        try:
-            store.policy(epoch)
-            if store.event(material['event_id'])['revision'] != material['revision']:
-                from .util import JCMError
-                raise JCMError('SOURCE_CHANGED_DURING_INDEX')
-            store.db.execute('DELETE FROM source_terms WHERE event_id=?', (material['event_id'],))
-            store.db.executemany('INSERT INTO source_terms VALUES (?,?)', ((word, material['event_id']) for word in words))
-            store.db.execute('INSERT OR REPLACE INTO source_index VALUES (?,?,?)',
-                             (material['event_id'], material['revision'], signature))
-            store.db.execute('COMMIT')
-            updated += 1
-        except BaseException:
-            store.db.execute('ROLLBACK')
-            raise
+        pending.append((material, signature, terms(material['text'])))
+        # Transaction sizing only: every changed source is indexed. Keep writer
+        # leases short without spawning Git and committing once per record.
+        if len(pending) >= 128:
+            commit()
+    commit()
+    store.policy(epoch)
     return updated
 
 

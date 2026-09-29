@@ -161,6 +161,10 @@ class Store:
             self.policy(policy['epoch'])
             if self.db.execute('SELECT 1 FROM tombstones WHERE session=?', (session,)).fetchone():
                 raise JCMError('SOURCE_FORGOTTEN')
+            alias = self.db.execute('SELECT value FROM meta WHERE key=?',
+                                    ('event_alias:' + session + ':' + event_id,)).fetchone()
+            if alias:
+                event_id = alias[0]
             # Blob publication and its reference share the writer lock so GC
             # cannot remove a just-written manifest before its event commits.
             blob = self.put_blob(admitted)
@@ -277,6 +281,7 @@ class Store:
                 self.db.execute(f'DELETE FROM {table} WHERE event_id IN (SELECT id FROM events WHERE session=?)', (session,))
             self.db.execute('DELETE FROM events WHERE session=?', (session,))
             self.db.execute('DELETE FROM sources WHERE session=?', (session,))
+            self.db.execute('DELETE FROM meta WHERE key LIKE ?', ('event_alias:' + session + ':%',))
             self.db.execute('DELETE FROM meta WHERE key IN (?,?)',
                             ('bootstrap_existing:' + session, 'bootstrap_new:' + session))
             self.db.execute('DELETE FROM meta WHERE key IN (?,?)',

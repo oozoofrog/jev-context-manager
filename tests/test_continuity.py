@@ -63,6 +63,7 @@ def fake_http(body, key):
             answers[name] = {'type': 'noul', 'noul': value}
         elif typ == 'choice':
             value = ('changed' if semantic_name == 'scope' else 'resume' if semantic_name == 'intent' else
+                     'possible' if semantic_name in ('change_trigger', 'target_group') else
                      'same' if semantic_name == 'same_property' else
                      'optional' if semantic_name.startswith('preservation_') else 'full' if semantic_name.startswith('representation') else 'corrects')
             if value not in question['criteria']:
@@ -256,6 +257,10 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
             for name, question in request['questions'].items():
                 if name.endswith('_correction'):
                     response['answers'][name]['noul'] = 0
+                if name.endswith('_change_trigger'):
+                    item = request['state']['items'][int(name.split('_')[0][1:])]
+                    if item['text'] in ('Implement error handling', 'Documentation for reconnect'):
+                        response['answers'][name].update(choice='ordinary', probabilities={'ordinary':1,'possible':0})
                 if '_query_' not in name or name.endswith('_query_equivalence'):
                     continue
                 item = request['state']['items'][int(name.split('_')[0][1:])]

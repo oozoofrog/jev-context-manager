@@ -78,7 +78,9 @@ class SelectionPrecisionTests(unittest.TestCase):
         assessment = {**empty, 'spans': [{'start': start, 'end': start + len('New applicable result')}], 'relevance': 3}
         semantic = {'assessments': [empty, assessment], 'intent': 'resume', 'decisions': [],
                     'errors': [], 'batches': [], 'relations': []}
-        with patch('jcm.coordinator.select', return_value=semantic):
+        def select_by_source(store, provider, materials, *args):
+            return {**semantic, 'assessments': [assessment if m['event_id'] == copied else empty for m in materials]}
+        with patch('jcm.coordinator.select', side_effect=select_by_source):
             route = dispatch(self.store, token, self.provider())
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])
         self.assertEqual([r['event_id'] for r in pack['selected_records']], [copied])

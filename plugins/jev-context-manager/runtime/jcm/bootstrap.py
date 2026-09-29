@@ -159,6 +159,13 @@ def new(store, token, provider=None):
     result.update(bootstrap='new', stage='read_served' if result['delivery'] == 'read_served' else 'reading' if result['delivery'] == 'page_served' else 'blocked',
                   session_id=request['session'], recovery_success='not_attested')
     # Serving bytes does not prove the agent consumed them or resumed correctly.
-    store.db.execute('INSERT OR REPLACE INTO meta VALUES (?,?)', ('bootstrap_new:' + request['session'],
-        json.dumps({'bootstrap': 'new', 'stage': result['stage'], 'pack_id': route['pack_id'], 'created_at': now()})))
+    meta_key = 'bootstrap_new:' + request['session']
+    previous = store.db.execute('SELECT value FROM meta WHERE key=?', (meta_key,)).fetchone()
+    metadata = json.loads(previous[0]) if previous else {}
+    metadata.update(bootstrap='new', stage=result['stage'], pack_id=route['pack_id'],
+                    delivery=result['delivery'], updated_at=now())
+    store.policy(request['epoch'])
+    store.db.execute("UPDATE meta SET value=? WHERE key=? AND json_extract(value, '$.request_token')=? "
+                     "AND json_extract(value, '$.pack_id')=? AND EXISTS(SELECT 1 FROM requests WHERE token=?)",
+                     (json.dumps(metadata), meta_key, token, route['pack_id'], token))
     return result

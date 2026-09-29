@@ -122,6 +122,7 @@ def run(args):
     if args.command == 'install-hooks':
         return config.install_hooks(policy)
     store = Store(policy)
+    store.progress_output = args.command in ('dispatch', 'bootstrap', 'sync', 'entry')
     try:
         if args.command == 'entry':
             from . import entry
@@ -188,6 +189,10 @@ def main():
     try:
         result = run(args)
         sys.stdout.buffer.write(encode(result) + b'\n')
+    except KeyboardInterrupt:
+        sys.stdout.buffer.write(encode({'origin': 'jcm', 'error': 'RECOVERY_INTERRUPTED',
+                                       'retry': 'Completed judgments remain reusable.'}) + b'\n')
+        return 130
     except (JCMError, ValueError, OSError, sqlite3.Error) as error:
         # Never echo exception bodies from external providers or input payloads.
         code = str(error) if isinstance(error, JCMError) else type(error).__name__

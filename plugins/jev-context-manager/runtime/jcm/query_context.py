@@ -35,8 +35,8 @@ def resolve(store, provider, identity, request, frame, epoch):
     # Changed source context prevents blind exact-text reuse for relative queries.
     binding = frame['read_revision']
     context = {'request': request['text'], 'task_scope': identity['scope'], 'binding': binding}
-    rows = store.db.execute('SELECT data FROM query_views WHERE task_id=? AND epoch=? AND model=? '
-        'AND rubric=? AND lane=?', (identity['id'], epoch, policy['model'], RUBRIC_VERSION, provider.lane))
+    rows = store.db.execute('SELECT data FROM query_views WHERE task_id=? AND model=? '
+        'AND rubric=? AND lane=?', (identity['id'], policy['model'], RUBRIC_VERSION, provider.lane))
     profiles = []
     for row in rows:
         profile = json.loads(row[0])

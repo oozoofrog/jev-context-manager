@@ -120,6 +120,7 @@ class JevProvider:
         self.lane = 'mock' if transport else 'real_http'
         self.sleeper = sleeper
         self.observed_decisions = []
+        self.terminal_error = None
 
     def call(self, body, key, call_id):
         start = time.perf_counter()
@@ -131,6 +132,26 @@ class JevProvider:
                                   (time.perf_counter() - start, call_id))
 
     def evaluate(self, state, questions, heartbeat=None):
+        self.store.policy()
+        if self.terminal_error:
+            raise JCMError(self.terminal_error)
+        frontier = len(self.observed_decisions)
+        try:
+            return self._evaluate(state, questions, heartbeat)
+        except JCMError as error:
+            if str(error) in ('PROVIDER_HTTP_401','PROVIDER_HTTP_403','PROVIDER_CREDENTIAL_UNAVAILABLE'):
+                # A provider instance belongs to one operation. Later routing
+                # stages must not retry the same failed authentication.
+                self.terminal_error = str(error)
+            raise
+        except KeyboardInterrupt:
+            # Also covers cancellation during Retry-After or between attempts.
+            for decision in self.observed_decisions[frontier:]:
+                self.store.db.execute("UPDATE decisions SET status='interrupted',error='RECOVERY_INTERRUPTED' WHERE id=? AND status='pending'", (decision,))
+                self.store.db.execute("UPDATE calls SET status='interrupted' WHERE status='reserved' AND id IN (SELECT call_id FROM call_metrics WHERE decision_id=?)", (decision,))
+            raise
+
+    def _evaluate(self, state, questions, heartbeat=None):
         store = self.store
         policy = store.policy()
         # No config, arbitrary path or raw hook/transcript metadata leaves this process.
@@ -179,6 +200,10 @@ class JevProvider:
                 raise
             retry, delay = False, None
             try:
+                from .progress import update as progress
+                recovery = getattr(store, 'recovery', None)
+                if recovery:
+                    progress(store, provider_called=True, provider_calls=recovery.value['provider_calls'] + 1)
                 if heartbeat:
                     heartbeat()
                 response = validate(self.call(body, key, call_id), questions, policy['model'])
@@ -198,6 +223,10 @@ class JevProvider:
                     raise
                 return {'decision_id': decision, 'response': response, 'cached': False,
                         'lane': self.lane, 'epoch': policy['epoch']}
+            except KeyboardInterrupt:
+                store.db.execute("UPDATE calls SET status='interrupted' WHERE id=?", (call_id,))
+                store.db.execute("UPDATE decisions SET status='interrupted',error='RECOVERY_INTERRUPTED' WHERE id=?", (decision,))
+                raise
             except HTTPError as exc:
                 try:
                     detail, request_id, context = error_detail(exc)

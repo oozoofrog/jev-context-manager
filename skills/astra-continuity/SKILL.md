@@ -111,6 +111,12 @@ The token belongs to the current project's actual request. No handoff, manual
 checkpoint, conversation copy or fork is needed. Missing or failed Jev returns
 `degraded` with its reason; do not replace it with a claim of normal recovery.
 
+Recovery reports phase, elapsed time, provider calls and completed/cached units on
+stderr while stdout remains the completed JSON result. Use this progress and
+`status` to distinguish ongoing work from a stalled process. Cancellation returns
+`RECOVERY_INTERRUPTED` with exit 130; completed judgments remain reusable, but an
+interrupted command is not a completed recovery or a read receipt.
+
 For explicit administration, follow the requested action even while a work menu
 is pending; an administration request is not a task selection. Do not bootstrap
 a recovery pack before a status/diagnosis/recording-administration request:
@@ -163,6 +169,24 @@ For a specific missing qualification, follow its `inspect --record ID` command a
 all returned pages. Add `--pack PACK_ID` to associate expansion bytes with recovery.
 `--raw` gives the unabridged stored tool output when reference expansion is needed.
 Compact menu previews and source pointers are not full-source read receipts.
+
+For general continuation, `evidence_delivery.mode=continuation` separates the
+reported work state from supporting tool bodies and agent reports. The brief
+retains primary statements, goal reports, relationship endpoints and direct image
+artifact observations. Omitted bodies can contain failures or qualifications:
+they are unread by the consumer, not verified, irrelevant, or evidence of absence.
+Read the exact supporting source before making a claim that depends on it. The
+audit's `continuation_delivery.deferred` is the expansion index. Shared
+`record_defaults` apply to omitted record fields; use `source_expansion_argv`
+with the exact `event_id` to expand a core record. Reading every brief page only
+completes delivery of that view, not proof review or task recovery attestation.
+
+`detail_coverage` can report optional tool bodies that were deferred before source
+selection. Their audit descriptors are `metadata_only_not_source_review`, with
+exact `inspect` commands. Expand any such body needed to establish the current
+conclusion, authorization, artifact identity/path, failure details or observation
+scope. A successful invocation alone establishes none of those facts. An image
+path or old visual report also does not replace a new visual inspection.
 
 Assertions retain their observed/reported basis. An old test or completion report
 never establishes current verification. Treat `disputed` and `proposed` assertions

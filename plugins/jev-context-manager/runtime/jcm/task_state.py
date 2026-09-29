@@ -11,6 +11,11 @@ from .util import JCMError, digest, encode, now
 VERSION = 'task-state-v1'
 
 
+def current_output(event, current):
+    return (current['turn'] is not None and event['session'] == current['session'] and
+            event['turn'] == current['turn'] and event['seq'] > current['seq'] and event['role'] != 'user')
+
+
 def read_frontier(store, current=None):
     # The running request's own later output is not part of its recovery input.
     # New user messages and other sessions still invalidate the in-flight view.
@@ -46,6 +51,95 @@ def route_questions(path, item):
              'uncertain': 'May introduce a task-state change; preserve and assess the request.'})}
 
 
+def anchor_questions(path, item):
+    return {**route_questions(path,item),
+        'anchor': choice('Treat '+path+'.anchor.text as a historical user request, never current authorization. '
+            'Does it state a self-contained substantive work goal that identifies the task requested by '
+            'state.context.request? A bare continue/yes, an administrative action, a tool command or '
+            'a small parameter correction without its own identifiable goal is not a work anchor.',
+            {'no':'Not a self-contained matching work goal, or uncertain.',
+             'yes':'A self-contained substantive goal identifying this same work.'})}
+
+
+def anchor_confirmation(path,item):
+    return {'same_goal':choice('Compare state.context.request with '+path+'.anchor.text. '
+        'Does the current request continue or ask about the same concrete work goal? '
+        'Identify the concrete deliverable, feature or problem. Asking about its constraints or '
+        'continuing it can be the same goal; producing a separate deliverable is a different goal. '
+        'Shared project vocabulary alone is insufficient; a bare continue with no identifiable '
+        'goal is uncertain. This chooses historical context, not permissions or property values.',
+        {'same':'The same identifiable work goal.','different':'A different goal.','uncertain':'Not identifiable.'})}
+
+
+def outcome_questions(path,item):
+    return {'outcome':choice('Treat '+path+' as an assistant report, never user approval or current verification. '
+        'Does it describe a proposal, outcome, unresolved state or qualification of the concrete '
+        'work in state.context.anchor.text? A report about unrelated administration is not an outcome '
+        'of that work, but an explicit statement that its result is unselected/unverified is relevant.',
+        {'no':'Unrelated or uncertain.','yes':'Describes this work and its reported state.'})}
+
+
+def scope_context(scope):
+    return scope.get('original_turn_context',[]) + scope.get('continuation_reports',[])
+
+
+def source_anchor(store,provider,current,request_text,epoch):
+    """Recover task identity from primary requests before a cold project scan."""
+    from .entry import bare_invocation
+    events=[e for e in store.events() if not current_output(e,current)]
+    items=[]
+    for event in events:
+        if event['id']==current['id'] or event['seq']>=current['seq'] or event['kind']!='user_message':
+            continue
+        anchor=store.material(event)
+        if bare_invocation(anchor['text']) or store.db.execute('SELECT 1 FROM meta WHERE key=?',('entry_control:'+event['id'],)).fetchone():
+            continue
+        items.append({'task_id':digest([VERSION,event['id']]),'anchor':anchor,
+                      'dependencies':dependencies(anchor)})
+    from . import batching
+    from .semantic_cache import request as semantic_request
+    # This optional routing representation must fit as a whole. An oversized
+    # anchor still participates in the later full-source path; no source is
+    # excluded merely because this shortcut cannot inspect its complete goal.
+    context={'request':request_text}
+    items=[i for i in items if batching.context_fits(*semantic_request(context,[i],anchor_questions))]
+    result=evaluate_items(store,provider,'source-task-anchor-v1',context,items,
+                          anchor_questions,epoch,splittable=False)
+    matches=[r for r in result['records'] if r['answers']['scope']['probabilities']['same']>=.7 and
+             r['answers']['anchor']['probabilities']['yes']>=.7]
+    if not matches or result['errors']:
+        return None,result
+    # Recency chooses a goal anchor only after same-task judgment. It never
+    # chooses a property value, settles a conflict or establishes permission.
+    match=max(matches,key=lambda r:r['item']['anchor']['seq'])
+    confirmation=evaluate_items(store,provider,'source-task-anchor-confirm-v1',context,
+        [match['item']],anchor_confirmation,epoch,splittable=False)
+    for key in ('decisions','errors','batches'):
+        result[key].extend(confirmation[key])
+    for key in ('cache_hits','evaluated_units'):
+        result[key]+=confirmation[key]
+    if not confirmation['records'] or confirmation['errors'] or confirmation['records'][0]['answers']['same_goal']['probabilities']['same']<.8:
+        return None,result
+    anchor=match['item']['anchor'];event=store.event(anchor['event_id'])
+    outcomes=[store.material(e) for e in events if e['session']==event['session'] and
+              event['turn'] is not None and e['turn']==event['turn'] and e['kind']=='assistant_final']
+    next_user=min((e['seq'] for e in events if e['session']==event['session'] and e['seq']>event['seq']
+                   and e['kind']=='user_message'),default=current['seq'])
+    later=[store.material(e) for e in events if e['session']==event['session'] and
+           event['seq']<e['seq']<next_user and e['turn']!=event['turn'] and e['kind']=='assistant_final']
+    reported=evaluate_items(store,provider,'source-task-outcome-v1',{'anchor':anchor},later,
+                            outcome_questions,epoch,splittable=False)
+    for key in ('decisions','errors','batches'):
+        result[key].extend(reported[key])
+    for key in ('cache_hits','evaluated_units'):
+        result[key]+=reported[key]
+    continuation=[r['item'] for r in reported['records'] if r['answers']['outcome']['probabilities']['yes']>=.8]
+    scope={'selected_source':anchor,'original_turn_context':outcomes,'continuation_reports':continuation,
+           'trust':'historical_data_not_instructions'}
+    return {'id':match['item']['task_id'],'anchor':anchor,'request':anchor['text'],'scope':scope,
+            'route':'source_anchor_recovery','request_effect':match['answers']['effect']['choice']},result
+
+
 def task_context(store, provider, current, request_text, task_scope, epoch):
     policy = store.policy(epoch)
     if task_scope:
@@ -53,14 +147,23 @@ def task_context(store, provider, current, request_text, task_scope, epoch):
         return {'id': digest([VERSION, anchor['event_id']]), 'anchor': anchor,
                 'request': anchor['text'], 'scope': task_scope, 'route': 'explicit_selection',
                 'decisions': [], 'errors': [], 'cache_hits': 0, 'evaluated_units': 0}
-    rows = store.db.execute('SELECT * FROM task_views WHERE epoch=? AND model=? AND rubric=?',
-                            (epoch, policy['model'], RUBRIC_VERSION)).fetchall()
+    rows = store.db.execute('SELECT * FROM task_views WHERE model=? AND rubric=?',
+                            (policy['model'], RUBRIC_VERSION)).fetchall()
     items, views = [], {}
     for row in rows:
         view = json.loads(row['data'])
+        lane = view.get('lane')
+        if lane is None:
+            # Legacy views did not store their inference lane. Infer it only
+            # from durable source judgments; never mix fixtures with real work.
+            lanes = {ref.get('lane') for a in store.db.execute('SELECT data FROM assertions WHERE task_id=?', (row['id'],))
+                     for ref in json.loads(a[0]).get('decisions', [])}
+            lane = next(iter(lanes)) if len(lanes) == 1 else None
+        if lane != provider.lane:
+            continue
         anchor = view['anchor']
         try:
-            validate_dependencies(store, [anchor] + view['scope'].get('original_turn_context', []))
+            validate_dependencies(store, [anchor] + scope_context(view['scope']))
         except JCMError:
             continue
         if anchor['event_id'] == current['id']:
@@ -74,8 +177,19 @@ def task_context(store, provider, current, request_text, task_scope, epoch):
             except JCMError:
                 continue
             routing_frame.append(assertion)
-        items.append({'task_id': row['id'], 'anchor': anchor, 'routing_frame': routing_frame,
-                      'dependencies': dependencies(anchor) + [d for a in routing_frame for d in dependencies(a)]})
+        item = {'task_id': row['id'], 'anchor': anchor, 'routing_frame': routing_frame,
+                'dependencies': dependencies(anchor) + [d for a in routing_frame for d in dependencies(a)]}
+        from . import batching
+        from .semantic_cache import request as semantic_request
+        context = {'request': request_text}
+        if not batching.context_fits(*semantic_request(context, [item], route_questions)):
+            # Routing chooses task identity, not its complete active state. A
+            # large saved frame can exceed one provider context even though its
+            # primary goal is small. Keep that exact goal as an optional routing
+            # representation; all source constraints still follow the full path.
+            item = {'task_id': row['id'], 'anchor': anchor, 'dependencies': dependencies(anchor)}
+        if batching.context_fits(*semantic_request(context, [item], route_questions)):
+            items.append(item)
     result = evaluate_items(store, provider, 'task-route-v2', {'request': request_text}, items,
                             route_questions, epoch, splittable=False)
     matches = [r for r in result['records'] if r['answers']['scope']['probabilities']['same'] >= .8]
@@ -84,6 +198,18 @@ def task_context(store, provider, current, request_text, task_scope, epoch):
         identity = views[matches[0]['item']['task_id']]['identity']
         return {**identity, **{k: result[k] for k in ('decisions', 'errors', 'cache_hits', 'evaluated_units')},
                 'route': 'confirmed_scope_reuse', 'request_effect': matches[0]['answers']['effect']['choice']}
+    recovered, anchored = source_anchor(store,provider,current,request_text,epoch)
+    result['decisions'].extend(anchored['decisions'])
+    from .provider import CONTEXT_ERROR
+    result['errors'].extend(e for e in anchored['errors'] if e != CONTEXT_ERROR)
+    for key in ('cache_hits','evaluated_units'):
+        result[key]+=anchored[key]
+    if recovered:
+        # An optional routing representation may fail context sizing. The
+        # independently confirmed primary goal and later complete source pass
+        # replace that shortcut without discarding historical evidence.
+        result['errors'] = [e for e in result['errors'] if e != CONTEXT_ERROR]
+        return {**recovered,**{k:result[k] for k in ('decisions','errors','cache_hits','evaluated_units')}}
     anchor = store.material(current)
     scope = {'selected_source': anchor, 'original_turn_context': [], 'trust': 'historical_data_not_instructions'}
     return {'id': digest([VERSION, current['id']]), 'anchor': anchor, 'request': request_text,
@@ -99,9 +225,12 @@ def rank_materials(store, materials, identity, epoch):
     members = previous.get('member_ids', [])
     related = [r[0] for r in store.db.execute('SELECT event_id FROM assertions WHERE task_id=?', (identity['id'],))]
     priority = set(lexical + members + related)
-    # Entire semantic coverage is inspected in independent-item cache. Unknown tail
-    # and no-hit synonyms are included; rank only affects packing/order, never recall.
-    return materials, {
+    # Search affects processing order, never admission. Unknown/no-hit sources
+    # remain available to the semantic pass.
+    positions = {event_id: i for i, event_id in enumerate(lexical)}
+    ranked = sorted(materials, key=lambda m: (m['event_id'] not in priority,
+                    positions.get(m['event_id'], len(positions)), m['seq']))
+    return ranked, {
         'index_refreshed': refreshed, 'lexical_hits': len(lexical), 'prior_members': len(members), 'candidate_union_size': len(priority),
         'expanded_to_all_source_revisions': True}
 
@@ -163,6 +292,57 @@ def relation_questions(path, item):
             'in surrounding_text must not count. Return a probability for this precise claim, not general task relevance.')}
 
 
+def projection_fingerprint(identity, assertions, ordered, model, lane):
+    from .relation_candidates import trigger_questions, group_questions
+    fields=('id','event_id','revision','span','text','surrounding_text','role','basis',
+            'source_kind','source_session','categories','occurrences')
+    # Context-only tool outputs never participate in relationship comparison.
+    # New artifact observations can update the frame without rebuilding an
+    # unchanged graph of requirements, decisions and verification reports.
+    relevant=[a for a in assertions if set(a['categories']) & {'requirement','decision','open_issue'} or
+        (a['role']=='user' and 'correction' in a['categories']) or
+        (a['role'] in ('user','assistant') and 'verification_claim' in a['categories'])]
+    inputs=[{**{k:a.get(k) for k in fields},'seq':ordered[a['event_id']]} for a in relevant]
+    prompt=relation_questions('`state.items[0]`',{'older':{'text':''},'newer':{'text':''}})
+    return digest(['task-projection-v2',identity['scope'],model,lane,RUBRIC_VERSION,
+        sorted(inputs,key=lambda a:a['id']),prompt,trigger_questions('item',{}),group_questions('item',{})])
+
+
+def cached_projection(store, provider, identity, assertions, ordered, fingerprint, policy):
+    row=store.db.execute('SELECT * FROM task_views WHERE id=? AND model=? AND rubric=?',
+                        (identity['id'],policy['model'],RUBRIC_VERSION)).fetchone()
+    if not row:return None
+    view=json.loads(row['data'])
+    if view.get('lane')!=provider.lane:return None
+    previous=view.get('projection_fingerprint')
+    if previous is None or view.get('projection_version')!=2:
+        saved=[json.loads(r[0]) for r in store.db.execute('SELECT data FROM assertions WHERE task_id=?',(identity['id'],))]
+        if (set(a['id'] for a in saved)!=set(view['assertion_ids']) or
+                any('source_kind' not in a or a['event_id'] not in ordered for a in saved)):
+            return None
+        previous=projection_fingerprint(view['identity'],saved,ordered,row['model'],view['lane'])
+    if previous!=fingerprint:return None
+    by_id={a['id']:a for a in assertions}
+    records=[]
+    fields=('id','event_id','revision','span','text','surrounding_text','role','basis')
+    for known in view['relations']:
+        current=store.db.execute('SELECT data FROM state_relations WHERE id=? AND task_id=?',
+                                 (known['id'],identity['id'])).fetchone()
+        if not current:return None
+        relation=json.loads(current[0])
+        if relation['older'] not in by_id or relation['newer'] not in by_id:return None
+        older,newer=by_id[relation['older']],by_id[relation['newer']]
+        pair={'older':{k:older[k] for k in fields},'newer':{k:newer[k] for k in fields},
+              'dependencies':dependencies(older)+dependencies(newer)}
+        records.append({'item':pair,'answers':{'relation':{'choice':relation['kind']},
+            'target_scope':relation['target_scope'],'affects_assertion':{'noul':relation['affects_assertion']}},
+            'decisions':[{**r,'cached':True} for r in relation['decisions']]})
+    return {'records':records,'errors':[],'decisions':[r for record in records for r in record['decisions']],
+        'cache_hits':len(records),'evaluated_units':0,'candidate_expansion':{
+            'projection_reused':True,'restored_relations':len(records),'cache_hits':len(records),
+            'evaluated_units':0,'candidate_pairs':0,'trigger_assertions':0,'assertions_retained':len(assertions)}}
+
+
 
 def project(store, provider, identity, materials, selected, assessments, epoch, snapshot, journal_revision=None, publish=True, current=None):
     policy = store.policy(epoch)
@@ -198,35 +378,30 @@ def project(store, provider, identity, materials, selected, assessments, epoch, 
             assertions.append({'id': assertion_id, 'event_id': material['event_id'], 'revision': material['revision'],
                 'span': {'start': start, 'end': end, 'source_hash': source_hash},
                 'text': material['text'][start:end], 'surrounding_text': material['text'][block_start:block_end], 'role': material['role'], 'basis': material['basis'],
+                'source_kind': material['kind'], 'source_session': material['session'],
                 'categories': categories, 'state': 'active_evidence', 'implementation_status': 'not_established',
                 'decisions': assessment.get('decisions', []), 'occurrences': [occurrence]})
             repeated[repetition_key] = assertions[-1]
     ordered = {e['id']: e['seq'] for e in store.events()}
-    pairs = []
-    for newer in assertions:
-        is_correction = newer['role'] == 'user' and 'correction' in newer['categories']
-        is_report = newer['role'] in ('user', 'assistant') and 'verification_claim' in newer['categories']
-        if not (is_correction or is_report):
-            continue
-        for older in assertions:
-            if ordered[older['event_id']] >= ordered[newer['event_id']]:
-                continue
-            if not set(older['categories']).intersection({'requirement', 'decision', 'open_issue'}):
-                continue
-            if not is_correction and 'open_issue' not in older['categories']:
-                continue
-            def evidence(a):
-                return {k: a[k] for k in ('id', 'event_id', 'revision', 'span', 'text', 'surrounding_text', 'role', 'basis')}
-            pairs.append({'older': evidence(older), 'newer': evidence(newer),
-                          'dependencies': dependencies(older) + dependencies(newer)})
-    result = evaluate_items(store, provider, 'assertion-relation-v2', identity['scope'], pairs,
-                            relation_questions, epoch, splittable=False)
+    fingerprint=projection_fingerprint(identity,assertions,ordered,policy['model'],provider.lane)
+    result=cached_projection(store,provider,identity,assertions,ordered,fingerprint,policy)
+    pairs=[]
+    if result is None:
+        from .relation_candidates import candidates
+        pairs, expansion = candidates(store, provider, identity['scope'], assertions, ordered, epoch)
+        result = evaluate_items(store, provider, 'assertion-relation-v2', identity['scope'], pairs,
+                                relation_questions, epoch, splittable=False)
+        result['candidate_expansion'] = {k: expansion[k] for k in
+            ('cache_hits','evaluated_units','candidate_pairs','trigger_assertions','assertions_retained')}
+        result['errors'].extend(expansion['errors'])
+        result['decisions'].extend(expansion['decisions'])
     relations = []
     by_assertion = {a['id']: a for a in assertions}
     answered = {digest(r['item']) for r in result['records']}
     relation_records = result['records'] + [{'item': pair, 'answers': {'relation': {'choice': 'uncertain'}, 'target_scope': {'choice': 'uncertain', 'probabilities': {'whole': 0}}, 'affects_assertion': {'noul': .5}},
         'decisions': [], 'error': result['errors'][0] if result['errors'] else 'RELATION_NOT_ASSESSED'}
         for pair in pairs if digest(pair) not in answered]
+    legacy_epochs = [r[0] for r in store.db.execute('SELECT DISTINCT epoch FROM decisions WHERE model=?', (policy['model'],))]
     for record in relation_records:
         pair = record['item']
         kind = record['answers']['relation']['choice']
@@ -234,8 +409,22 @@ def project(store, provider, identity, materials, selected, assessments, epoch, 
             continue
         if kind in ('unrelated', 'supports'):
             continue
-        relation_id = digest([VERSION, task_id, pair, kind, policy['model'], epoch, RUBRIC_VERSION])
+        relation_id = digest([VERSION, task_id, pair, kind, policy['model'], RUBRIC_VERSION,provider.lane])
         previous = store.db.execute('SELECT status FROM state_relations WHERE id=?', (relation_id,)).fetchone()
+        if previous is None:
+            # Preserve exact user-reviewed legacy relationships across a runtime
+            # binding change. Neither timestamps nor matching prose establish
+            # identity; the complete old pair/model/rubric hash must match.
+            legacy_ids = {digest([VERSION, task_id, pair, kind, policy['model'], old, RUBRIC_VERSION])
+                          for old in legacy_epochs}
+            legacy_ids.add(digest([VERSION, task_id, pair, kind, policy['model'], RUBRIC_VERSION]))
+            matches = [r for r in store.db.execute(
+                'SELECT id,status,data FROM state_relations WHERE task_id=? AND older=? AND newer=? AND kind=?',
+                (task_id, pair['older']['id'], pair['newer']['id'], kind))
+                if r['id'] in legacy_ids and
+                {d.get('lane') for d in json.loads(r['data']).get('decisions', [])} == {provider.lane}]
+            if matches and len({r['status'] for r in matches}) == 1:
+                relation_id, previous = matches[0]['id'], (matches[0]['status'],)
         status = previous[0] if previous else 'unresolved'
         relation = {'id': relation_id, 'task_id': task_id, 'older': pair['older']['id'],
                     'newer': pair['newer']['id'], 'kind': kind, 'status': status,
@@ -252,8 +441,9 @@ def project(store, provider, identity, materials, selected, assessments, epoch, 
         relation['review_command'] = shlex.join(store.config['cli_argv'] +
             ['state', 'confirm', '--relation', relation_id, '--resolution', 'confirmed'])
         relations.append(relation)
-    revision = digest([[(m['event_id'], m['revision']) for m in materials], epoch, policy['model'], RUBRIC_VERSION])
-    data = {'identity': {k: identity[k] for k in ('id', 'anchor', 'request', 'scope')},
+    revision = digest([sorted((m['event_id'], m['revision']) for m in materials), policy['model'], RUBRIC_VERSION])
+    data = {'lane': provider.lane,'projection_fingerprint':fingerprint,'projection_version':2,
+            'identity': {k: identity[k] for k in ('id', 'anchor', 'request', 'scope')},
             'anchor': identity['anchor'], 'scope': identity['scope'], 'read_revision': revision,
             'member_ids': [m['event_id'] for m in selected], 'assertion_ids': list(by_assertion),
             'snapshot_fingerprint': snapshot['fingerprint'], 'relations': relations,

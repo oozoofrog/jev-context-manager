@@ -59,6 +59,10 @@ def drain(store, provider=None, limit=4, through_seq=None):
                 store.db.execute('ROLLBACK')
                 raise
             done += 1
+        except KeyboardInterrupt:
+            store.db.execute("UPDATE jobs SET state='retryable',error='RECOVERY_INTERRUPTED',owner=NULL WHERE event_id=? AND owner=?",
+                             (event['id'], owner))
+            raise
         except JCMError as error:
             store.db.execute("UPDATE jobs SET state='retryable',error=?,owner=NULL WHERE event_id=? AND owner=?",
                              (str(error), event['id'], owner))

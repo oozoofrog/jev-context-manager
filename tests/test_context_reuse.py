@@ -163,6 +163,30 @@ class TaskReuseTests(IndependentCacheTests):
         self.assertGreater(second['metrics']['source_units_evaluated'], 0)
         self.assertGreater(second['metrics']['classification_units_reused'], 0)
 
+    def test_compiled_relation_graph_reuses_same_inputs_but_not_changed_sources_or_lane(self):
+        from jcm.coordinator import dispatch
+        from jcm.task_state import cached_projection, projection_fingerprint
+        import json
+        source = self.capture('history','one','Use delay 5 seconds.')
+        self.capture('history','two','Correction: use delay 8 seconds.')
+        first = self.recover('session-a','Continue pause recovery.')
+        token = first['request_token']
+        result = dispatch(self.store,token,self.provider(self.transport))
+        second = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?',(result['pack_id'],)).fetchone()[0])
+        self.assertTrue(second['metrics']['relation_candidate_expansion']['projection_reused'])
+        self.assertEqual(second['metrics']['relation_units_evaluated'],0)
+        view=json.loads(self.store.db.execute('SELECT data FROM task_views WHERE id=?',(second['task_frame']['task_id'],)).fetchone()[0])
+        ordered={e['id']:e['seq'] for e in self.store.events()}
+        provider=self.provider(self.transport)
+        provider.lane='different_fixture_lane'
+        fp=projection_fingerprint(view['identity'],second['task_frame']['assertions'],ordered,self.cfg['model'],provider.lane)
+        self.assertIsNone(cached_projection(self.store,provider,view['identity'],second['task_frame']['assertions'],ordered,fp,self.store.policy()))
+        self.store.db.execute('UPDATE events SET revision=revision+1 WHERE id=?',(source,))
+        changed=dispatch(self.store,token,self.provider(self.transport))
+        pack=self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?',(changed['pack_id'],)).fetchone()[0])
+        self.assertFalse(pack['metrics']['relation_candidate_expansion'].get('projection_reused',False))
+        self.assertGreater(pack['metrics']['relation_units_evaluated'],0)
+
     def test_scoped_review_requires_original_reads_and_does_not_establish_verification(self):
         from jcm.task_state import confirm
         from jcm.source_read import inspect_source

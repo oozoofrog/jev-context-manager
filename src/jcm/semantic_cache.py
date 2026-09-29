@@ -12,8 +12,10 @@ from . import batching
 from .batching import STOP_ERRORS, batches, context_fits, planned_spans, source_span, split_source
 from .provider import CONTEXT_ERROR, RUBRIC_VERSION
 from .util import JCMError, digest, encode, now
+from .progress import update as progress
 
-VERSION = 'independent-items-v1'
+VERSION = 'independent-items-v2'
+LEGACY_VERSION = 'independent-items-v1'
 PARTITION_VERSION = 'source-partition-v1'
 
 
@@ -33,7 +35,11 @@ def request(context, items, builder):
     questions = {}
     for index, item in enumerate(items):
         questions.update({f'i{index}_{name}': q for name, q in builder(f'`state.items[{index}]`', item).items()})
-    return {'context': context, 'items': items}, questions
+    # Dependency IDs protect cache reuse and publication in code. They are not
+    # semantic evidence and can repeat an entire source group for every item.
+    # Keep them in cache keys/local validation, outside the model's input.
+    return {'context': context, 'items': [{k:v for k,v in item.items()
+        if k != 'dependencies' and not k.startswith('_')} for item in items]}, questions
 
 
 def source_items(material, context, builder):
@@ -50,11 +56,32 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
     result = {'records': [], 'errors': [], 'decisions': [], 'batches': [],
               'cache_hits': 0, 'evaluated_units': 0, 'partitions_reused': 0}
     stopped = None
+    unsplittable_sources = set()
     start = time.perf_counter()
+    progress(store, phase=kind, units=len(items), completed_units=0, cached_units=0)
 
-    def key(item):
-        return digest([VERSION, RUBRIC_VERSION, kind, policy['repo_id'], epoch, policy['model'],
-                       provider.lane, context, item, builder('`state.items[0]`', item)])
+    def key(item, legacy_epoch=None):
+        # Epoch protects in-flight publication/egress, not the meaning of a
+        # completed pure judgment. Source, question, model, scope and lane still
+        # participate in its identity. Forget deletes these derivatives.
+        prefix = ([VERSION, RUBRIC_VERSION, kind, policy['repo_id']] if legacy_epoch is None else
+                  [LEGACY_VERSION, RUBRIC_VERSION, kind, policy['repo_id'], legacy_epoch])
+        return digest(prefix + [policy['model'], provider.lane, context, item,
+                                builder('`state.items[0]`', item)])
+
+    legacy_epochs = [r[0] for r in store.db.execute(
+        'SELECT DISTINCT epoch FROM semantic_items WHERE kind=? AND model=?', (kind, policy['model']))]
+
+    def lookup(item, item_key):
+        cached = store.db.execute('SELECT * FROM semantic_items WHERE key=?', (item_key,)).fetchone()
+        if cached:
+            return cached, item_key
+        for old in legacy_epochs:
+            candidate = key(item, old)
+            cached = store.db.execute('SELECT * FROM semantic_items WHERE key=?', (candidate,)).fetchone()
+            if cached:
+                return cached, candidate
+        return None, None
 
     def uncached(batch):
         # Cache lookup is local work, not an egress boundary. Validate policy
@@ -67,7 +94,7 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
             item = pending.pop()
             validate_dependencies(store, [item])
             item_key = key(item)
-            cached = store.db.execute('SELECT * FROM semantic_items WHERE key=?', (item_key,)).fetchone()
+            cached, _ = lookup(item, item_key)
             if cached:
                 refs = [{**r, 'cached': True} for r in json.loads(cached['decisions'])]
                 result['records'].append({'item': item, 'answers': json.loads(cached['answer']),
@@ -75,8 +102,13 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
                 result['decisions'].extend(refs)
                 result['cache_hits'] += 1
             else:
-                partition = store.db.execute('SELECT answer FROM semantic_items WHERE key=?',
-                    (digest([PARTITION_VERSION, item_key]),)).fetchone() if splittable and 'span' in item else None
+                partition = None
+                if splittable and 'span' in item:
+                    for parent in [item_key] + [key(item, old) for old in legacy_epochs]:
+                        partition = store.db.execute('SELECT answer FROM semantic_items WHERE key=?',
+                            (digest([PARTITION_VERSION, parent]),)).fetchone()
+                        if partition:
+                            break
                 if partition:
                     parts = split_source(item)
                     if parts and [p['span'] for p in parts] == json.loads(partition[0])['children']:
@@ -92,6 +124,7 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
 
     def process(remaining):
         nonlocal stopped
+        remaining=[item for item in remaining if item.get('event_id') not in unsplittable_sources]
         if not remaining:
             return
         if stopped:
@@ -124,6 +157,7 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
                 store.db.execute('ROLLBACK')
                 raise
             result['cache_hits' if evaluated['cached'] else 'evaluated_units'] += len(remaining)
+            progress(store, completed_units=result['evaluated_units'], cached_units=result['cache_hits'])
         except JCMError as error:
             code = str(error)
             report.update(status='failed', error=code)
@@ -150,8 +184,16 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
                     for part in parts:
                         process(uncached([part]))
                     return
+                if splittable and 'span' in remaining[0] and 'event_id' in remaining[0]:
+                    # Even the smallest fragment of this source was rejected.
+                    # Preserve the whole record as unresolved instead of trying
+                    # its larger sibling fragments; other sources may still fit.
+                    unsplittable_sources.add(remaining[0]['event_id'])
             result['errors'].append(code)
-            if code in STOP_ERRORS or code == CONTEXT_ERROR:
+            # A single unsplittable item may exceed the provider context while
+            # later independent items still fit. Keep that item unresolved;
+            # only operation-wide failures stop the rest of the stage.
+            if code in STOP_ERRORS:
                 stopped = code
 
     # Only misses need provider-context packing. Previously even a fully cached
@@ -164,4 +206,5 @@ def evaluate_items(store, provider, kind, context, items, builder, epoch, splitt
     result['records'].sort(key=lambda r: (r['item'].get('event_id', ''), r['item'].get('span', {}).get('start', 0)))
     result['errors'] = sorted(set(result['errors']))
     result['elapsed_seconds'] = time.perf_counter() - start
+    progress(store, completed_units=result['evaluated_units'], cached_units=result['cache_hits'])
     return result
