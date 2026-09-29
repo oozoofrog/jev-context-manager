@@ -32,15 +32,9 @@ def discover_all(store, session, path=None):
                        if name.fullmatch(p.name) and not p.is_symlink())
     if not matches:
         raise JCMError('TRANSCRIPT_NOT_FOUND')
-    supported, rejected = [], []
+    sources = []
     for candidate in sorted(matches):
-        try:
-            source = transcript_path(store, candidate, session)
-        except JCMError as error:
-            if str(error) != 'UNSUPPORTED_TRANSCRIPT_VERSION':
-                raise
-            rejected.append(str(candidate))
-            continue
+        source = transcript_path(store, candidate, session)
         with source.open('rb') as stream:
             meta = json.loads(stream.readline(1_000_001))['payload']
         base = meta.get('history_base')
@@ -52,14 +46,10 @@ def discover_all(store, session, path=None):
             if base.get('thread_id') != session or type(ordinal) is not int or ordinal < 0:
                 raise JCMError('UNSUPPORTED_PAGINATED_HISTORY_BASE')
             store.gap('PAGINATED_HISTORY_COVERAGE_PARTIAL', str(source))
-        supported.append((ordinal, source))
-    if not supported:
-        raise JCMError('UNSUPPORTED_TRANSCRIPT_VERSION')
-    if len({ordinal for ordinal, _ in supported}) != len(supported):
+        sources.append((ordinal, source))
+    if len({ordinal for ordinal, _ in sources}) != len(sources):
         raise JCMError('TRANSCRIPT_DISCOVERY_AMBIGUOUS')
-    for candidate in rejected:
-        store.gap('UNSUPPORTED_TRANSCRIPT_VERSION', candidate)
-    return [source for _, source in sorted(supported)]
+    return [source for _, source in sorted(sources)]
 
 
 def discover(store, session, path=None):

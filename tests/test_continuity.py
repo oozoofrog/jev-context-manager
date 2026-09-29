@@ -192,11 +192,14 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.assertEqual(len(self.store.events()), 1)
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM event_sources').fetchone()[0], 2)
 
-    def test_T05_unknown_parser_does_not_guess(self):
+    def test_T05_unknown_host_version_keeps_structurally_supported_records(self):
         path = self.transcript()
         path.write_text(path.read_text().replace('0.158.0-alpha.2.1', '999.0'))
-        with self.assertRaisesRegex(JCMError, 'UNSUPPORTED_TRANSCRIPT_VERSION'):
-            register_transcript(self.store, str(path), 'prior')
+        with path.open('ab') as stream:
+            stream.write(self.user_line('a version-neutral request'))
+        key = register_transcript(self.store, str(path), 'prior')
+        recover_source(self.store, self.store.db.execute('SELECT * FROM sources WHERE key=?', (key,)).fetchone())
+        self.assertEqual(self.store.material(self.store.events()[0])['text'], 'a version-neutral request')
 
     def test_T05_private_and_instruction_records_are_never_captured(self):
         path = self.transcript()

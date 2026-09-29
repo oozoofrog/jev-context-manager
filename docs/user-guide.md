@@ -4,7 +4,7 @@ JCM records a project's session history and restores relevant context when you c
 
 ## Install and prepare
 
-Requires local Codex and Python 3.11 or later. Transcript parsing currently supports Codex CLI `0.158.0-alpha.2.1`.
+Requires local Codex and Python 3.11 or later. Transcript compatibility is determined by record structure, not the Codex version. The optional `cli_version` metadata does not control admission. JCM validates session and project identity, captures understood public records, and reports unknown structures with source references. An unresolved record cannot silently cause an older user request to be selected; a later understood user message establishes a new request while the history gap remains visible.
 
 ```sh
 codex plugin marketplace add oozoofrog/jev-context-manager --ref main
@@ -286,7 +286,8 @@ Disabling the plugin in Codex stops subsequent guarded capture and its follower.
 | `TRANSCRIPT_NOT_FOUND` | Confirm the session ID and transcript location. If needed, add `--transcript /absolute/path/to/session.jsonl`; it must be inside the admitted transcript roots. |
 | `TRANSCRIPT_LINE_TOO_LARGE` from an older runtime | Update the runtime. Current capture streams large records and preserves the cursor on admission failures. |
 | `PAGINATED_HISTORY_COVERAGE_PARTIAL` | Supported continuation segments were found; this does not prove that the entire earlier history was imported. |
-| `UNSUPPORTED_TRANSCRIPT_VERSION` | The session's transcript format is not supported. Do not edit its version metadata to force ingestion. |
+| `UNSUPPORTED_TRANSCRIPT_SCHEMA` | Required session metadata or record structure cannot be interpreted. Codex version differences alone never block capture. |
+| `UNKNOWN_TRANSCRIPT_RECORD`, `UNKNOWN_TRANSCRIPT_EVENT`, `UNSUPPORTED_PUBLIC_ITEM` | An unfamiliar record was encountered. Supported records continue to be captured; unresolved source references and coverage gaps are retained. |
 | Jev result is `degraded` | Check key availability, network access, and the reported provider error. Jev needs no separate permission; old denial flags do not block it. |
 | Recovery is `reading` | Read the returned page and follow `next_read_command`; the pack spans multiple bounded responses. |
 | Recovery is `blocked` | Inspect the reported reason. Even the minimum page envelope may not fit an unusually small delivery limit. A blocked pack has not been delivered. |

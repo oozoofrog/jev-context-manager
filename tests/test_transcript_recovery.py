@@ -16,9 +16,11 @@ class TranscriptRecoveryTests(unittest.TestCase):
     transcript = fixtures.ContinuityTests.transcript
     user_line = fixtures.ContinuityTests.user_line
 
-    def test_segment_discovery_preserves_supported_history_and_reports_old_version(self):
+    def test_segment_discovery_includes_history_from_different_host_versions(self):
         old = self.transcript().rename(self.logs / 'rollout-old-prior.jsonl')
         old.write_text(old.read_text().replace('0.158.0-alpha.2.1', '0.155.0-alpha.16.4'))
+        with old.open('ab') as stream:
+            stream.write(self.user_line('keep older history', 'old'))
         for ordinal, suffix in [(100, 'a'), (200, 'b')]:
             path = self.transcript()
             meta = json.loads(path.read_bytes())
@@ -26,9 +28,10 @@ class TranscriptRecoveryTests(unittest.TestCase):
             path.write_bytes(encode(meta) + b'\n' + self.user_line(suffix, suffix))
             path.rename(self.logs / ('rollout-date-prior_' + suffix + '.jsonl'))
         result = existing(self.store, 'prior', install=False, follow=False)
-        self.assertEqual(result['new_events'], 2)
+        self.assertEqual(result['new_events'], 3)
         self.assertTrue(result['source']['path'].endswith('_b.jsonl'))
-        self.assertIn('UNSUPPORTED_TRANSCRIPT_VERSION', result['gaps'])
+        self.assertEqual(len(result['sources']), 3)
+        self.assertNotIn('UNSUPPORTED_TRANSCRIPT_VERSION', result['gaps'])
         self.assertEqual(result['coverage'], 'partial')
         self.assertEqual(existing(self.store, 'prior', install=False, follow=False)['new_events'], 0)
 
@@ -153,7 +156,7 @@ class TranscriptRecoveryTests(unittest.TestCase):
         path = self.transcript()
         with path.open('ab') as f:
             f.write(self.user_line('missed by previous parser'))
-        legacy = digest([str(path), 'prior', 'codex-0.158-public-items-v1'])
+        legacy = digest([str(path), 'prior', 'codex-0.158-public-items-v2'])
         self.store.set_cursor({'key': legacy, 'session': 'prior', 'path': str(path),
             'generation': 0, 'offset': path.stat().st_size, 'prefix_hash': digest(path.read_bytes()),
             'inode': path.stat().st_ino, 'status': 'read_to_offset'})

@@ -8,7 +8,7 @@ import re
 import uuid
 
 from . import config
-from .adapter import MAX_LINE_BYTES, public_item
+from .adapter import MAX_LINE_BYTES, public_item, unresolved_record
 from .bootstrap import discover_all, session_id
 from .util import JCMError, atomic_write, digest, encode, identifier, private_dir
 from .transcript_io import read_record
@@ -41,6 +41,8 @@ def session_items(policy, session, path=None, requests_only=False):
             while line := read_record(stream):
                 if not line['complete']:
                     reader.gap('TRANSCRIPT_PARTIAL_LINE')
+                    items.append(unresolved_record(None, 'TRANSCRIPT_PARTIAL_LINE', source,
+                                                   line['start'], line['hash']))
                     break
                 try:
                     if line.get('error'):
@@ -48,7 +50,7 @@ def session_items(policy, session, path=None, requests_only=False):
                     item = public_item(line['value'], session)
                 except JCMError as exc:
                     reader.gap(str(exc))
-                    continue
+                    item = unresolved_record(line.get('value'), exc, source, line['start'], line['hash'])
                 if item and (not requests_only or item['role'] in ('user', 'unsupported_request')):
                     items.append(item)
     return items, sorted(set(reader.gaps))

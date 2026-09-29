@@ -1,4 +1,4 @@
-"""Codex hook v1 and explicitly probed 0.158.0-alpha.2.1 JSONL adapter."""
+"""Codex public-record adapter selected by structure, never host version."""
 import fcntl
 import hashlib
 import json
@@ -12,8 +12,9 @@ from .snapshot import snapshot
 from .transcript_io import read_record
 from .util import JCMError, digest
 
-SUPPORTED_TRANSCRIPTS = {'0.158.0-alpha.2.1'}
-PARSER = 'codex-0.158-public-items-v2'
+# This revision describes JCM's decoding behavior, not the producing Codex build.
+# A new cursor replays previously skipped records while event identities deduplicate.
+PARSER = 'codex-public-items-v3'
 MAX_LINE_BYTES = 8_000_000
 
 
@@ -131,13 +132,20 @@ def transcript_path(store, path, session):
         raise JCMError('TRANSCRIPT_METADATA_INCOMPLETE')
     try:
         meta = json.loads(first)
+        if not isinstance(meta, dict) or meta.get('type') != 'session_meta':
+            raise JCMError('UNSUPPORTED_TRANSCRIPT_SCHEMA')
         payload = meta['payload']
-        if meta['type'] != 'session_meta' or payload.get('session_id', payload.get('id')) != session:
+        if not isinstance(payload, dict):
+            raise JCMError('UNSUPPORTED_TRANSCRIPT_SCHEMA')
+        if payload.get('session_id', payload.get('id')) != session:
             raise JCMError('TRANSCRIPT_SESSION_MISMATCH')
-        if Path(payload['cwd']).resolve() != Path(store.config['root']):
+        cwd = payload['cwd']
+        if not isinstance(cwd, str) or not Path(cwd).is_absolute():
+            raise JCMError('UNSUPPORTED_TRANSCRIPT_SCHEMA')
+        if Path(cwd).resolve() != Path(store.config['root']):
             raise JCMError('TRANSCRIPT_PROJECT_MISMATCH')
-        if payload.get('cli_version') not in SUPPORTED_TRANSCRIPTS:
-            raise JCMError('UNSUPPORTED_TRANSCRIPT_VERSION')
+        # cli_version is optional provenance. It says nothing about whether
+        # this session's individual public records can be interpreted.
     except (KeyError, ValueError, TypeError):
         raise JCMError('UNSUPPORTED_TRANSCRIPT_SCHEMA') from None
     return real
@@ -181,24 +189,32 @@ def without_inline_media(value):
 
 def public_item(record, session=None):
     """No private reasoning, instructions or generated user-context wrappers."""
+    if not isinstance(record, dict) or not isinstance(record.get('type'), str):
+        raise JCMError('UNSUPPORTED_TRANSCRIPT_SCHEMA')
     if record.get('type') != 'event_msg':
         if record.get('type') in {'session_meta', 'response_item', 'turn_context', 'world_state',
                                  'token_usage_record', 'compacted'}:
             return None
         raise JCMError('UNKNOWN_TRANSCRIPT_RECORD')
     payload = record.get('payload', {})
+    if not isinstance(payload, dict) or not isinstance(payload.get('type'), str):
+        raise JCMError('UNSUPPORTED_TRANSCRIPT_SCHEMA')
     if payload.get('type') != 'item_completed':
         if payload.get('type') in {'task_started', 'task_complete', 'token_count', 'turn_aborted',
                                   'thread_settings_applied'}:
             return None
         raise JCMError('UNKNOWN_TRANSCRIPT_EVENT')
     item = payload.get('item', {})
+    if not isinstance(item, dict) or not isinstance(item.get('type'), str):
+        raise JCMError('UNSUPPORTED_PUBLIC_ITEM')
     typ, turn = item.get('type'), payload.get('turn_id')
     provenance = None
     if typ == 'UserMessage':
         role, kind = 'user', 'user_message'
         content = item.get('content', [])
-        if any(c.get('type') not in ('text', 'image', 'local_image') for c in content):
+        if not isinstance(content, list) or any(not isinstance(c, dict) or
+                c.get('type') not in ('text', 'image', 'local_image') or
+                (c.get('type') == 'text' and not isinstance(c.get('text'), str)) for c in content):
             raise JCMError('NON_TEXT_USER_CONTENT_UNSUPPORTED')
         item = without_inline_media(item)
         text = '\n'.join(c['text'] for c in content if c.get('type') == 'text')
@@ -220,7 +236,11 @@ def public_item(record, session=None):
     elif typ == 'AgentMessage' and item.get('phase') in ('commentary', 'final_answer'):
         role = 'assistant'
         kind = 'assistant_final' if item['phase'] == 'final_answer' else 'assistant_commentary'
-        text = '\n'.join(c['text'] for c in item.get('content', []) if c.get('type') == 'Text')
+        content = item.get('content', [])
+        if not isinstance(content, list) or any(not isinstance(c, dict) or
+                c.get('type') not in ('Text', 'text') or not isinstance(c.get('text'), str) for c in content):
+            raise JCMError('UNSUPPORTED_PUBLIC_CONTENT')
+        text = '\n'.join(c['text'] for c in content)
     elif typ == 'CommandExecution':
         role, kind = 'tool', 'tool_result'
         text = json.dumps({k: item.get(k) for k in ('command', 'cwd', 'status', 'aggregated_output', 'exit_code')}, ensure_ascii=False)
@@ -237,17 +257,44 @@ def public_item(record, session=None):
         role, kind = 'tool', 'tool_result'
         item = {k: item.get(k) for k in ('type', 'id', 'path')}
         text = json.dumps(item, ensure_ascii=False)
+    elif typ in ('FileChange', 'CollabAgentToolCall') or (typ == 'Extension' and item.get('kind') == 'web.search'):
+        role, kind = 'tool', 'tool_result'
+        item = without_inline_media(item)
+        text = json.dumps({k: v for k, v in item.items() if k not in ('type', 'id')}, ensure_ascii=False)
+    elif typ == 'SubAgentActivity':
+        role, kind = 'lifecycle', 'agent_activity'
+        item = {k: item.get(k) for k in ('type', 'id', 'kind', 'agent_thread_id', 'agent_path')}
+        text = json.dumps(item, ensure_ascii=False)
     elif typ in ('Reasoning', 'Plan', 'ContextCompaction'):
         return None
     else:
         raise JCMError('UNSUPPORTED_PUBLIC_ITEM')
-    if not turn or not item.get('id'):
+    if not isinstance(turn, str) or not turn or not isinstance(item.get('id'), str) or not item['id']:
         raise JCMError('PUBLIC_ITEM_ID_MISSING')
     return {'turn': turn, 'kind': kind, 'role': role,
             'payload': {'text': text, 'public_item': item, 'parser': PARSER,
                         **({'request_provenance': provenance} if provenance else {})},
             'identity': identity(kind, turn, text, item.get('id')),
             'observed_at': record.get('timestamp')}
+
+
+def unresolved_record(record, error, source, offset, record_hash):
+    """Keep a source reference and request boundary without guessing private content.
+
+    An unfamiliar record may contain a new request or correction. Readers must
+    not silently select an older request across it. A later understood user
+    message establishes a new observable request; the history gap remains.
+    """
+    record = record if isinstance(record, dict) else {}
+    payload = record.get('payload')
+    payload = payload if isinstance(payload, dict) else {}
+    turn = payload.get('turn_id')
+    reference = {'path': str(source), 'offset': offset, 'sha256': record_hash}
+    return {'turn': turn if isinstance(turn, str) else None,
+            'kind': 'unsupported_record', 'role': 'unsupported_request',
+            'payload': {'text': '', 'parser': PARSER, 'error': str(error), 'source': reference},
+            'identity': 'unresolved:' + digest(reference),
+            'observed_at': record.get('timestamp') if isinstance(record.get('timestamp'), str) else None}
 
 
 def recover_source(store, row):
@@ -317,7 +364,7 @@ def _recover_source(store, row):
                 item = public_item(record, row['session'])
             except JCMError as error:
                 store.gap(str(error), f'{row["key"]}:{start}')
-                item = None
+                item = unresolved_record(record, error, source, start, line['hash'])
             if item:
                 if admitted_start is None or start < admitted_start or not allows_item(rule, item):
                     store.set_cursor(row)

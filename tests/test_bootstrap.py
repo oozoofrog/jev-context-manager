@@ -57,11 +57,10 @@ class BootstrapTests(unittest.TestCase):
             with self.assertRaisesRegex(JCMError, 'AMBIGUOUS'):
                 existing(self.store, follow=False)
 
-    def test_existing_rejects_foreign_version_session_and_forgotten(self):
+    def test_existing_rejects_foreign_project_session_and_forgotten(self):
         path = self.history()
         original = path.read_text()
         for changed, code in [(original.replace(str(self.root), str(self.base)), 'PROJECT_MISMATCH'),
-                              (original.replace('0.158.0-alpha.2.1', 'future'), 'VERSION'),
                               (original.replace('"id":"prior"', '"id":"foreign"'), 'SESSION_MISMATCH')]:
             path.write_text(changed)
             with self.assertRaisesRegex(JCMError, code):

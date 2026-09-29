@@ -60,7 +60,7 @@ Sandbox가 `.codex` 쓰기를 차단하면 `PROJECT_HOOK_INSTALL_PERMISSION_DENI
 
 | ID | 요구 | 구현 / 시험 |
 |---|---|---|
-| B01 | 현재 기존 세션의 허용된 과거 기록 편입 | `bootstrap.existing`, discovery·idempotency·foreign/version/tombstone 시험 |
+| B01 | 현재 기존 세션의 허용된 과거 기록 편입 | `bootstrap.existing`, discovery·idempotency·foreign/tombstone 및 Codex 버전 독립 수집 시험 |
 | B02 | 기존 세션의 편입 이후 기록 자동 수집 | `follower`, partial-line·독립 프로세스·disable 시험 |
 | B03 | hook/follower/다음 세션의 동시 회수 안전성 | source별 lock + lock 내부 최신 cursor 재조회, stale-reader 시험 |
 | B04 | 새 세션 시작과 현재 요청 복원 분리 | `prepare_new` / `bootstrap.new`, 빈 history·무요청·무호출 시험 |

@@ -21,7 +21,7 @@ codex plugin marketplace add oozoofrog/jev-context-manager --ref main
 codex plugin add jev-context-manager@jcm
 ```
 
-To use Jev, set `TYPESAFE_API_KEY` in the environment where Codex runs. Transcript parsing currently supports Codex CLI `0.158.0-alpha.2.1`.
+To use Jev, set `TYPESAFE_API_KEY` in the environment where Codex runs. JCM reads public transcript records by their structure, independently of the Codex version. Unknown record structures are reported as gaps; they do not prevent supported records from being captured.
 
 ## Usage
 
