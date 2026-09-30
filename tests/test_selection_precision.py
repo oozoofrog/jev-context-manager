@@ -37,24 +37,27 @@ class SelectionPrecisionTests(unittest.TestCase):
                 observed.append(payload['state'])
             for i, candidate in enumerate(payload['state'].get('candidates', [])):
                 answers = result['answers']
-                answers[f'relevance_{i}'].update(score=3, probabilities={str(n): float(n == 3) for n in range(4)})
-                answers[f'omission_{i}']['noul'] = 1
+                answers[f'i{i}_relevance'].update(score=3, probabilities={str(n): float(n == 3) for n in range(4)})
+                answers[f'i{i}_omission']['noul'] = 1
                 value = ('unrelated' if candidate['event_id'] in (ids['noise'], ids['context']) else
                          'shared' if candidate['event_id'] == ids['shared'] else
                          'uncertain' if candidate['event_id'] == ids['uncertain'] else 'direct')
-                answer = answers[f'applicability_{i}']; answer['choice'] = value
+                answer = answers[f'i{i}_applicability']; answer['choice'] = value
                 answer['probabilities'] = {v: float(v == value) for v in answer['probabilities']}
                 if candidate['event_id'] == ids['shared']:
                     answer.update(choice='unrelated', probabilities={'direct': .4, 'shared': .15, 'uncertain': 0, 'unrelated': .45})
                 if candidate['event_id'] == ids['omitted']:
-                    answer = answers[f'representation_{i}']; answer['choice'] = 'omit'
+                    answer = answers[f'i{i}_representation']; answer['choice'] = 'omit'
                     answer['probabilities'] = {v: float(v == 'omit') for v in answer['probabilities']}
             for name, question in payload['questions'].items():
                 if '_query_' not in name:
                     continue
                 item = payload['state']['items'][int(name.split('_')[0][1:])]
                 if item.get('event_id') == ids['omitted']:
-                    result['answers'][name].update(choice='omit', probabilities={v: float(v == 'omit') for v in question['criteria']})
+                    if question['type'] == 'noul':
+                        result['answers'][name]['noul'] = 0
+                    else:
+                        result['answers'][name].update(choice='omit', probabilities={v: float(v == 'omit') for v in question['criteria']})
             return result
         route = dispatch(self.store, token, self.provider(transport))
         pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (route['pack_id'],)).fetchone()[0])

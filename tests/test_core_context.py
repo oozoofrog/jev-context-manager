@@ -16,7 +16,8 @@ class CoreContextTests(unittest.TestCase):
         eid = self.store.capture(session='history', turn=turn, kind=role+'_message', role=role,
             payload={'text':text, **({'public_item':native} if native else {})}, snapshot={},
             source_key=turn, identity=turn)
-        return {**self.store.material(self.store.event(eid)), 'reason_codes':[]}
+        return {**self.store.material(self.store.event(eid)), 'reason_codes':[],
+                'implementation_status':'not_established', 'verification_currently_applicable':False}
 
     def fixture(self):
         goal = self.source('goal','Propose three character designs.','user')
@@ -53,7 +54,7 @@ class CoreContextTests(unittest.TestCase):
         plan = core_context.plan(self.store,self.provider(self.transport('continuation')),identity,
                                  {'text':'Continue the design proposals.'},frame,selected,selected,self.cfg['epoch'])
         deferred = {r['event_id'] for r in plan['deferred']}
-        self.assertEqual(deferred,{old['event_id'],tool['event_id']})
+        self.assertEqual(deferred,set())
         self.assertFalse(deferred & {r['event_id'] for r in (goal,correction,report,exception,image)})
         brief = {'selected_records':copy.deepcopy(selected),'task_frame':{'goal':goal,'relations':[], 'assertions':[]},
                  'optional_audit_command':'read --view audit','journal_read_revision':42}
@@ -62,7 +63,11 @@ class CoreContextTests(unittest.TestCase):
         self.assertEqual(result['evidence_delivery']['reported_state_frontier'],42)
         self.assertIn('still unselected',str(result))
         self.assertIn('/images/C.png',str(result))
-        self.assertNotIn('historical failure',str(result))
+        self.assertIn('historical failure',str(result))
+        delivered = {r['event_id']: {**result['record_defaults'], **r} for r in result['selected_records']}
+        self.assertEqual(delivered[correction['event_id']]['text'], correction['text'])
+        self.assertTrue(all(r['implementation_status'] == 'not_established' and
+                            r['verification_currently_applicable'] is False for r in delivered.values()))
 
     def test_exact_evidence_question_retains_logs_and_supporting_reports(self):
         selected = list(self.fixture())

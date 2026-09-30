@@ -80,6 +80,70 @@ class ProviderLimitsTests(unittest.TestCase):
         with self.assertRaisesRegex(JCMError, '^PROVIDER_HTTP_400$'):
             self.provider(transport).evaluate({}, {'q': noul('A?')})
 
+    def test_credit_failure_stops_later_stages_in_the_same_operation(self):
+        self.capture('old','one','First original evidence.')
+        self.capture('old','two','Second original evidence.')
+        token=self.request(); calls=[]
+        def transport(body,key):
+            calls.append(body)
+            raise HTTPError('https://api.typesafe.ai',402,'Payment Required',{},
+                            io.BytesIO(b'{"detail":{"error_type":"billing_error","message":"No credits"}}'))
+        provider=self.provider(transport)
+        route=dispatch(self.store,token,provider)
+        self.assertEqual(route['quality'],'degraded')
+        self.assertEqual(len(calls),1)
+        with self.assertRaisesRegex(JCMError,'PROVIDER_HTTP_402'):
+            provider.evaluate({'another_stage':True},{'q':noul('Later question?')})
+        self.assertEqual(len(calls),1)
+        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM provider_errors WHERE status=402').fetchone()[0],1)
+        recovered=self.provider().evaluate({'new_operation':True},{'q':noul('Credits restored?')})
+        self.assertIn('decision_id',recovered)
+        self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM calls').fetchone()[0],2)
+
+    def test_context_rejection_survives_epoch_but_not_question_or_model_change(self):
+        calls = []
+        def transport(body, key):
+            calls.append(body)
+            raise context_error()
+        for change, question, expected in (({}, 'A?', 1), ({'cli_argv':['/new/jcm']}, 'A?', 1),
+                                          ({}, 'B?', 2), ({'model':'other-model'}, 'A?', 3)):
+            if change:
+                self.store.change_policy(**change)
+            with self.assertRaisesRegex(JCMError, 'PROVIDER_CONTEXT_LENGTH_EXCEEDED'):
+                self.provider(transport).evaluate({}, {'q': noul(question)})
+            self.assertEqual(len(calls), expected)
+
+    def test_fresh_dispatch_recovers_after_billing_error_without_promoting_prior_failure(self):
+        self.capture('old', 'one', 'First original evidence.')
+        self.capture('old', 'two', 'Second original evidence.')
+        token = self.request()
+        calls = []
+        def interrupted(body, key):
+            calls.append(body)
+            if len(calls) == 2:
+                raise HTTPError('https://api.typesafe.ai', 402, 'Payment Required', {},
+                                io.BytesIO(b'{"error":{"code":"billing_error"}}'))
+            return fixtures.fake_http(body, key)
+        failed = dispatch(self.store, token, self.provider(interrupted))
+        self.assertEqual((failed['quality'], len(calls)), ('degraded', 2))
+        successes = {r[0] for r in self.store.db.execute("SELECT id FROM decisions WHERE status='success'")}
+        self.assertTrue(successes)
+        request = self.store.db.execute('SELECT * FROM requests WHERE token=?', (token,)).fetchone()
+        self.store.change_policy(enabled=False)
+        self.store.change_policy(enabled=True)
+        fresh_token = self.store.request(request['session'], request['event_id'])
+        self.assertNotEqual(fresh_token, token)
+        provider = self.provider()
+        resumed = dispatch(self.store, fresh_token, provider)
+        pack = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (resumed['pack_id'],)).fetchone()[0])
+        self.assertEqual(resumed['quality'], 'normal')
+        self.assertNotIn('PROVIDER_HTTP_402', pack['coverage']['gaps'])
+        self.assertEqual(pack['metrics']['failed_or_retried_calls'], 0)
+        self.assertTrue(successes & {r['id'] for r in pack['decisions'] if r['cached']})
+        self.assertFalse(successes & set(provider.observed_decisions))
+        self.assertEqual(self.store.db.execute('SELECT count(*) FROM provider_errors WHERE status=402').fetchone()[0], 1)
+        self.assertEqual(self.store.db.execute('SELECT invalid FROM packs WHERE id=?', (failed['pack_id'],)).fetchone()[0], 1)
+
     def test_observed_jev_max_tokens_error_is_classified(self):
         def transport(body, key):
             raise HTTPError('https://api.typesafe.ai', 400, 'Bad Request', {},

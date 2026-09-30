@@ -12,13 +12,18 @@ delivery selection.
 - `reusable_selection.py` derives task membership from source applicability.
   Low relevance to the original task question cannot hide a member from a later
   question. Source classification and membership retain their independent caches.
-- `representations.py` builds exact-source representations and a reusable
-  preservation floor. User statements remain complete. For other sources, Jev
-  distinguishes unique constraints, qualifications, corrections, outcomes and
-  open issues from optional diagnostic detail. Uncertainty preserves the source.
-- `query_context.py` separately checks question equivalence and selects source
-  detail and paragraph evidence for that question. The task frame is built before
-  question selection and is never replaced by that smaller selection.
+- `detail_plan.py` retains descriptor helpers but never excludes a body by native
+  type or process status. Existing worker, classification and membership caches
+  assess the admitted source revisions.
+- `query_context.py` owns question equivalence, passage selection, qualification
+  uncertainty, related evidence completion and the frozen delivery contract.
+- `core_context.py` selects request depth and orders records. It does not judge
+  tool or assistant-report relevance again.
+- `representations.py` renders exact spans and validates their text, source
+  identity, state and provenance after restoring shared defaults. A failed
+  invariant triggers one exact-source repair and degraded status, or blocks.
+- `delivery.py` encodes immutable pages and whole-record deltas with explicit
+  record order; deterministic decoding must reconstruct the validated brief.
 
 Question equivalence requires matching information needs and depth, not task
 membership alone. A separate referent judgment prevents reuse of questions about
@@ -26,9 +31,10 @@ the latest error or a relative source position when the source context changes.
 The current request remains visible alongside the canonical equivalent question.
 
 Each source can contribute brief evidence, supporting detail, its complete text,
-or nothing to the default delivery. Task-wide mandatory spans override omission.
-Sources involved in correction relationships, referenced originals, selected task
-anchors and unassessed sources are preserved. Membership span boundaries also
+or nothing to the default delivery. Selected anchors and unassessed material
+remain protected. Relevant relationships add both enclosing endpoint sources,
+including unchanged clauses of partial corrections. Selected source references
+are followed with a visited set over the admitted snapshot. Membership span boundaries also
 limit question selection, so a mixed-topic source cannot reintroduce an excluded
 span or its compacted references.
 
@@ -36,7 +42,11 @@ For a brief, both `support` and `omit` mean deferral. Their probabilities are ad
 before applying the action threshold; disagreement between these two labels is
 not uncertainty about deferral. For detail, only `omit` permits deferral. A
 possible missing core fact is preserved. Qualification preservation uses a
-separate judgment, rather than inferring safety from query relevance alone.
+separate judgment, rather than inferring safety from query relevance alone. The
+v3 policy defers only when qualification probability is at most 0.2; values
+between 0.2 and 0.8 preserve enclosing admitted context with an explicit
+uncertainty. Conflicting aggregate/passage decisions also retain context. These
+thresholds are local decision policy, not a general recall guarantee.
 Source detail levels are nested: the smallest level covering at least 0.8 of the
 probability mass is delivered. Disagreement between brief and detail can thus be
 covered by detail, while a plausible need for full text retains full text.
@@ -59,6 +69,11 @@ changed focus creates a separate selection context. Per-source judgment keys als
 include the source revision, complete question definition and canonical query.
 Deterministic preservation guards are reapplied on every dispatch, so a newly
 disputed source cannot vanish because of a cached optional selection.
+
+The v3 query and v2 presentation-intent namespaces invalidate changed judgment
+meanings; source classification and task membership caches are unchanged. No new
+table or source-ID format is introduced. Legacy packs remain immutable and cannot
+serve as a retained delta base without a validated delivery contract.
 
 Schema 6 adds `query_views`. Opening a schema 5 store preserves its journal and
 adds the new derivative table. Forgetting removes profiles along with the other

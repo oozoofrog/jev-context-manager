@@ -84,6 +84,8 @@ class TaskReuseTests(IndependentCacheTests):
             answer = response['answers'][name]
             if question['type'] == 'noul':
                 answer['noul'] = float((field == 'requirement' and item.get('role') == 'user') or
+                    (field.startswith('query_guard_') and (item.get('role') == 'user' or
+                        item['paragraphs'][int(field.rsplit('_', 1)[1])]['text'].startswith('Exception:'))) or
                     (field == 'correction' and 'Correction:' in text) or
                     (field == 'verification_claim' and 'test passed' in text) or (field == 'open_issue' and 'Unresolved:' in text) or field == 'omission' or
                     (field == 'affects_assertion' and 'delay' in item['older']['text'] and 'delay' in item['newer']['text']))
@@ -136,21 +138,23 @@ class TaskReuseTests(IndependentCacheTests):
             pages.append(result)
         return result, pages
 
-    def test_rephrase_reuses_source_judgments_and_delta_only_reassesses_new_sources(self):
+    def test_changed_question_reassesses_membership_while_reusing_classification(self):
         self.capture('history', 'one', 'Keep pause state. Delay 5 seconds.')
         self.capture('history', 'two', 'Never resume automatically, except on explicit user action.')
         first = self.recover('session-a', 'Continue pause recovery.')
         second = self.recover('session-b', 'Resume work on pause handling.')
         self.assertEqual(second['metrics']['task_route'], 'confirmed_scope_reuse')
-        self.assertEqual(second['metrics']['source_units_evaluated'], 0)
-        self.assertEqual(second['metrics']['source_units_reused'], 2)
+        self.assertEqual(second['metrics']['source_units_evaluated'], 2)
+        self.assertEqual(second['metrics']['source_units_reused'], 0)
+        self.assertEqual(second['metrics']['classification_units_reused'], 2)
         self.assertEqual(second['task_frame']['task_id'], first['task_frame']['task_id'])
         self.assertIn('except on explicit user action', str(second['context_views']['brief']))
         correction = self.capture('session-c', 'correction', 'Correction: change delay to 8 seconds.')
         third = self.recover('session-c', 'Continue pause recovery after correction.')
         # The prior session's request is newly admitted history, alongside the correction.
-        self.assertEqual(third['metrics']['source_units_evaluated'], 2)
-        self.assertEqual(third['metrics']['source_units_reused'], 2)
+        self.assertEqual(third['metrics']['source_units_evaluated'], 4)
+        self.assertEqual(third['metrics']['source_units_reused'], 0)
+        self.assertGreaterEqual(third['metrics']['classification_units_reused'], 2)
         self.assertTrue(any(a['event_id'] == correction for a in third['task_frame']['assertions']))
         self.assertGreaterEqual(third['metrics']['relation_units_evaluated'], 3)
 
@@ -238,7 +242,7 @@ class TaskReuseTests(IndependentCacheTests):
         source = self.capture('history', 'one', 'Use delay 5 seconds.')
         self.recover('session-a', 'Continue pause recovery.')
         corrected = self.recover('session-b', 'Correction: change pause delay to 8 seconds.')
-        self.assertEqual(corrected['metrics']['source_units_evaluated'], 1)
+        self.assertEqual(corrected['metrics']['source_units_evaluated'], 2)
         old = next(a for a in corrected['task_frame']['assertions'] if a['event_id'] == source)
         self.assertEqual(old['state'], 'disputed')
         self.assertTrue(any('8 seconds' in a['text'] for a in corrected['task_frame']['assertions']))
@@ -390,6 +394,20 @@ class TaskReuseTests(IndependentCacheTests):
         inspect_source(self.store, source, pack_id=pack['pack_id'])
         self.assertEqual(delivery_metrics(self.store, pack['pack_id'])['source_expansion_bytes'], before * 2)
 
+    def test_generated_expansion_command_tracks_recovery_bytes(self):
+        import shlex
+        from jcm.cli import parser, run
+        from jcm.metrics import delivery_metrics
+        source = self.capture('history', 'one', 'Keep pause state.')
+        pack = self.recover('session-a', 'Continue pause recovery.')
+        record = next(r for r in pack['context_views']['detail']['selected_records'] if r['event_id'] == source)
+        args = shlex.split(record['expand_command'])[len(self.store.config['cli_argv']):]
+        self.assertIn('--pack', args)
+        command = parser().parse_args(['--home', str(self.home), '--repo', str(self.root)] + args)
+        result = run(command)
+        self.assertEqual(result['source']['event_id'], source)
+        self.assertGreater(delivery_metrics(self.store, pack['pack_id'])['source_expansion_bytes'], 0)
+
 
     def test_quoted_tool_requirements_are_evidence_not_new_authority(self):
         self.capture('history', 'one', 'Use delay 5 seconds.')
@@ -452,7 +470,7 @@ class ResumePerformanceTests(unittest.TestCase):
                 if not name.endswith('_applicability'):
                     continue
                 item = payload['state']['items'][int(name.split('_')[0][1:])]
-                scope = payload['state']['context']['request']
+                scope = payload['state']['context']['task_scope']['selected_source']['text']
                 unrelated = ('Task A:' in scope and item['text'].startswith('Task B:')) or ('Task B:' in scope and item['text'].startswith('Task A:'))
                 selected = 'unrelated' if unrelated else 'direct'
                 response['answers'][name].update(choice=selected, probabilities={v: float(v == selected) for v in question['criteria']})

@@ -43,6 +43,10 @@ def main():
     background = capture('history', 'background', '재접속 코드의 설명 자료를 만들 때 참고했던 비유와 도식이다.\n\n'
         '배경 비유: 연결 이벤트를 편지를 나르는 우편배달부에 빗대어 설명할 수 있다. 도식에는 편지 봉투와 우체통 그림을 넣는 예시가 있다. '
         '구현 요구사항이나 채택한 결정은 아니며 설명용 참고 내용이다.', 'assistant')
+    mixed = capture('shared-policy', 'mixed',
+        '별도 사진 앨범 프로젝트에서는 표지 색상을 cyan으로 하고 업로드 폴더 이름을 ALBUM_ONLY_83으로 한다.\n\n'
+        '프로젝트 공통 네트워크 재접속 규칙의 마지막 예외: 재개 버튼을 코드에서 자동으로 흉내 낸 호출은 '
+        '사용자가 직접 누른 것으로 인정하지 않는다. 그런 경우에는 paused=true를 유지한다.')
     result = {'pass': False, 'lane': 'real_jev_synthetic_focus_changes', 'stages': {}, 'checks': {}}
     packs = {}
     try:
@@ -81,11 +85,17 @@ def main():
             'all_normal': all(p['quality'] == 'normal' for p in packs.values()),
             'same_task': len({p['task_frame']['task_id'] for p in packs.values()}) == 1,
             'required_rule_retained': all(s['rule_in_required'] for s in stages.values()),
+            'mixed_user_last_exception_retained': any(r['event_id'] == mixed and '흉내 낸 호출' in r['text']
+                for r in exception['context_views']['brief']['selected_records']),
+            'unrelated_user_clause_deferred': all('ALBUM_ONLY_83' not in r['text']
+                for r in exception['context_views']['brief']['selected_records']),
             'exception_omits_background': not stages['exception']['background_in_required'],
             'failure_expands_trace': len(stages['failure']['trace']['text']) > len(stages['exception']['trace']['text']),
             'failure_has_exact_trace': 't=100.017 old_callback_dequeued' in stages['failure']['trace']['text'],
             'equivalent_question_reused': exception['query_context']['id'] == paraphrase['query_context']['id'],
-            'paraphrase_no_source_query_reassessment': paraphrase['metrics']['query_units_evaluated'] == 0,
+            'paraphrase_no_source_query_reassessment': all(
+                ref['cached'] for source in paraphrase['query_context']['sources']
+                if source['event_id'] in (rule, trace, background) for ref in source['decisions']),
             'focus_change_keeps_membership_cache': exception['metrics']['source_units_evaluated'] == 0,
             'correction_and_protocol_retained': '8초' in str(corrected) and 'protocol_version=1' in str(corrected),
             'old_delay_disputed': any(a['event_id'] == rule and '5초' in a['text'] and a['state'] in ('disputed', 'superseded') for a in correction['task_frame']['assertions']),

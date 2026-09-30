@@ -293,14 +293,14 @@ class EntryTests(unittest.TestCase):
         candidates = payload['state'].get('candidates', [])
         for n, candidate in enumerate(candidates):
             theme = 'settings theme' in candidate['text']
-            if f'relevance_{n}' in result['answers']:
+            if f'i{n}_relevance' in result['answers']:
                 # The mock separates an unrelated task while retaining a shared constraint.
-                applicability = result['answers'][f'applicability_{n}']
+                applicability = result['answers'][f'i{n}_applicability']
                 applicability.update(choice='unrelated' if theme else 'direct', probabilities={k: float(k == ('unrelated' if theme else 'direct')) for k in applicability['probabilities']})
                 score = 0 if theme else 3
-                result['answers'][f'relevance_{n}']['score'] = score
-                result['answers'][f'relevance_{n}']['probabilities'] = {str(i): float(i == score) for i in range(4)}
-                result['answers'][f'omission_{n}']['noul'] = 0 if theme else 1
+                result['answers'][f'i{n}_relevance']['score'] = score
+                result['answers'][f'i{n}_relevance']['probabilities'] = {str(i): float(i == score) for i in range(4)}
+                result['answers'][f'i{n}_omission']['noul'] = 0 if theme else 1
         return result
 
     def test_work_list_and_selection_use_source_ids_and_exclude_unrelated_task(self):

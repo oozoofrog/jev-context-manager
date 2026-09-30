@@ -5,6 +5,7 @@ judgments must be one item containing BOTH sources; query-dependent judgments
 must include the query in context. Batch neighbours are not semantic inputs.
 """
 import json
+import sqlite3
 import time
 
 from . import batching
@@ -24,11 +25,28 @@ def dependencies(item):
                     if 'event_id' in item else [])
 
 
-def validate_dependencies(store, items):
-    for item in items:
-        for dep in dependencies(item):
-            if store.event(dep['event_id'])['revision'] != dep['revision']:
-                raise JCMError('SEMANTIC_DEPENDENCY_CHANGED')
+def validate_dependencies(store, items, bindings=None):
+    deps = [dep for item in items for dep in dependencies(item)]
+    bindings = bindings or {}
+    identifiers = list(dict.fromkeys([d['event_id'] for d in deps] + list(bindings)))
+    rows = {}
+    # This is the SQLite parameter limit, not an evidence/source limit. Every
+    # dependency is checked, including across chunk boundaries.
+    limit = store.db.getlimit(sqlite3.SQLITE_LIMIT_VARIABLE_NUMBER)
+    for offset in range(0,len(identifiers),limit):
+        batch=identifiers[offset:offset+limit]
+        rows.update((r['id'],r) for r in store.db.execute(
+            'SELECT id,revision,blob FROM events WHERE id IN ('+','.join('?' for _ in batch)+')',batch))
+    for dep in deps:
+        if dep['event_id'] not in rows:
+            raise JCMError('EVENT_NOT_FOUND')
+        if rows[dep['event_id']]['revision'] != dep['revision']:
+            raise JCMError('SEMANTIC_DEPENDENCY_CHANGED')
+    for event_id,blob in bindings.items():
+        if event_id not in rows:
+            raise JCMError('EVENT_NOT_FOUND')
+        if rows[event_id]['blob'] != blob:
+            raise JCMError('PACK_SOURCE_CHANGED')
 
 
 def request(context, items, builder):
@@ -38,8 +56,18 @@ def request(context, items, builder):
     # Dependency IDs protect cache reuse and publication in code. They are not
     # semantic evidence and can repeat an entire source group for every item.
     # Keep them in cache keys/local validation, outside the model's input.
-    return {'context': context, 'items': [{k:v for k,v in item.items()
-        if k != 'dependencies' and not k.startswith('_')} for item in items]}, questions
+    visible=[]
+    for item in items:
+        value={k:v for k,v in item.items() if k!='dependencies' and not k.startswith('_')}
+        if 'reading_text' in value:
+            # The decoded view and raw offsets remain bound in the local cache
+            # key. Send the readable evidence once, not an escaped duplicate.
+            value['text']=value.pop('reading_text')
+        if '_parents' in item:
+            value['parent_conditions']=[{'path':p['path'],'text':p.get('reading_text',p['text'])}
+                                        for p in item['_parents']]
+        visible.append(value)
+    return {'context': context, 'items': visible}, questions
 
 
 def source_items(material, context, builder):

@@ -288,7 +288,7 @@ class Store:
                             ('scope_anchor:' + session, 'scope_session:' + session))
             # Work menus are mixed-source derivatives, just like recovery packs.
             self.db.execute("DELETE FROM meta WHERE key LIKE 'entry_catalogue:%' OR key LIKE 'entry_selection:%' OR key LIKE 'entry_control:%'")
-            self.db.execute("DELETE FROM meta WHERE key LIKE 'source_read:%' OR key LIKE 'source_pages:%' OR key LIKE 'required_read:%' OR key LIKE 'pack_timing:%'")
+            self.db.execute("DELETE FROM meta WHERE key LIKE 'source_read:%' OR key LIKE 'source_pages:%' OR key LIKE 'required_read:%' OR key LIKE 'pack_timing:%' OR key LIKE 'read_progress:%' OR key LIKE 'delivery_header:%'")
             # Conservative derivative invalidation includes mixed-source model requests.
             for table in ('requests', 'packs', 'receipts', 'delivery_calls', 'decisions', 'provider_errors',
                           'call_metrics', 'semantic_items', 'source_index', 'source_terms', 'task_views',
@@ -312,6 +312,8 @@ class Store:
                 retained.update(pack.get('page_manifest', {}).get('pages', []))
                 for view in pack.get('context_views', {}).values():
                     retained.update(view.get('page_manifest', {}).get('pages', []))
+            retained.update(json.loads(r[0])['blob'] for r in self.db.execute(
+                "SELECT value FROM meta WHERE key LIKE 'delivery_header:%'"))
             collect(self.blobs, retained)
             self.db.execute('COMMIT')
         except BaseException:

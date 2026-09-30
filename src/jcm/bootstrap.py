@@ -152,10 +152,10 @@ def prepare_new(store, session):
     return result
 
 
-def new(store, token, provider=None):
+def new(store, token, provider=None, retained_context=None):
     request = store.resolve_request(token)
     route = dispatch(store, token, provider)
-    result = read_pack(store, route['pack_id'], bootstrap=True)
+    result = read_pack(store, route['pack_id'], bootstrap=True, retained_context=retained_context)
     result.update(bootstrap='new', stage='read_served' if result['delivery'] == 'read_served' else 'reading' if result['delivery'] == 'page_served' else 'blocked',
                   session_id=request['session'], recovery_success='not_attested')
     # Serving bytes does not prove the agent consumed them or resumed correctly.

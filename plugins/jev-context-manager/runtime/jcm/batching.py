@@ -4,7 +4,7 @@ import math
 from .provider import CONTEXT_ERROR, choice, retrieval_questions
 from .util import JCMError, digest, encode
 
-STOP_ERRORS = {'PROVIDER_HTTP_401', 'PROVIDER_HTTP_403', 'PROVIDER_CREDENTIAL_UNAVAILABLE',
+STOP_ERRORS = {'PROVIDER_HTTP_401', 'PROVIDER_HTTP_402', 'PROVIDER_HTTP_403', 'PROVIDER_CREDENTIAL_UNAVAILABLE',
                'POLICY_EPOCH_CHANGED',
                'PROJECT_DISABLED', 'SOURCE_FORGOTTEN'}
 
@@ -87,7 +87,11 @@ def split_source(source):
     if boundary >= 0:
         middle = boundary + 1
     start = source['span']['start']
+    # A decoded display value belongs to the whole unit. Once an exact raw
+    # span is divided, carrying that value would keep resending the full unit
+    # and prevent a server-confirmed context rejection from shrinking.
     return [{**source, 'text': text[a:b],
+             **({'reading_text':text[a:b]} if 'reading_text' in source else {}),
              'span': {**source['span'], 'start': start + a, 'end': start + b}}
             for a, b in ((0, middle), (middle, len(text)))]
 

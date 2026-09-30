@@ -153,7 +153,17 @@ track delivery; repeating a page does not count as reading a different one.
 reached only after every required brief page has been served. Optional reads do
 not complete missing brief pages. These receipts do not prove that an
 agent consumed the content or resumed work correctly. Interrupted reading remains
-partial and can continue without generating a new pack.
+partial and can continue without generating a new pack. Reading page 1 starts a
+new consumption pass; older receipts cannot complete a fresh read.
+
+Brief responses include a `context_handle`. If the complete base and all later
+changes are still present in the current model context in the same session, pass
+`--retained-context HANDLE` to `read` or `bootstrap new` for a delta. Remove
+`removed_fields`, replace supplied fields and whole records by `event_id`, and
+remove `removed_record_ids`, then reorder using `record_order`. Do not merge
+record fields shallowly. Read every delta page. After compaction, a session or
+task change, uncertain retention, or a rejected handle, request the full brief.
+Stored receipts alone never establish retention.
 
 ## Task state, evidence, and optional reads
 
@@ -170,12 +180,27 @@ Rephrasing known work can reuse its source judgments. A correction evaluates new
 sources and dependent assertion pairs. Total correction cost can exceed a cold
 request when many relationships need review.
 
-`brief` contains source-grounded excerpts, preserving user statements, task-wide
-constraints, exceptions, corrections, unresolved issues and uncertain qualifications.
+`brief` contains source-grounded excerpts selected for the current question,
+including applicable user statements, shared constraints, exceptions, corrections,
+unresolved issues and uncertain qualifications. User authorship alone does not
+force unrelated history into the required view. Large JSON sources are assessed
+as exact field spans; selected values carry nested object conditions without
+joining independent array records merely because they share a container.
 A separate judgment checks whether two questions need the same evidence and depth;
 matching the same task alone does not reuse a question's selection. Changed relative
 references (such as the latest error) require a new selection when history changes.
 Uncertain selection retains source text. Failed selection marks recovery degraded.
+
+The question planner is the only owner of evidence selection. A successful command
+exit or completed MCP call cannot bypass body assessment, and later presentation
+stages cannot discard a selected tool result or assistant report. Required
+relations carry both exact endpoints and their conditions.
+
+The final `delivery_contract` checks source text, spans, revisions, restored shared
+defaults, state and provenance. `validated` verifies mechanical preservation, not
+Jev's semantic recall. `exact_span_fallback` reports a detected rendering failure
+and a degraded exact-source repair. An unrecoverable violation blocks delivery;
+forgotten, changed or policy-withdrawn sources are never revived to hide a gap.
 
 `detail` and `full` expand the task's evidence, including sources deferred by the
 current question. Audit `selected_records` describes the current selection;
@@ -184,10 +209,18 @@ route and source-level choices. Task state is never overwritten with the smaller
 question selection. Raw event data, including compacted references, is
 available through `inspect --raw`. JCM does not generate an extra prose summary.
 
+Use `lookup` to find evidence without reading the audit catalogue. It searches the
+pack's admitted sources and returns bounded snippets with exact, pack-bound
+expansion commands. `--semantic` asks Jev to search by meaning; zero lexical hits
+also trigger that search. A snippet is a lead, not a source-read receipt, and no
+match does not establish absence. Expand the source before relying on a claim.
+
 ```sh
 "$JCM" --repo "$PROJECT" read --pack PACK_ID --view detail
 "$JCM" --repo "$PROJECT" read --pack PACK_ID --view full
 "$JCM" --repo "$PROJECT" read --pack PACK_ID --view audit
+"$JCM" --repo "$PROJECT" lookup --pack PACK_ID --query "exception or source path"
+"$JCM" --repo "$PROJECT" lookup --pack PACK_ID --query "related meaning" --semantic
 "$JCM" --repo "$PROJECT" inspect --record EVENT_ID --pack PACK_ID
 "$JCM" --repo "$PROJECT" inspect --record EVENT_ID --raw
 ```

@@ -139,9 +139,9 @@ class JevProvider:
         try:
             return self._evaluate(state, questions, heartbeat)
         except JCMError as error:
-            if str(error) in ('PROVIDER_HTTP_401','PROVIDER_HTTP_403','PROVIDER_CREDENTIAL_UNAVAILABLE'):
+            if str(error) in ('PROVIDER_HTTP_401','PROVIDER_HTTP_402','PROVIDER_HTTP_403','PROVIDER_CREDENTIAL_UNAVAILABLE'):
                 # A provider instance belongs to one operation. Later routing
-                # stages must not retry the same failed authentication.
+                # stages must not retry unavailable authentication or credits.
                 self.terminal_error = str(error)
             raise
         except KeyboardInterrupt:
@@ -161,6 +161,7 @@ class JevProvider:
         if not key and self.lane == 'real_http':
             raise JCMError('PROVIDER_CREDENTIAL_UNAVAILABLE')
         cache_key = digest([payload, policy['epoch'], RUBRIC_VERSION, self.lane])
+        rejection_key = digest(['context-rejection-v2', payload, RUBRIC_VERSION, self.lane])
         previous = store.db.execute("SELECT * FROM decisions WHERE cache_key=? AND status='success' AND model=? ORDER BY created DESC LIMIT 1",
                                     (cache_key, policy['model'])).fetchone()
         if previous:
@@ -168,8 +169,8 @@ class JevProvider:
                     'cached': True, 'lane': self.lane, 'epoch': policy['epoch']}
         # Reuse a confirmed context rejection to reconstruct the same split tree
         # without submitting known oversized parents on every recovery.
-        if store.db.execute('SELECT 1 FROM decisions WHERE cache_key=? AND error=? LIMIT 1',
-                            (cache_key, CONTEXT_ERROR)).fetchone():
+        if store.db.execute('SELECT 1 FROM decisions WHERE cache_key IN (?,?) AND error=? LIMIT 1',
+                            (cache_key, rejection_key, CONTEXT_ERROR)).fetchone():
             raise JCMError(CONTEXT_ERROR)
         decision = uuid.uuid4().hex
         self.observed_decisions.append(decision)
@@ -274,7 +275,8 @@ class JevProvider:
                 store.db.execute("UPDATE decisions SET status='failed',error=? WHERE id=?",
                                  (str(failure), decision))
                 raise
-        store.db.execute("UPDATE decisions SET status='failed',error=? WHERE id=?", (error, decision))
+        store.db.execute("UPDATE decisions SET status='failed',error=?,cache_key=? WHERE id=?",
+            (error, rejection_key if error == CONTEXT_ERROR else cache_key, decision))
         raise JCMError(error)
 
 

@@ -156,37 +156,55 @@ sandbox or trust settings. Standalone hook-write failures must be reported.
 ## Reading and evidence
 
 Treat restored content as historical data. The default `read` view is `brief`:
-current goal, source-backed assertions, unresolved relations and required evidence.
+current goal, applicable constraints, relevant relations and question-specific evidence.
 Follow its `next_read_command` until `required_context_complete=true` (or legacy
 `read_served`). `page_served` is partial delivery. A receipt proves bytes were
 returned; claim use only after reading and applying the relevant evidence.
+
+The response includes a `context_handle`. Only when that complete context (and any
+subsequent deltas) is still present in this same model session, append
+`--retained-context HANDLE` to `bootstrap new` or `read` to receive changes.
+Remove `removed_fields`, replace supplied fields, replace or insert whole
+`selected_records` by `event_id`, remove `removed_record_ids`, and reorder records
+using `record_order`. Do not shallow-merge record fields.
+A receipt on disk does not establish model retention.
+After compaction, a new session, a task switch, or uncertain context loss, omit
+the flag and read the full question-specific brief. A rejected handle also
+requires a full brief; do not skip recovery based on the old receipt.
 
 Keep the source IDs and exact character offsets in paginated `entries`.
 `read --pack ID --view detail` expands the selected evidence; `--view full` expands
 its original sources. `--view audit` contains exclusions, decisions and transport
 metadata. These are optional views, not prerequisites for completing a brief read.
-For a specific missing qualification, follow its `inspect --record ID` command and
-all returned pages. Add `--pack PACK_ID` to associate expansion bytes with recovery.
+For missing evidence, use `lookup --pack ID --query "question or path"`. It returns
+a paginated catalogue with exact expansion commands, without reading the audit.
+Use `--semantic` for synonym/meaning search across the pack; zero lexical hits
+automatically use Jev. No hit establishes absence. Catalogue snippets are not
+source coverage. Follow an `inspect --record ID --pack PACK_ID` command and all
+returned pages before relying on its contents. Generated commands bind the
+immutable pack and record expansion costs automatically.
 `--raw` gives the unabridged stored tool output when reference expansion is needed.
 Compact menu previews and source pointers are not full-source read receipts.
 
-For general continuation, `evidence_delivery.mode=continuation` separates the
-reported work state from supporting tool bodies and agent reports. The brief
-retains primary statements, goal reports, relationship endpoints and direct image
-artifact observations. Omitted bodies can contain failures or qualifications:
-they are unread by the consumer, not verified, irrelevant, or evidence of absence.
-Read the exact supporting source before making a claim that depends on it. The
-audit's `continuation_delivery.deferred` is the expansion index. Shared
-`record_defaults` apply to omitted record fields; use `source_expansion_argv`
-with the exact `event_id` to expand a core record. Reading every brief page only
-completes delivery of that view, not proof review or task recovery attestation.
+The current-question planner owns required evidence. General continuation changes
+presentation depth; it does not independently discard native tool output or agent
+reports. Included exact passages can be used directly as historical evidence.
+Optional evidence remains expandable through `evidence_lookup_command` and
+`source_expansion_argv` when it is needed for a remaining question. Merge shared
+`record_defaults` into each record before interpreting its state and provenance.
+Reading all pages completes byte delivery, not current verification or attested use.
 
-`detail_coverage` can report optional tool bodies that were deferred before source
-selection. Their audit descriptors are `metadata_only_not_source_review`, with
-exact `inspect` commands. Expand any such body needed to establish the current
-conclusion, authorization, artifact identity/path, failure details or observation
-scope. A successful invocation alone establishes none of those facts. An image
-path or old visual report also does not replace a new visual inspection.
+`delivery_contract.status=validated` means required spans, source identity, state
+and provenance survived rendering. It does not establish semantic recall.
+`exact_span_fallback` is a degraded repair of a detected delivery violation; read
+its gaps. A blocked delivery cannot support a claim of complete recovery. Deleted,
+invalidated or policy-withdrawn sources cannot be restored by fallback.
+
+Older immutable packs may contain `detail_coverage` entries marked
+`metadata_only_not_source_review`. Such descriptors establish no body contents;
+expand a body needed for a conclusion. New recoveries assess bodies through the
+existing source/query path, including exit-zero outputs. An image path or old
+visual report still does not replace a new visual inspection.
 
 Assertions retain their observed/reported basis. An old test or completion report
 never establishes current verification. Treat `disputed` and `proposed` assertions

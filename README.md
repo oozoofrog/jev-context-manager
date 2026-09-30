@@ -2,6 +2,12 @@
 
 A Codex plugin that carries working context across sessions. It automatically records conversations and tool results, then restores the context needed for the current request in a new session.
 
+JCM 1.0.2 preserves the required state across seven prepared continuity flows.
+In two matched consumer orders, all 28 answers and primary gates passed while
+aggregate consumer input fell by 14.0807%. Uncached input increased slightly;
+this does not establish monetary savings. See the [release notes](docs/releases/1.0.2.md)
+for the measured scope and limits.
+
 ## Features
 
 - **Choose scope or work** — A bare skill invocation previews a new conversation before you choose where recording begins; managed projects offer work to continue or a new task.
@@ -10,7 +16,10 @@ A Codex plugin that carries working context across sessions. It automatically re
 - **New-session recovery** — Retrieves earlier requirements and recent changes without a separate summary or handoff.
 - **Reusable task context** — Reuses source classifications, task membership, and evidence representations across sessions; new corrections reassess their source dependencies.
 - **Question-specific context** — Selects evidence and detail for the current question, separately from task identity. Equivalent questions can reuse selections while constraints and corrections remain preserved.
+- **Delivery integrity** — Checks that the planner’s required exact spans, provenance and unresolved state survive rendering; repairs are degraded and unrecoverable gaps block delivery.
 - **Layered recovery** — Restores the task frame and essential evidence first. Detailed sources and judgment audit data are available separately.
+- **Retained-context changes** — An explicit current-context handle requests only changed records and fields within the same session. Fresh or compacted contexts receive the complete question-specific brief.
+- **Evidence lookup** — Searches a pack by words, paths or Jev semantic matching, then expands exact sources without browsing the audit. Search snippets never count as source reads.
 - **Observed costs** — Records provider calls, transmitted bytes, returned usage, cache reuse, and context delivery. Host model consumption is reported separately when observable.
 - **Recovery progress** — Reports active phases and reusable work during recovery. Interrupted requests keep completed judgments and report cancellation explicitly.
 

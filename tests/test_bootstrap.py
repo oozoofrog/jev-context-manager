@@ -131,7 +131,8 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(result['pack']['quality'], 'normal')
         self.assertEqual(result['recovery_success'], 'not_attested')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], 1)
-        self.assertTrue(all(r['reconciliation'] == 'not_checked' for r in result['pack']['selected_records']))
+        self.assertTrue(all({**result['pack'].get('record_defaults', {}), **r}['reconciliation'] == 'not_checked'
+                            for r in result['pack']['selected_records']))
         (self.root / 'changed.py').write_text('changed')
         again = new(self.store, token, self.provider())
         self.assertNotEqual(result['pack']['snapshot']['fingerprint'], again['pack']['snapshot']['fingerprint'])

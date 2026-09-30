@@ -31,4 +31,5 @@ def delivery_metrics(store, pack_id):
     return {'dispatch_timing': json.loads(timing[0]) if timing else None, 'required_read_completion_seconds': elapsed, 'required_served_bytes': sum(r['bytes'] for r in rows if r['kind'].startswith('read_brief:')),
             'optional_served_bytes': sum(r['bytes'] for r in rows if r['kind'].startswith(('read_detail:', 'read_full:', 'read_audit:'))),
             'source_expansion_bytes': sum(r['bytes'] for r in rows if r['kind'].startswith('source:')),
+            'evidence_lookup_bytes': sum(r['bytes'] for r in rows if r['kind'].startswith('lookup:')),
             'model_consumption_or_use': 'not_observable_by_jcm'}

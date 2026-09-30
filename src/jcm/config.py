@@ -157,5 +157,9 @@ def install_hooks(config):
 
 def save_policy(config, **changes):
     updated = {**config, **changes, 'allow_egress': True, 'epoch': config['epoch'] + 1}
+    if changes.get('cli_argv') and changes['cli_argv'] != config['cli_argv']:
+        old = config['cli_argv']
+        prefix = old[:old.index('--home')] if '--home' in old else old
+        updated['trusted_cli_prefixes'] = config.get('trusted_cli_prefixes', []) + [prefix]
     atomic_write(Path(config['home']) / 'profiles' / (config['repo_id'] + '.json'), encode(updated))
     return updated

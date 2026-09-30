@@ -75,7 +75,8 @@ class QueryContextTests(unittest.TestCase):
         exception = self.recover('b', 'Explain only the exception to automatic resume in pause recovery.')
         failure = self.recover('c', 'Analyze the pause recovery failure with the full callback trace.')
         self.assertEqual(len({p['task_frame']['task_id'] for p in (resume, exception, failure)}), 1)
-        self.assertEqual(exception['metrics']['source_units_evaluated'], 0)
+        self.assertGreater(exception['metrics']['source_units_evaluated'], 0)
+        self.assertGreater(exception['metrics']['classification_units_reused'], 0)
         self.assertIn(self.design, self.required(resume))
         self.assertNotIn(self.design, self.required(exception))
         self.assertNotIn('failure code 42', self.required(exception)[self.explanation]['text'])
@@ -92,10 +93,16 @@ class QueryContextTests(unittest.TestCase):
         self.corpus()
         self.recover('a', 'Continue pause recovery.')
         first = self.recover('b', 'Explain only the exception to automatic resume in pause recovery.')
+        before = len(self.sent)
         paraphrase = self.recover('c', 'Describe the special case in pause recovery.')
         self.assertEqual(paraphrase['query_context']['route'], 'equivalent_question')
         self.assertEqual(first['query_context']['id'], paraphrase['query_context']['id'])
-        self.assertEqual(paraphrase['metrics']['query_units_evaluated'], 0)
+        # The previous procedural request is a newly admitted source. Reusing
+        # the question must avoid retransmitting the already assessed evidence.
+        reassessed = {item.get('event_id') for payload in self.sent[before:]
+                      if any(name.endswith('_query_level') for name in payload['questions'])
+                      for item in payload['state']['items']}
+        self.assertTrue({self.rule, self.explanation, self.design}.isdisjoint(reassessed))
         self.assertGreater(paraphrase['metrics']['query_units_reused'], 0)
         correction = self.recover('d', 'Correction: use delay 8 seconds. Explain only the exception in pause recovery.')
         self.assertIn('8 seconds', str(correction['context_views']['brief']))
@@ -181,6 +188,25 @@ class QueryContextTests(unittest.TestCase):
         self.assertIn(self.rule, self.required(pack))
         self.assertIn('never auto-resume', self.required(pack)[self.explanation]['text'])
         self.assertNotIn('failure code 42', self.required(pack)[self.explanation]['text'])
+
+    def test_all_unrelated_passages_do_not_fall_back_to_full_on_aggregate_uncertainty(self):
+        self.corpus()
+        original = self.transport
+        def omit(body, key):
+            response = original(body, key)
+            for name, answer in response['answers'].items():
+                if name.endswith('_query_level'):
+                    answer.update(choice='omit', probabilities={'omit':.76, 'brief':.12, 'detail':.11, 'full':.01})
+                elif '_query_block_' in name:
+                    answer.update(choice='omit', probabilities={'core':0, 'support':.05, 'omit':.95})
+                elif '_query_guard_' in name:
+                    answer['noul'] = 0
+            return response
+        self.transport = omit
+        pack = self.recover('a', 'Explain the exception in pause recovery.')
+        self.assertNotIn(self.design, self.required(pack))
+        self.assertNotIn(self.explanation, self.required(pack))
+        self.assertIn(self.design, {r['event_id'] for r in pack['task_records']})
 
     def test_current_question_revision_is_a_delivery_dependency(self):
         from jcm.coordinator import read_pack

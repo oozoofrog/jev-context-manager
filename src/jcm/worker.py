@@ -31,6 +31,8 @@ def drain(store, provider=None, limit=4, through_seq=None):
             if classified['errors']:
                 raise JCMError(classified['errors'][0])
             records = classified['records']
+            from .local_index import refresh
+            refresh(store, [source], epoch)
             refs = list(dict.fromkeys(ref['id'] for r in records for ref in r['decisions']))
             decision_refs.extend(refs)
             labels = {name: max(r['answers'][name]['noul'] for r in records) for name in LABELS}

@@ -160,7 +160,9 @@ class BatchedRecoveryTests(unittest.TestCase):
                     target[key] = json.loads(json.dumps(entry['value']))
         self.assertEqual(reconstructed, {**{k:v for k,v in original.items() if k not in ('page_manifest', 'context_views')}, 'view': 'audit'})
         before = self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0]
-        read_pack(self.store, route['pack_id'], page=1, view='audit')
+        restarted = read_pack(self.store, route['pack_id'], page=1, view='audit')
+        self.assertFalse(restarted['pagination']['all_pages_served'])
+        self.assertEqual(restarted['delivery'], 'page_served')
         self.assertEqual(self.store.db.execute('SELECT COUNT(*) FROM receipts').fetchone()[0], before)
         self.store.change_policy()
         with self.assertRaisesRegex(JCMError, 'INVALIDATED|EPOCH'):
@@ -220,12 +222,12 @@ class BatchedRecoveryTests(unittest.TestCase):
             response = fixtures.fake_http(body, key)
             for i, candidate in enumerate(fixtures.fixture_payload(body)['state'].get('candidates', [])):
                 if 'IMPORTANT' in candidate['text']:
-                    response['answers'][f'relevance_{i}'].update(score=3, probabilities={str(n):float(n == 3) for n in range(4)})
+                    response['answers'][f'i{i}_relevance'].update(score=3, probabilities={str(n):float(n == 3) for n in range(4)})
             payload = json.loads(body)
             for name, question in payload['questions'].items():
                 if '_query_block_' in name:
                     item = payload['state']['items'][int(name.split('_')[0][1:])]
-                    paragraph = item['paragraphs'][int(name.rsplit('_', 1)[1])]['text']
+                    paragraph = item['text'] if 'text' in item else item['paragraphs'][int(name.rsplit('_', 1)[1])]['text']
                     value = 'core' if 'IMPORTANT' in paragraph else 'omit'
                     response['answers'][name].update(choice=value, probabilities={v: float(v == value) for v in question['criteria']})
             return response

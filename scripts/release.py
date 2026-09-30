@@ -2,6 +2,7 @@
 """Reproducible JCM release/install; concise output, durable logs, exact-ref checks."""
 import argparse
 from contextlib import closing
+import copy
 import fcntl
 import hashlib
 import json
@@ -62,6 +63,16 @@ def public_source(path):
 def other_plugins(inventory):
     return sorted((p for p in inventory['installed'] if p['pluginId'] != SELECTOR),
                   key=lambda p: p['pluginId'])
+
+
+def other_settings(raw):
+    value = copy.deepcopy(tomllib.loads(raw.decode()))
+    for table, key in [('marketplaces', 'jcm'), ('plugins', SELECTOR)]:
+        if table in value:
+            value[table].pop(key, None)
+            if not value[table]:
+                del value[table]
+    return value
 
 
 def backup_store(source, target):
@@ -137,16 +148,46 @@ class Release:
         tracked = self.run('tracked-files', ['git', 'ls-files', '-z']).stdout.split('\0')
         untracked = self.run('untracked-files', ['git', 'ls-files', '--others', '--exclude-standard', '-z']).stdout.split('\0')
         explicit = set(self.args.include)
+        scope_file = getattr(self.args, 'scope_file', None)
+        self.publish_names = None
+        scope_bytes = b''
+        if scope_file:
+            scope_bytes = Path(scope_file).read_bytes()
+            scope = json.loads(scope_bytes)
+            require(isinstance(scope, list) and all(isinstance(p, str) and p for p in scope), 'Scope must be a JSON path list')
+            explicit.update(scope)
+            self.publish_names = explicit
         for path in explicit:
             require(not Path(path).is_absolute() and '..' not in Path(path).parts, 'Include must be repo-relative')
-        names = sorted(set(p for p in tracked + untracked if p and (p in tracked or public_source(p) or p in explicit)))
+        names = sorted(set(p for p in tracked + untracked if p and
+            (p in tracked or p in explicit or (self.publish_names is None and public_source(p)))))
         digest = hashlib.sha256()
+        digest.update(scope_bytes)
         for name in names:
             path = self.root / name
             require(not path.is_symlink(), 'Release source contains a symlink: ' + name)
             digest.update(name.encode() + b'\0')
             digest.update(path.read_bytes() if path.is_file() else b'<deleted>')
         return digest.hexdigest(), names
+
+    def scan_staged(self, expected):
+        staged = set(self.git('diff', '--cached', '--name-only', '-z').split('\0')) - {''}
+        require(staged == set(expected), 'Staged paths differ from explicit release changes')
+        patterns = {'private_key': rb'-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----',
+                    'github_token': rb'\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{30,})\b',
+                    'api_token': rb'\bsk-[A-Za-z0-9_-]{24,}\b',
+                    'literal_credential': rb'(?i)(?:api[_-]?key|access[_-]?token|authorization)\s*["\x27]?\s*[:=]\s*["\x27](?:Bearer )?[A-Za-z0-9_./+-]{20,}["\x27]'}
+        files = {}; failures = []
+        for name in sorted(staged):
+            result = subprocess.run(['git', 'show', ':' + name], cwd=self.root, capture_output=True)
+            if result.returncode:  # A staged deletion has no blob.
+                require(not (self.root / name).exists(), 'Cannot inspect staged content: ' + name)
+                continue
+            files[name] = {'sha256': hashlib.sha256(result.stdout).hexdigest(), 'bytes': len(result.stdout)}
+            failures += [{'path': name, 'pattern': label} for label, pattern in patterns.items() if re.search(pattern, result.stdout)]
+        report = {'pass': not failures, 'staged_paths': sorted(staged), 'files': files, 'credential_matches': failures}
+        write_json(self.directory / 'staged-scan.json', report)
+        require(not failures, 'Sensitive staged content; inspect private staged-scan.json')
 
     def preflight(self):
         require(self.git('branch', '--show-current') == 'main', 'Release requires main')
@@ -163,6 +204,11 @@ class Release:
             require(not self.state.get('notes_sha256') or self.state['notes_sha256'] == sha(notes), 'Release notes changed during resume')
             self.state['notes_sha256'] = sha(notes)
         self.fingerprint, self.names = self.inputs()
+        for asset in self.args.asset:
+            path = Path(asset).resolve()
+            require(path.is_file() and path.is_relative_to(self.root), 'Asset must be a public repository file')
+            relative = str(path.relative_to(self.root))
+            require(relative in self.names and (self.publish_names is None or relative in self.publish_names), 'Asset is outside release scope')
         previous = self.state.get('fingerprint')
         require(not previous or previous == self.fingerprint, 'Release inputs changed; start a new run')
         self.state['fingerprint'] = self.fingerprint
@@ -189,10 +235,13 @@ class Release:
         require(self.inputs()[0] == self.fingerprint, 'Source changed during validation')
         changed = set(self.run('changed-files', ['git', 'diff', 'HEAD', '--name-only', '-z']).stdout.split('\0')) - {''}
         untracked = set(self.run('new-files', ['git', 'ls-files', '--others', '--exclude-standard', '-z']).stdout.split('\0')) - {''}
-        include = sorted(changed | (untracked & set(self.names)))
+        include = sorted((changed | untracked) & (self.publish_names if self.publish_names is not None else set(self.names)))
+        staged = set(self.git('diff', '--cached', '--name-only', '-z').split('\0')) - {''}
+        require(staged <= set(include), 'Unrelated staged work must be preserved; refusing release commit')
         if include:
             require(self.args.commit_message, 'Uncommitted release inputs require --commit-message')
             self.run('stage', ['git', 'add', '--', *include])
+            self.scan_staged(include)
             self.run('commit', ['git', 'commit', '-m', self.args.commit_message])
         head = self.git('rev-parse', 'HEAD')
         require(not self.state.get('commit') or self.state['commit'] == head, 'Resume commit changed')
@@ -228,12 +277,26 @@ class Release:
         prior = self.state['steps'].get('published_fixture')
         if prior and Path(prior['result']).is_file() and sha(prior['result']) == prior['sha256']:
             return prior
-        directory = self.directory / ('published-fixture-' + str(int(time.time())))
-        result = self.json('published-fixture', [sys.executable, 'scripts/verify_plugin.py',
-            '--source', f'https://github.com/{REPOSITORY}.git', '--ref', head, '--output-dir', str(directory)], timeout=600)
-        require(result['pass'] and result['marketplace_revision'] == head, 'Published installation failed')
-        path = directory / 'result.json'
-        item = {'result': str(path), 'sha256': sha(path)}
+        item = self.state['steps'].get('new_marketplace_fixture')
+        if not item or not Path(item['result']).is_file() or sha(item['result']) != item['sha256']:
+            directory = self.directory / ('published-fixture-' + str(int(time.time())))
+            result = self.json('published-fixture', [sys.executable, 'scripts/verify_plugin.py',
+                '--source', f'https://github.com/{REPOSITORY}.git', '--ref', head, '--output-dir', str(directory)], timeout=600)
+            require(result['pass'] and result['marketplace_revision'] == head, 'Published installation failed')
+            path = directory / 'result.json'
+            item = {'result': str(path), 'sha256': sha(path)}
+            self.progress('new_marketplace_fixture', item)
+        result = json.loads(Path(item['result']).read_text())
+        require(result['pass'] and result['marketplace_revision'] == head, 'Saved published fixture changed')
+        fixture = copy.copy(self)
+        fixture.directory = self.directory / 'existing-marketplace-fixture'; fixture.directory.mkdir(exist_ok=True)
+        fixture.state_path = fixture.directory / 'result.json'; fixture.state = {'steps': {}}
+        fixture.home = Path(result['fixture']) / 'codex'
+        fixture.env = {**self.env, 'CODEX_HOME': str(fixture.home), 'JCM_HOME': str(Path(result['fixture']) / 'private')}
+        fixture.number = len(list(fixture.directory.glob('*.log')))
+        fixture.install(head)
+        item = {**item, 'existing_install_result': str(fixture.state_path), 'existing_install_sha256': sha(fixture.state_path),
+            'existing_install_checks': fixture.state['steps']['install']['checks']}
         self.progress('published_fixture', item)
         return item
 
@@ -249,8 +312,12 @@ class Release:
                 '--verify-tag', '--draft', prerelease_flag, '--title', 'JCM ' + self.version, '--notes-file', str(notes)])
         assets = [Path(wheel['wheel']), Path(fixture['result'])]
         public_fixture = self.directory / f'jcm-{self.version}-plugin-validation.json'
-        shutil.copy2(assets[1], public_fixture)
+        checked = json.loads(assets[1].read_text())
+        public = {k: checked[k] for k in ('pass', 'live', 'source', 'ref', 'marketplace_revision', 'host_version', 'runtime_manifest_sha256', 'checks')}
+        public.update(version=self.version, existing_marketplace_install_checks=fixture.get('existing_install_checks', {}))
+        write_json(public_fixture, public)
         assets[1] = public_fixture
+        assets += [Path(p).resolve() for p in self.args.asset]
         # GitHub's REST lookup by tag returns 404 for a draft; gh resolves drafts
         # through release listing and their release ID.
         available = self.json('release-assets', ['gh', 'release', 'view', self.tag,
@@ -314,8 +381,8 @@ class Release:
         inventory = self.json('plugins-before', ['codex', 'plugin', 'list', '--json'])
         marketplaces = self.json('marketplaces', ['codex', 'plugin', 'marketplace', 'list', '--json'])
         market = next((m for m in marketplaces['marketplaces'] if m['name'] == 'jcm'), None)
-        require(market and market.get('marketplaceSource', {}).get('sourceType') == 'git', 'Expected installed Git-backed jcm marketplace')
-        require(market['marketplaceSource']['source'].removesuffix('.git') in
+        require(not market or market.get('marketplaceSource', {}).get('sourceType') == 'git', 'Expected Git-backed jcm marketplace')
+        require(not market or market['marketplaceSource']['source'].removesuffix('.git') in
                 {f'https://github.com/{REPOSITORY}', f'git@github.com:{REPOSITORY}'}, 'Unexpected marketplace source')
         config = self.home / 'config.toml'
         original = config.read_bytes()
@@ -324,22 +391,43 @@ class Release:
         self.state.update(backup=str(backup), backup_complete=False); self.save()
         shutil.copy2(config, backup / 'config.toml')
         write_json(backup / 'plugins.json', inventory)
+        write_json(backup / 'marketplaces.json', marketplaces)
         cache = self.home / 'plugins/cache/jcm/jev-context-manager'
         if cache.exists():
             shutil.copytree(cache, backup / 'plugin-cache', symlinks=True)
-        store = Path(os.environ.get('JCM_HOME', '~/Library/Application Support/JCM')).expanduser().resolve()
+        store = Path(self.env.get('JCM_HOME', '~/Library/Application Support/JCM')).expanduser().resolve()
         backup_store(store, backup / 'JCM')
+        write_json(backup / 'backup-manifest.json', {'files': {str(p.relative_to(backup)): sha(p) for p in backup.rglob('*') if p.is_file()},
+            'external_store': str(store), 'external_store_existed': store.exists(), 'cache_existed': cache.exists(), 'sqlite_online_backup_integrity_checked': True})
         self.state['backup_complete'] = True; self.save()
-        self.run('marketplace-upgrade', ['codex', 'plugin', 'marketplace', 'upgrade', 'jcm', '--json'])
+        observations = []
+        def mutate(name, argv, structured=False):
+            current = config.read_bytes()
+            result = self.json(name, argv) if structured else self.run(name, argv)
+            latest = config.read_bytes()
+            observation = {'stage': name, 'before_sha256': hashlib.sha256(current).hexdigest(),
+                'after_sha256': hashlib.sha256(latest).hexdigest(), 'other_settings_unchanged': other_settings(current) == other_settings(latest)}
+            observations.append(observation)
+            self.state['config_write_observations'] = observations; self.save()
+            require(observation['other_settings_unchanged'], 'Unrelated settings changed during ' + name + '; preserved current config, no restoration')
+            return result
+        if market:
+            mutate('marketplace-upgrade', ['codex', 'plugin', 'marketplace', 'upgrade', 'jcm', '--json'])
+        else:
+            mutate('marketplace-add', ['codex', 'plugin', 'marketplace', 'add', f'https://github.com/{REPOSITORY}.git', '--ref', 'main', '--json'], True)
+            registered = self.json('marketplaces-registered', ['codex', 'plugin', 'marketplace', 'list', '--json'])
+            market = next((m for m in registered['marketplaces'] if m['name'] == 'jcm'), None)
+            require(market and market.get('marketplaceSource', {}).get('sourceType') == 'git' and
+                market['marketplaceSource']['source'].removesuffix('.git') == f'https://github.com/{REPOSITORY}', 'New marketplace source differs')
         revision = self.run('marketplace-revision', ['git', '-C', market['root'], 'rev-parse', 'HEAD']).stdout.strip()
         require(revision == head, 'Marketplace revision differs from validated release')
-        item = self.json('plugin-install', ['codex', 'plugin', 'add', SELECTOR, '--json'])
+        item = mutate('plugin-install', ['codex', 'plugin', 'add', SELECTOR, '--json'], True)
         installed = Path(item['installedPath'])
         require(item['version'] == self.version, 'Installed version mismatch')
         after = self.json('plugins-after', ['codex', 'plugin', 'list', '--json'])
         manifest = json.loads((installed / 'runtime-manifest.json').read_text())
         source = self.root / 'plugins/jev-context-manager'
-        checks = {'config_bytes_unchanged': config.read_bytes() == original,
+        checks = {'other_settings_preserved_each_write': all(o['other_settings_unchanged'] for o in observations),
                   'other_plugins_unchanged': other_plugins(inventory) == other_plugins(after),
                   'installed_enabled': any(p['pluginId'] == SELECTOR and p['enabled'] for p in after['installed']),
                   'installed_hashes': all(sha(installed / p) == value for p, value in manifest.items()),
@@ -348,7 +436,10 @@ class Release:
         self.run('installed-help', [str(installed / 'scripts/jcm'), '--help'])
         checks['fresh_loader'] = self.loader(installed)
         require(all(checks.values()), 'Installation verification failed; see backup and logs')
-        self.progress('install', {'path': str(installed), 'checks': checks, 'backup': str(backup)})
+        self.progress('install', {'path': str(installed), 'checks': checks, 'backup': str(backup), 'marketplace_was_new': not any(m['name'] == 'jcm' for m in marketplaces['marketplaces']),
+            'config_observations': {'whole_bytes_unchanged': config.read_bytes() == original,
+                'other_settings_equal_across_interval': other_settings(config.read_bytes()) == other_settings(original),
+                'scope': 'Each CLI write preserves unrelated settings; interval drift is observation only. No whole-config restore.'}})
 
     def execute(self):
         self.preflight()
@@ -376,6 +467,8 @@ def main():
     parser.add_argument('--notes', help='Repository release-notes file')
     parser.add_argument('--commit-message')
     parser.add_argument('--include', action='append', default=[], help='Explicitly include an untracked evidence file')
+    parser.add_argument('--scope-file', help='JSON list of exact repository-relative paths allowed in this release commit')
+    parser.add_argument('--asset', action='append', default=[], help='Reviewed public release asset path')
     parser.add_argument('--resume', help='Resume the identical inputs using the previous run directory')
     args = parser.parse_args()
     require(not args.install or args.publish, '--install requires --publish')

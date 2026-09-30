@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "release": "1.0.2",
+  "status": "ACCEPTED_REPRESENTATIVE_CONSUMER_IMPROVEMENT",
+  "comparison": "starting_JCM_brief_delta_vs_improved_JCM_brief_delta",
+  "accepted_candidate_runtime_before_version": "c93b45c029bd9a7ac41f7fe2bb6af1b2cb6aa5de554f016ccf595ee82787fd31",
+  "release_runtime_difference": "version field only",
+  "flows": [
+    "cold_consumer_from_prepared_history",
+    "warm_same_source",
+    "changed_question",
+    "partial_correction",
+    "dependent_scope",
+    "independent_B",
+    "return_corrected_A"
+  ],
+  "exact_answers": {
+    "checked": 28,
+    "passed": 28
+  },
+  "primary_gates": "all pass",
+  "pairs": [
+    {
+      "order": "baseline_then_candidate",
+      "baseline_input": 646020,
+      "candidate_input": 569124,
+      "reduction_percent": 11.903,
+      "resumed_only_unpaid_last_candidate_stage": true
+    },
+    {
+      "order": "fresh_candidate_then_baseline",
+      "baseline_input": 680008,
+      "candidate_input": 570190,
+      "reduction_percent": 16.1495
+    }
+  ],
+  "combined": {
+    "baseline_input_tokens": 1326028,
+    "candidate_input_tokens": 1139314,
+    "reduction_percent": 14.0807,
+    "baseline_uncached_input_tokens": 420684,
+    "candidate_uncached_input_tokens": 425714,
+    "uncached_change_percent": 1.1957,
+    "baseline_output_tokens": 3699,
+    "candidate_output_tokens": 3581,
+    "baseline_read_calls": 21,
+    "candidate_read_calls": 16,
+    "baseline_additional_reads": 7,
+    "candidate_additional_reads": 2,
+    "baseline_execution_seconds": 346.511,
+    "candidate_execution_seconds": 309.586,
+    "some_individual_stages_slower": true,
+    "interruption_seconds_excluded_from_execution": 5141.652
+  },
+  "cost_ledger": {
+    "historical_Jev_preparation": {
+      "calls": 238,
+      "input_tokens": 1627855,
+      "output_tokens": 89587,
+      "includes_previous_baseline_calls": 99
+    },
+    "incremental_optional_provider_in_selected_consumers": {
+      "calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "audits": 4,
+      "basis": "calls/decisions archive tables and actual native/read lookup attempts"
+    },
+    "selected_consumers": {
+      "turns": 28,
+      "response_receipts": 65,
+      "input_tokens": 2465342,
+      "output_tokens": 7280,
+      "earlier_13_stage_prefix_counted_once": true
+    },
+    "new_validation_increment": {
+      "turns": 15,
+      "response_receipts": 35,
+      "input_tokens": 1365711,
+      "output_tokens": 3788
+    },
+    "separate_design_advisories": {
+      "calls": 3,
+      "input_tokens": 4111,
+      "output_tokens": 243
+    },
+    "earlier_failed_priority_run": "known subtotals and interrupted unknowns retained privately; outside selected comparison",
+    "monetary_savings_established": false
+  },
+  "integrity": {
+    "independent_root_answer_check": true,
+    "corrected_final_manifest_files_checked": 152,
+    "original_13_stage_objects_preserved": true,
+    "native_prefixes_preserved": true,
+    "initial_preflight_header_changes": "14 journals, exact +1 at header offsets24/92; explicitly approved derived bindings, no general exception",
+    "malformed_original_checksum_metadata": "28 serialized digest fields retained; corrected structured bindings independently rehashed",
+    "raw_artifacts_preserved_privately": true
+  },
+  "not_established": [
+    "preparation_or_indexing_cost_improvement",
+    "JCM_vs_no_JCM_savings",
+    "full_7230_event_history_recovery",
+    "installed_Desktop_capture_or_hooks",
+    "monetary_savings",
+    "universal_performance"
+  ],
+  "source_acceptance_report_sha256": "6ea224e8aa611de04812e0e84f9a934810ad613da617f19533d46bc9e6d93646"
+}

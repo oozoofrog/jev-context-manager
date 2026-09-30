@@ -10,6 +10,15 @@ from jcm.semantic_cache import evaluate_items, source_items
 from jcm.util import digest
 
 
+def resume_harness():
+    import importlib.util
+    from pathlib import Path
+    spec = importlib.util.spec_from_file_location('history_resume', Path(__file__).resolve().parents[1] / 'scripts/history_resume.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class RecoveryOperationsTests(unittest.TestCase):
     setUp = fixtures.ContinuityTests.setUp
     tearDown = fixtures.ContinuityTests.tearDown
@@ -50,6 +59,113 @@ class RecoveryOperationsTests(unittest.TestCase):
         self.assertEqual(result['errors'],[CONTEXT_ERROR])
         self.assertIn(small,seen)
 
+    def test_billing_resume_reuses_successes_and_retries_only_missing_units_after_new_epoch(self):
+        import io
+        from urllib.error import HTTPError
+        events = [self.capture('prior', str(i), f'Evidence {i}') for i in range(3)]
+        context = {'goal': 'resume billing interruption'}
+        items = [self.store.material(self.store.event(eid)) for eid in events]
+        calls = []
+        def interrupted(body, key):
+            calls.append(body)
+            if len(calls) == 2:
+                raise HTTPError('https://api.typesafe.ai', 402, 'Payment Required', {},
+                                io.BytesIO(b'{"error":{"code":"billing_error"}}'))
+            return fixtures.fake_http(body, key)
+        provider = self.provider(interrupted)
+        first = evaluate_items(self.store, provider, 'billing-resume', context, items[:1], builder, self.cfg['epoch'])
+        failed = evaluate_items(self.store, provider, 'billing-resume', context, items[1:2], builder, self.cfg['epoch'])
+        missing = evaluate_items(self.store, provider, 'billing-resume', context, items[2:], builder, self.cfg['epoch'])
+        self.assertEqual((first['evaluated_units'], failed['errors'], missing['errors']),
+                         (1, ['PROVIDER_HTTP_402'], ['PROVIDER_HTTP_402']))
+        self.assertEqual(len(calls), 2)
+        old_success = first['records'][0]['decisions'][0]['id']
+        old_errors = [tuple(r) for r in self.store.db.execute('SELECT * FROM provider_errors')]
+        self.store.change_policy(enabled=False)
+        policy = self.store.change_policy(enabled=True)
+        resumed_calls = []
+        def restored(body, key):
+            resumed_calls.append(json.loads(body))
+            return fixtures.fake_http(body, key)
+        resumed = evaluate_items(self.store, self.provider(restored), 'billing-resume', context, items, builder, policy['epoch'])
+        self.assertEqual((resumed['cache_hits'], resumed['evaluated_units'], resumed['errors']), (1, 2, []))
+        self.assertEqual({item['event_id'] for call in resumed_calls for item in call['state']['items']}, set(events[1:]))
+        self.assertIn(old_success, {r['id'] for r in resumed['decisions'] if r['cached']})
+        self.assertEqual([tuple(r) for r in self.store.db.execute('SELECT * FROM provider_errors')], old_errors)
+        self.assertEqual(self.store.db.execute("SELECT count(*) FROM decisions WHERE status='failed' AND error='PROVIDER_HTTP_402'").fetchone()[0], 1)
+
+    def test_resume_preflight_missing_storage_does_not_create_or_replay_a_journal(self):
+        harness = resume_harness()
+        expected = {'source_fingerprint': 'a' * 64, 'event_count': 7230}
+        missing = self.base / 'missing' / 'profiles' / 'unavailable.json'
+        result = harness.inspect(missing, expected, {})
+        self.assertFalse(result['ready'])
+        self.assertEqual(result['errors'], ['PROFILE_MISSING'])
+        self.assertIsNone(result['semantic_inventory'])
+        self.assertFalse(missing.parent.parent.exists())
+
+    def test_resume_clone_preserves_exact_sources_cache_and_disabled_original_policy(self):
+        harness = resume_harness()
+        token = self.request('Resume the original frozen evidence.')
+        request = self.store.db.execute('SELECT * FROM requests WHERE token=?', (token,)).fetchone()
+        item = self.store.material(self.store.event(request['event_id']))
+        evaluated = evaluate_items(self.store, self.provider(), 'fixture', {}, [item], builder, self.cfg['epoch'])
+        events = self.store.events()
+        interrupted = {'repo_id': self.cfg['repo_id'], 'policy_epoch': self.cfg['epoch'],
+            'request_token': token, 'session_id': request['session'], 'decisions': evaluated['decisions'],
+            'source_dependencies': [{'event_id': e['id'], 'revision': e['revision']} for e in events],
+            'source_bindings': {e['id']: e['blob'] for e in events}}
+        expected = {'source_fingerprint': harness.fingerprint(self.store.db), 'event_count': len(events),
+                    'decision_ids': [r[0] for r in self.store.db.execute('SELECT id FROM decisions')]}
+        policy = self.store.change_policy(enabled=False)
+        profile = self.home / 'profiles' / (self.cfg['repo_id'] + '.json')
+        profile_before = profile.read_bytes()
+        inventory = harness.inspect(profile, expected, interrupted)
+        self.assertTrue(inventory['ready'], inventory)
+        clone = harness.clone(profile, expected, interrupted, self.base / 'resume')
+        self.assertTrue(clone['ready'], clone)
+        self.assertEqual(clone['epoch_after'], policy['epoch'] + 1)
+        self.assertEqual(clone['semantic_inventory']['successful_units'], 1)
+        self.assertEqual(profile.read_bytes(), profile_before)
+        self.assertFalse(self.store.policy(require_enabled=False)['enabled'])
+        self.assertEqual(harness.fingerprint(self.store.db), expected['source_fingerprint'])
+        bad = {**expected, 'source_fingerprint': 'b' * 64}
+        self.assertIn('FROZEN_SOURCE_MISMATCH', harness.inspect(profile, bad, interrupted)['errors'])
+        with self.assertRaisesRegex(Exception, 'HISTORICAL_RESUME_PREFLIGHT_FAILED'):
+            harness.clone(profile, bad, interrupted, self.base / 'forbidden-replay')
+        self.assertFalse((self.base / 'forbidden-replay').exists())
+        row = self.store.db.execute('SELECT key,answer FROM semantic_items').fetchone()
+        self.store.db.execute('UPDATE semantic_items SET answer=? WHERE key=?', ('{"invented":{"type":"noul","noul":1}}', row['key']))
+        self.assertIn('SEMANTIC_CACHE_NOT_RECOVERED', harness.inspect(profile, expected, interrupted)['errors'])
+        self.store.db.execute('UPDATE semantic_items SET answer=? WHERE key=?', (row['answer'], row['key']))
+        self.store.db.execute('DELETE FROM semantic_items')
+        self.assertIn('SEMANTIC_CACHE_NOT_RECOVERED', harness.inspect(profile, expected, interrupted)['errors'])
+
+    def test_resumed_measurement_uses_a_fresh_operation_and_incremental_cost_boundary(self):
+        harness = resume_harness()
+        self.capture('history', 'evidence', 'Keep the active original requirement.', role='assistant')
+        token = self.request('Resume original evidence.')
+        old_route = dispatch(self.store, token, self.provider())
+        interrupted = self.store.blob(self.store.db.execute('SELECT blob FROM packs WHERE id=?', (old_route['pack_id'],)).fetchone()[0])
+        expected = {'source_fingerprint': harness.fingerprint(self.store.db), 'event_count': len(self.store.events()),
+                    'decision_ids': [r[0] for r in self.store.db.execute('SELECT id FROM decisions')]}
+        self.store.change_policy(enabled=False)
+        profile = self.home / 'profiles' / (self.cfg['repo_id'] + '.json')
+        target = self.base / 'resume-measurement'
+        harness.clone(profile, expected, interrupted, target)
+        original_dispatch = dispatch
+        with patch.object(harness, 'dispatch', side_effect=lambda store, request:
+                original_dispatch(store, request, fixtures.JevProvider(store, transport=fixtures.fake_http))):
+            result = harness.measure(target, expected, interrupted, self.base / 'resumed-result')
+        self.assertTrue(result['pass'], result)
+        self.assertEqual(result['incremental_provider_metrics']['transport_calls'], 0)
+        self.assertEqual(result['model_consumption_or_use'], 'not_run')
+        self.assertEqual(harness.fingerprint(self.store.db), expected['source_fingerprint'])
+        self.assertFalse(self.store.policy(require_enabled=False)['enabled'])
+        with self.assertRaisesRegex(Exception, 'RESUME_MANIFEST_OR_RUNTIME_CHANGED'):
+            harness.measure(target, {**expected, 'event_count': 7230}, interrupted, self.base / 'different-corpus')
+        self.assertFalse((self.base / 'different-corpus').exists())
+
     def test_confirmed_goal_stays_resolved_when_source_intents_are_mixed(self):
         from jcm import task_state
         goal=self.capture('history','goal','Propose archive export formats.')
@@ -88,6 +204,29 @@ class RecoveryOperationsTests(unittest.TestCase):
         with patch.object(provider, 'evaluate', side_effect=AssertionError('legacy judgment retransmitted')):
             repeat = evaluate_items(self.store, provider, 'fixture', context, [item], builder, policy['epoch'])
         self.assertEqual(repeat['cache_hits'], 1)
+        for variation in ('context', 'model', 'lane', 'question', 'source'):
+            with self.subTest(variation=variation):
+                policy = self.store.change_policy(model=self.cfg['model'])
+                changed_context, changed_item, changed_builder = dict(context), dict(item), builder
+                provider = self.provider()
+                if variation == 'context':
+                    changed_context['goal'] = 'unrelated export'
+                elif variation == 'model':
+                    policy = self.store.change_policy(model='other-fixture-model')
+                elif variation == 'lane':
+                    provider.lane = 'other-fixture-lane'
+                elif variation == 'question':
+                    def changed_builder(path, source):
+                        result = builder(path, source)
+                        result['classification']['instructions'] += ' Classify a different property.'
+                        return result
+                else:
+                    self.store.db.execute('UPDATE events SET revision=revision+1 WHERE id=?', (event,))
+                    changed_item = source_items(self.store.material(self.store.event(event)), context, builder)[0]
+                changed = evaluate_items(self.store, provider, 'fixture', changed_context, [changed_item],
+                                         changed_builder, policy['epoch'])
+                self.assertEqual(changed['cache_hits'], 0)
+                self.assertEqual(changed['evaluated_units'], 1)
 
     def test_index_batches_policy_work_and_preserves_all_sources(self):
         ids = [self.capture('prior', str(i), f'필수 조건 {i}') for i in range(260)]
@@ -131,9 +270,8 @@ class RecoveryOperationsTests(unittest.TestCase):
         identity={'id':'fixture','scope':{'selected_source':{'text':'Plan a design'}}}
         provider=self.provider()
         kept,deferred,result=detail_plan.plan(self.store,provider,events,identity,'Plan a design',self.cfg['epoch'])
-        self.assertEqual({d['event_id'] for d in deferred},{ids[0]})
-        self.assertEqual({e['id'] for e in kept},set(ids[1:]))
-        self.assertEqual(deferred[0]['assessment'],'metadata_only_not_source_review')
+        self.assertEqual(deferred,[])
+        self.assertEqual({e['id'] for e in kept},set(ids))
         kept,_,_=detail_plan.plan(self.store,provider,events,identity,'Plan a design',self.cfg['epoch'],[ids[0]])
         self.assertEqual({e['id'] for e in kept},set(ids))
 
@@ -316,6 +454,20 @@ class RuntimeReuseTests(unittest.TestCase):
     def setUp(self):
         fixtures.ContinuityTests.setUp(self)
         self.sent=[]
+
+    def test_core_selection_errors_reach_dispatch_quality_and_coverage(self):
+        from jcm import core_context
+        self.capture('history', 'rule', 'Never resume without explicit user action.')
+        original = core_context.plan
+        def failed(*args, **kwargs):
+            result = original(*args, **kwargs)
+            result['errors'].append('PROVIDER_HTTP_429')
+            return result
+        with patch.object(core_context, 'plan', side_effect=failed):
+            pack = self.recover('current', 'Continue pause recovery.')
+        self.assertEqual(pack['quality'], 'degraded')
+        self.assertEqual(pack['semantic_error'], 'PROVIDER_HTTP_429')
+        self.assertIn('PROVIDER_HTTP_429', pack['coverage']['gaps'])
 
     def test_runtime_update_reuses_task_and_query_but_preserves_confirmed_legacy_relation(self):
         from jcm.task_state import confirm,VERSION

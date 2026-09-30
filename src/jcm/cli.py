@@ -55,6 +55,7 @@ def parser():
     read.add_argument('--pack', required=True)
     read.add_argument('--page', type=int, default=1)
     read.add_argument('--view', choices=['brief', 'detail', 'full', 'audit'], default='brief')
+    read.add_argument('--retained-context')
     state = sub.add_parser('state').add_subparsers(dest='state_mode', required=True)
     confirm = state.add_parser('confirm')
     confirm.add_argument('--relation', required=True)
@@ -64,6 +65,11 @@ def parser():
     inspect.add_argument('--raw', action='store_true')
     inspect.add_argument('--page', type=int, default=1)
     inspect.add_argument('--pack')
+    lookup = sub.add_parser('lookup')
+    lookup.add_argument('--pack', required=True)
+    lookup.add_argument('--query', required=True)
+    lookup.add_argument('--page', type=int, default=1)
+    lookup.add_argument('--semantic', action='store_true')
     worker = sub.add_parser('worker')
     worker.add_argument('action', choices=['drain'])
     worker.add_argument('--limit', type=int, default=4)
@@ -75,6 +81,7 @@ def parser():
     existing.add_argument('--no-follow', action='store_true')
     fresh = bootstrap.add_parser('new')
     fresh.add_argument('--request-token', required=True)
+    fresh.add_argument('--retained-context')
     follow = sub.add_parser('follow')
     follow.add_argument('--source', required=True)
     forget = sub.add_parser('forget')
@@ -158,20 +165,23 @@ def run(args):
             if args.bootstrap_mode == 'existing':
                 return existing(store, args.session_id, args.transcript,
                                 install=not args.no_install_hooks, follow=not args.no_follow)
-            return new(store, args.request_token)
+            return new(store, args.request_token, retained_context=args.retained_context)
         if args.command == 'follow':
             from .follower import follow
             return follow(store, args.source)
         if args.command == 'dispatch':
             return dispatch(store, args.request_token)
         if args.command == 'read':
-            return read_pack(store, args.pack, args.page, args.view)
+            return read_pack(store, args.pack, args.page, args.view, retained_context=args.retained_context)
         if args.command == 'state':
             from .task_state import confirm
             return confirm(store, identifier(args.relation), args.resolution)
         if args.command == 'inspect':
             from .source_read import inspect_source
             return inspect_source(store, identifier(args.record), args.page, args.raw, args.pack)
+        if args.command == 'lookup':
+            from .evidence import lookup
+            return lookup(store, args.pack, args.query, args.page, args.semantic)
         if args.command == 'worker':
             if not 0 <= args.limit <= 64:
                 raise JCMError('INVALID_WORKER_LIMIT')

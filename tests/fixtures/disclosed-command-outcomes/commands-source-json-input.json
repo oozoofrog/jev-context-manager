@@ -1,0 +1,39 @@
+{
+  "operation": "commands",
+  "records": [
+    {
+      "type": "response_item",
+      "payload": {
+        "type": "custom_tool_call",
+        "call_id": "c1",
+        "name": "functions.exec",
+        "input": "await tools.exec_command(...)"
+      }
+    },
+    {
+      "type": "response_item",
+      "payload": {
+        "type": "custom_tool_call_output",
+        "call_id": "c1",
+        "output": "{\"chunk_id\":\"cmd1\",\"exit_code\":0,\"output\":\"{\\\"exit_code\\\":9,\\\"chunk_id\\\":\\\"source-example\\\"}\"}"
+      }
+    },
+    {
+      "type": "response_item",
+      "payload": {
+        "type": "custom_tool_call",
+        "call_id": "c2",
+        "name": "mcp__jcm__read_source",
+        "input": "{}"
+      }
+    },
+    {
+      "type": "response_item",
+      "payload": {
+        "type": "custom_tool_call_output",
+        "call_id": "c2",
+        "output": "{\"origin\":\"jcm\",\"entries\":[{\"source\":{\"chunk_id\":\"historical-sample\",\"exit_code\":9}}]}"
+      }
+    }
+  ]
+}

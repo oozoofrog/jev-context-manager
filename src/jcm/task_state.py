@@ -219,7 +219,8 @@ def task_context(store, provider, current, request_text, task_scope, epoch):
 
 def rank_materials(store, materials, identity, epoch):
     refreshed = local_index.refresh(store, materials, epoch)
-    lexical = local_index.search(store, identity['request'])
+    material_ids = {m['event_id'] for m in materials}
+    lexical = [eid for eid in local_index.search(store, identity['request']) if eid in material_ids]
     saved = store.db.execute('SELECT data FROM task_views WHERE id=?', (identity['id'],)).fetchone()
     previous = json.loads(saved[0]) if saved else {}
     members = previous.get('member_ids', [])
@@ -292,6 +293,24 @@ def relation_questions(path, item):
             'in surrounding_text must not count. Return a probability for this precise claim, not general task relevance.')}
 
 
+RELATION_REVIEW_VERSION = 'relation-consistency-v1'
+
+
+def review_questions(path, item):
+    evidence = {key: {k: item[key][k] for k in ('text', 'surrounding_text', 'role', 'basis')}
+                for key in ('older', 'newer')}
+    return {'relation': choice({'question': 'Compare only the exact older.text and newer.text below. '
+        'One clause of a compound statement can be corrected while its other requirements remain. '
+        'Is a value or requirement explicitly changed, merely reaffirmed, contradicted, resolved in a '
+        'report, or unrelated? Surrounding text supplies conditions, not alternative target statements. '
+        'This judgment never grants authorization or verifies implementation.', 'assertions': evidence},
+        {'corrects':'Explicitly changes at least one clause in the same scope.',
+         'contradicts':'Conflicts without clear precedence.', 'resolves':'Reports resolution of that issue.',
+         'supports':'Reaffirms compatible details.', 'unrelated':'Different claim or scope.', 'uncertain':'Unclear.'}),
+        'affects_assertion': noul({'question':'Does newer.text change, contradict or resolve any part of '
+            'the exact older.text assertion, rather than merely reaffirming it?', 'assertions': evidence})}
+
+
 def projection_fingerprint(identity, assertions, ordered, model, lane):
     from .relation_candidates import trigger_questions, group_questions
     fields=('id','event_id','revision','span','text','surrounding_text','role','basis',
@@ -314,6 +333,7 @@ def cached_projection(store, provider, identity, assertions, ordered, fingerprin
     if not row:return None
     view=json.loads(row['data'])
     if view.get('lane')!=provider.lane:return None
+    if view.get('relation_review_version') != RELATION_REVIEW_VERSION:return None
     previous=view.get('projection_fingerprint')
     if previous is None or view.get('projection_version')!=2:
         saved=[json.loads(r[0]) for r in store.db.execute('SELECT data FROM assertions WHERE task_id=?',(identity['id'],))]
@@ -391,6 +411,27 @@ def project(store, provider, identity, materials, selected, assessments, epoch, 
         pairs, expansion = candidates(store, provider, identity['scope'], assertions, ordered, epoch)
         result = evaluate_items(store, provider, 'assertion-relation-v2', identity['scope'], pairs,
                                 relation_questions, epoch, splittable=False)
+        # Independent answers can disagree: "same property, partial change" but
+        # "unrelated". Re-ask the exact pair instead of silently dropping a
+        # potentially changed clause or lowering the original thresholds.
+        inconsistent = [r for r in result['records'] if
+            r['answers']['relation']['choice'] in ('unrelated', 'supports') and
+            r['answers']['same_property']['probabilities']['same'] >= .9 and
+            (r['answers']['affects_assertion']['noul'] > .1 or
+             r['answers']['target_scope']['probabilities']['partial'] > .5)]
+        if inconsistent:
+            review = evaluate_items(store, provider, RELATION_REVIEW_VERSION, identity['scope'],
+                [r['item'] for r in inconsistent], review_questions, epoch, splittable=False)
+            reviewed = {digest(r['item']): r for r in review['records']}
+            for record in inconsistent:
+                checked = reviewed.get(digest(record['item']))
+                if checked:
+                    record['answers'].update(checked['answers'])
+                    record['decisions'].extend(checked['decisions'])
+                else:
+                    record['answers']['relation'] = {'choice':'uncertain'}
+            result['decisions'].extend(review['decisions'])
+            result['errors'].extend(review['errors'])
         result['candidate_expansion'] = {k: expansion[k] for k in
             ('cache_hits','evaluated_units','candidate_pairs','trigger_assertions','assertions_retained')}
         result['errors'].extend(expansion['errors'])
@@ -443,6 +484,7 @@ def project(store, provider, identity, materials, selected, assessments, epoch, 
         relations.append(relation)
     revision = digest([sorted((m['event_id'], m['revision']) for m in materials), policy['model'], RUBRIC_VERSION])
     data = {'lane': provider.lane,'projection_fingerprint':fingerprint,'projection_version':2,
+            'relation_review_version': RELATION_REVIEW_VERSION,
             'identity': {k: identity[k] for k in ('id', 'anchor', 'request', 'scope')},
             'anchor': identity['anchor'], 'scope': identity['scope'], 'read_revision': revision,
             'member_ids': [m['event_id'] for m in selected], 'assertion_ids': list(by_assertion),

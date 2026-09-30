@@ -116,7 +116,7 @@ def _dispatch(store, token, provider=None):
     if terminal:
         semantic['errors'] = terminal
     else:
-        semantic = select(store, provider, materials, identity['request'], epoch, identity['scope'])
+        semantic = select(store, provider, materials, request_text, epoch, identity['scope'])
     stages['source_selection_seconds'] = time.perf_counter() - stage_start
     semantic['errors'].extend(identity['errors'])
     decisions, relations = identity['decisions'] + detail['decisions'] + semantic['decisions'], semantic['relations']
@@ -223,19 +223,27 @@ def _dispatch(store, token, provider=None):
     stages['state_and_representation_seconds'] = time.perf_counter() - stage_start
     stage_start = time.perf_counter()
     progress(store, phase='current_question')
+    request_intent = core_context.intent(store, provider, identity, store.material(current), epoch)
     reps, question, query = query_context.build(store, provider, identity, store.material(current), frame,
-                                               selected, materials, reps, epoch)
+        selected, materials, reps, epoch, brief_only=core_context.continuation(request_intent))
     task_records = selected
     selected, deferred = query_context.selected_records(task_records, reps, materials)
     excluded.extend(deferred)
-    core = core_context.plan(store, provider, identity, store.material(current), frame, selected, materials, epoch)
+    brief_frame, relation_delivery = query_context.relation_view(store, provider, identity,
+        store.material(current), frame, selected, epoch)
+    brief_frame, completion_errors = query_context.complete(store, question, reps, task_records, materials, brief_frame)
+    selected, deferred = query_context.selected_records(task_records, reps, materials)
+    included = {r['event_id'] for r in selected}
+    excluded = [r for r in excluded if r['event_id'] not in included]
+    core = core_context.plan(store, provider, identity, store.material(current), brief_frame, selected, materials, epoch, request_intent=request_intent)
     decisions.extend(core['decisions'])
     stages['query_context_seconds'] = time.perf_counter() - stage_start
-    gaps.extend(projection['errors'] + representation['errors'] + query['errors'])
-    if projection['errors'] or representation['errors'] or query['errors']:
+    selection_errors = projection['errors'] + representation['errors'] + query['errors'] + core['errors'] + relation_delivery['errors'] + completion_errors
+    gaps.extend(selection_errors)
+    if selection_errors:
         quality = 'degraded'
-        semantic_error = semantic_error or next(iter(projection['errors'] + representation['errors'] + query['errors']))
-    decisions.extend(projection['decisions'] + representation['decisions'] + query['decisions'])
+        semantic_error = semantic_error or selection_errors[0]
+    decisions.extend(projection['decisions'] + representation['decisions'] + query['decisions'] + relation_delivery['decisions'])
     relations = frame['relations']
     from .metrics import provider_metrics
     metrics = provider_metrics(store, provider.observed_decisions[observed_start:])
@@ -257,6 +265,12 @@ def _dispatch(store, token, provider=None):
     prepare_started = time.perf_counter()
     progress(store, phase='pack_delivery')
     pack_id = uuid.uuid4().hex
+    # Bind every generated expansion to its immutable recovery, including
+    # cached representations and tool descriptors created before the pack.
+    for source in reps + core['deferred'] + deferred_details:
+        source['expand_command'] = shlex.join(store.config['cli_argv'] +
+            ['inspect', '--record', source['event_id'], '--pack', pack_id])
+    core['source_expansion_argv'] = store.config['cli_argv'] + ['inspect', '--record', '{event_id}', '--pack', pack_id]
     pack = {'schema_version': 1, 'origin': 'jcm', 'pack_id': pack_id, 'request_token': token,
             'capture': capture,
             'repo_id': store.config['repo_id'], 'worktree_id': store.config['worktree_id'],
@@ -280,17 +294,48 @@ def _dispatch(store, token, provider=None):
                                    [{'event_id': identity['anchor']['event_id'], 'revision': identity['anchor']['revision']}] + question['source_dependencies'],
             'metrics': metrics, 'task_frame': frame, 'query_context': question, 'continuation_delivery': core,
             'audit_command': shlex.join(store.config['cli_argv'] + ['read', '--pack', pack_id, '--view', 'audit'])}
+    pack['source_bindings'] = {d['event_id']: store.event(d['event_id'])['blob'] for d in pack['source_dependencies']}
+    lookup = shlex.join(store.config['cli_argv'] + ['lookup', '--pack', pack_id, '--query', '{question}'])
+    pack['detail_coverage']['expansion'] = lookup
     pack['context_views'] = {level: representations.working_context(pack, frame, reps, level)
                              for level in ('brief', 'detail', 'full')}
+    question['required_metadata'] = {k:pack['context_views']['brief'][k] for k in
+        ('request','source_use_policy','verification','policy_epoch','selected_task','journal_read_revision')}
     pack['context_views']['brief'] = core_context.apply(pack['context_views']['brief'], core)
+    question['record_order'] = [r['event_id'] for r in pack['context_views']['brief']['selected_records']]
+    brief = representations.compact_brief(pack['context_views']['brief'], brief_frame)
+    brief['source_expansion_argv'] = core['source_expansion_argv']
+    brief['evidence_lookup_command'] = lookup
+    if 'evidence_delivery' in brief:
+        brief['evidence_delivery']['expansion_index'] = lookup
+        brief['evidence_delivery'].pop('unread_index_field', None)
+    brief, contract_errors = representations.enforce_contract(store, question, brief, epoch)
+    pack['context_views']['brief'] = brief
+    if contract_errors:
+        pack['quality'] = 'degraded'
+        pack['semantic_error'] = 'DELIVERY_CONTRACT_VIOLATION'
+        pack['coverage']['gaps'] = sorted(set(pack['coverage']['gaps'] + contract_errors))
+        if brief['dispatch'] == 'blocked':
+            pack['dispatch'] = 'blocked'
+        for context in pack['context_views'].values():
+            context['quality'] = pack['quality']
+            context['semantic_error'] = pack['semantic_error']
+            context['dispatch'] = pack['dispatch']
+            context['coverage'] = {'state':pack['coverage']['state'], 'gaps':list(pack['coverage']['gaps'])}
     metrics['required_content_bytes'] = len(encode({k:v for k,v in pack['context_views']['brief'].items() if k != 'metrics'}))
     metrics['optional_audit_content_bytes'] = len(encode({k:v for k,v in pack.items() if k not in ('context_views', 'metrics')}))
     try:
         for level, context in pack['context_views'].items():
             context['view'] = level
             context['page_manifest'] = paginate(store, context)
+            if level == 'brief':
+                from .delivery import reconstruct_pages
+                decoded = reconstruct_pages([{'entries':page} for page in context['page_manifest']['pages']])
+                if decoded != {k:v for k,v in context.items() if k != 'page_manifest'} or representations.validate_contract(question, decoded):
+                    raise JCMError('DELIVERY_PAGE_CONTRACT_VIOLATION')
     except JCMError as error:
         pack['dispatch'] = 'blocked'
+        pack['quality'] = 'degraded'
         pack['coverage']['gaps'].append(str(error))
     full_envelope = {'origin': 'jcm', 'pack': pack, 'delivery': 'read_served', 'delivery_coverage': 'unknown',
                      'current_reconciliation': 'consistent'}
@@ -333,14 +378,15 @@ def _dispatch(store, token, provider=None):
             'read_command': shlex.join(store.config['cli_argv'] + ['read', '--pack', pack_id])}
 
 
-def read_pack(store, pack_id, page=1, view='brief', bootstrap=False):
+def read_pack(store, pack_id, page=1, view='brief', bootstrap=False, retained_context=None):
     if type(page) is not int or page < 1 or view not in ('brief', 'detail', 'full', 'audit'):
         raise JCMError('INVALID_PACK_PAGE_OR_VIEW')
     row = store.db.execute('SELECT * FROM packs WHERE id=?', (identifier(pack_id),)).fetchone()
     if not row or row['invalid']:
         raise JCMError('PACK_MISSING_OR_INVALIDATED')
     store.policy(row['epoch'])
-    stored = store.blob(row['blob'])
+    from .source_read import bound_pack
+    stored = bound_pack(store, pack_id, delivery=not retained_context and view!='audit')
     if stored.get('semantic_version') and stored['semantic_version'] != {'model': store.policy(row['epoch'])['model'], 'rubric': task_state.RUBRIC_VERSION}:
         raise JCMError('PACK_SEMANTIC_VERSION_CHANGED')
     if stored['dispatch'] == 'blocked':
@@ -349,36 +395,63 @@ def read_pack(store, pack_id, page=1, view='brief', bootstrap=False):
                 'source_ids': [r['event_id'] for r in stored['selected_records']],
                 'next': 'Use inspect for scoped source reads; do not claim full recovery.'}
     from .semantic_cache import validate_dependencies
-    validate_dependencies(store, stored.get('source_dependencies', []))
     has_views = 'context_views' in stored
     pack = (stored['context_views'][view] if has_views and view != 'audit' else
             {k:v for k,v in stored.items() if k != 'context_views'})
     pack['view'] = view if has_views else 'audit'
-    current = snapshot(store.config['root'])
-    reconciliation = 'consistent' if current['fingerprint'] == pack['snapshot']['fingerprint'] else 'stale'
+    if retained_context:
+        from .delivery import delta
+        if view != 'brief' or not has_views:
+            raise JCMError('RETAINED_CONTEXT_REQUIRES_BRIEF')
+        pack = delta(store, stored, retained_context)
+        pack['page_manifest'] = paginate(store, pack)
     manifest = pack.get('page_manifest')
     count = len(manifest['pages']) if manifest else 1
     if page > count:
         raise JCMError('INVALID_PACK_PAGE')
+    # Workspace reconciliation is observed at the boundaries of this read pass.
+    # Intermediate pages explicitly make no fresh-filesystem claim. Source and
+    # policy validity are still checked for every page under the writer lock.
+    current = snapshot(store.config['root']) if page==1 or count==1 else None
+    reconciliation = ('consistent' if current['fingerprint']==stored['snapshot']['fingerprint'] else 'stale') if current else 'not_checked'
     prefix = 'read_' + view + ':' if has_views else 'read_page:'
+    if retained_context:
+        prefix += digest(retained_context) + ':'
     kind = prefix + str(page) if manifest else ('read_' + view + ':1' if has_views else 'read_served')
     store.db.execute('BEGIN IMMEDIATE')
     try:
         store.policy(row['epoch'])
-        fresh = store.db.execute('SELECT invalid FROM packs WHERE id=?', (pack_id,)).fetchone()
+        fresh = store.db.execute('SELECT invalid,blob FROM packs WHERE id=?', (pack_id,)).fetchone()
         if not fresh or fresh['invalid']:
             raise JCMError('PACK_MISSING_OR_INVALIDATED')
-        validate_dependencies(store, stored.get('source_dependencies', []))
+        if stored.get('_delivery_source_blob',fresh['blob'])!=fresh['blob']:
+            raise JCMError('PACK_SOURCE_CHANGED')
+        validate_dependencies(store,stored.get('source_dependencies',[]),stored.get('source_bindings',{}))
+        if '_delivery_source_blob' in stored and not stored['_delivery_cached']:
+            header=store.put_blob({k:v for k,v in stored.items() if not k.startswith('_delivery_')})
+            store.db.execute('INSERT OR REPLACE INTO meta VALUES (?,?)',('delivery_header:'+pack_id,
+                encode({'pack_blob':fresh['blob'],'blob':header}).decode()))
         if manifest and count > 1:
-            entries = store.blob(manifest['pages'][page - 1])
-            served = {int(r[0].split(':')[1]) for r in store.db.execute(
-                'SELECT DISTINCT kind FROM receipts WHERE pack_id=? AND kind LIKE ?', (pack_id, prefix + '%'))}
+            entries = manifest['pages'][page - 1] if retained_context else store.blob(manifest['pages'][page - 1])
+            progress_key = 'read_progress:' + pack_id + ':' + digest(prefix)
+            prior = store.db.execute('SELECT value FROM meta WHERE key=?', (progress_key,)).fetchone()
+            # Page 1 starts a new consumption pass. Historical receipts must
+            # not make a fresh/compacted consumer complete after only page 1.
+            served = set(json.loads(prior[0])) if prior and page != 1 else set()
             served.add(page)
-            next_page = page + 1 if page < count else next((n for n in range(1, count + 1) if n not in served), None)
+            if len(served)==count and current is None:
+                current=snapshot(store.config['root'])
+                reconciliation='consistent' if current['fingerprint']==stored['snapshot']['fingerprint'] else 'stale'
+            next_page = next((n for n in range(page + 1, count + 1) if n not in served), None)
+            if next_page is None:
+                next_page = next((n for n in range(1, count + 1) if n not in served), None)
             result = page_envelope(store, pack, entries, page, count, len(served), next_page, reconciliation)
+            store.db.execute('INSERT OR REPLACE INTO meta VALUES (?,?)', (progress_key, encode(sorted(served)).decode()))
         else:
             result = {'origin': 'jcm', 'pack': {k:v for k,v in pack.items() if k != 'page_manifest'}, 'view': pack['view'], 'delivery': 'read_served',
                       'delivery_coverage': 'unknown', 'current_reconciliation': reconciliation}
+        if has_views and view == 'brief':
+            result['context_handle'] = pack_id + ':' + stored['context_views']['brief']['page_manifest']['content_hash']
         if has_views:
             result['required_context_complete'] = (result['delivery'] == 'read_served' if view == 'brief' else
                 store.db.execute("SELECT 1 FROM meta WHERE key=?", ('required_read:' + pack_id,)).fetchone() is not None)

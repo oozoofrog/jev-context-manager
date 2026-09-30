@@ -18,21 +18,6 @@ from jcm.store import Store
 from jcm.util import JCMError, digest, encode
 
 
-class FixtureAnswers(dict):
-    """Keep fixture assertions readable across independent-item wire names."""
-    def canonical(self, key):
-        import re
-        match = re.fullmatch(r'(relevance|omission|representation|applicability)_(\d+)', key)
-        candidate = f'i{match[2]}_{match[1]}' if match else 'i0_intent' if key == 'intent' else key
-        return candidate if dict.__contains__(self, candidate) else key
-
-    def __getitem__(self, key):
-        return super().__getitem__(self.canonical(key))
-
-    def __contains__(self, key):
-        return super().__contains__(self.canonical(key))
-
-
 def fixture_payload(body):
     """A test-only source-oriented view of the actual independent-item payload."""
     payload = json.loads(body)
@@ -53,7 +38,7 @@ def fixture_payload(body):
 
 def fake_http(body, key):
     payload = json.loads(body)
-    answers = FixtureAnswers()
+    answers = {}
     for name, question in payload['questions'].items():
         import re
         semantic_name = re.sub(r'^i[0-9]+_', '', name)
@@ -63,6 +48,7 @@ def fake_http(body, key):
             answers[name] = {'type': 'noul', 'noul': value}
         elif typ == 'choice':
             value = ('changed' if semantic_name == 'scope' else 'resume' if semantic_name == 'intent' else
+                     'evidence' if semantic_name == 'delivery' else
                      'possible' if semantic_name in ('change_trigger', 'target_group') else
                      'same' if semantic_name == 'same_property' else
                      'optional' if semantic_name.startswith('preservation_') else 'full' if semantic_name.startswith('representation') else 'corrects')
@@ -251,7 +237,7 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
                 query = request['state']['request']
                 for i, candidate in enumerate(request['state']['candidates']):
                     high = ('Documentation' in query and 'documentation' in candidate['text']) or ('Implement' in query and 'Implementation' in candidate['text'])
-                    answer = response['answers'][f'relevance_{i}']
+                    answer = response['answers'][f'i{i}_relevance']
                     score = 3 if high else 0
                     answer.update(score=score, probabilities={str(j): float(j == score) for j in range(4)})
             for name, question in request['questions'].items():
@@ -261,7 +247,11 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
                     item = request['state']['items'][int(name.split('_')[0][1:])]
                     if item['text'] in ('Implement error handling', 'Documentation for reconnect'):
                         response['answers'][name].update(choice='ordinary', probabilities={'ordinary':1,'possible':0})
-                if '_query_' not in name or name.endswith('_query_equivalence'):
+                if not any(part in name for part in ('_query_level', '_query_block_', '_query_guard_')):
+                    continue
+                if question['type'] == 'noul':
+                    item = request['state']['items'][int(name.split('_')[0][1:])]
+                    response['answers'][name]['noul'] = float(item.get('role') == 'user')
                     continue
                 item = request['state']['items'][int(name.split('_')[0][1:])]
                 text = ''.join(p['text'] for p in item['paragraphs'])
@@ -321,8 +311,8 @@ s.capture(session=sys.argv[3],turn='t',kind='user_message',role='user',payload={
         self.capture('old', '1', '연결 복구를 구현한다')
         def transport(body, key):
             response = fake_http(body, key)
-            if 'intent' in response['answers']:
-                a = response['answers']['intent']
+            if 'i0_intent' in response['answers']:
+                a = response['answers']['i0_intent']
                 a.update(choice='new_task', probabilities={k: float(k == 'new_task') for k in a['probabilities']})
             return response
         route = dispatch(self.store, self.request('새 작업: 시 한 편 써줘'), self.provider(transport))
